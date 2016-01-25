@@ -1,0 +1,23 @@
+{
+  "name": "polyball",
+  "version": "0.0.1",
+  "description": "Fast multiplayer tennis in two dimensions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/polyball/polyball.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/polyball/polyball/issues"
+  },
+  "homepage": "https://github.com/polyball/polyball#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "socket.io": "^1.4.4"
+  }
+}

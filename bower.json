@@ -1,0 +1,26 @@
+{
+  "name": "polyball",
+  "description": "Fast multiplayer tennis in two dimensions.",
+  "main": "index.js",
+  "authors": [
+    "kdbanman <kirby.banman@gmail.com>",
+    "j-rewerts <rewerts@ualberta.ca>",
+    "ryant26 <thornhil@ualberta.ca>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/polyball/polyball",
+  "moduleType": [
+    "globals"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0",
+    "PhysicsJS": "physicsjs#~0.7.0"
+  }
+}
