@@ -2,7 +2,7 @@
 
 Fast multiplayer tennis in two dimensions.
 
-## dev setup
+## setup
 
 1. Install node, npm, & bower.
     
@@ -18,7 +18,7 @@ Fast multiplayer tennis in two dimensions.
         npm install
         bower install
 
-## run setup
+## run
 
 1. Follow dev setup instructions.
 2. Edit polyball config file, `polyball.json`.
