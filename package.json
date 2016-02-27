@@ -18,6 +18,7 @@
   "homepage": "https://github.com/polyball/polyball#readme",
   "dependencies": {
     "express": "^4.13.4",
+    "log4js": "^0.6.31",
     "socket.io": "^1.4.4"
   }
 }
