@@ -7,9 +7,9 @@ var io = require('socket.io')(server);
 
 app.use(loggers.expressLogger);
 app.use(express.static('bower_components'));
-app.use(express.static('client'));
+app.use(express.static('public'));
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + 'client/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 loggers.mainLogger.info('Polyball server starting.');
