@@ -18,6 +18,12 @@ Fast multiplayer tennis in two dimensions.
         npm install
         bower install
 
+When you make a change to anything the client cares about, run
+
+    browserify lib\client\client.js > client\bin\client-bundle.js
+
+from the project root.  This can be automated using [watchify](https://npmjs.org/package/watchify), just make sure you remember to start it.
+
 ## run setup
 
 1. Follow dev setup instructions.
