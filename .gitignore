@@ -52,5 +52,3 @@ bower_components
 
 # node_modules is conventionally ignored, but browserify *really* wants our stuff in there
 !polyball
-
-public/bin
