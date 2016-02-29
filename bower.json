@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "jquery": "~2.2.0",
-    "PhysicsJS": "physicsjs#~0.7.0"
+    "PhysicsJS": "physicsjs#~0.7.0",
+    "tween.js": "tweenjs#~16.3.4"
   }
 }

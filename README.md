@@ -20,8 +20,16 @@ Fast multiplayer tennis in two dimensions.
 
 ## run
 
-1. Follow dev setup instructions.
+1. Follow setup instructions.
 2. Edit polyball config file, `polyball.json`.
 3. Run the server.
 
         node index.js
+
+## dev
+
+When you make a change to anything the client cares about, run
+
+    npm run build
+
+from the project root.
