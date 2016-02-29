@@ -21,12 +21,19 @@
     "log4js": "^0.6.31",
     "pixi-particles": "^1.5.1",
     "pixi.js": "^3.0.9",
-    "socket.io": "^1.4.4"
+    "socket.io": "^1.4.4",
+    "bower": "^1.7.7"
   },
   "devDependencies": {
-    "bower": "^1.7.7",
     "browserify": "^13.0.0",
-    "browserify-shim": "^3.8.12"
+    "browserify-shim": "^3.8.12",
+    "gulp": "^3.9.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-util": "^3.0.7",
+    "lodash.assign": "^4.0.4",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
   },
   "browserify": {
     "transform": "browserify-shim"

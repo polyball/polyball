@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var loggers = require('./node_modules/polyball/loggers');
+var loggers = require('./shared/loggers');
 
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
