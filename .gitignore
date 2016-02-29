@@ -1,7 +1,14 @@
+
+# TOOLING STUFF ON TOP, POLYBALL STUFF AT BOTTOM
+#   (so that polyball stuff takes precedence)
+
+# WebStorm
 .idea
 
+# Vim
 *.swp
 
+# OSX
 *DS_Store
 
 # Logs
@@ -31,8 +38,7 @@ build/Release
 
 # Dependency directories
 # https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
-node_modules
-# uncomment below if you wish to obey http://stackoverflow.com/a/22328067
+node_modules/*
 bower_components
 
 # Optional npm cache directory
@@ -40,3 +46,9 @@ bower_components
 
 # Optional REPL history
 .node_repl_history
+
+
+# POLYBALL STUFF
+
+# node_modules is conventionally ignored, but browserify *really* wants our stuff in there
+!node_modules/polyball
