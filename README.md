@@ -38,8 +38,21 @@ Fast, multiplayer, physics-driven tennis in two dimensions.
         cd polyball/
         npm install --production
 
-To automatically watch all client source files and build them on change,  run
+3. [WINDOWS ONLY] Replace the polyball module symlink for browserify with a windows symlink
 
-    gulp watch-js
+   Start `cmd`, probably as an administrator.  Navigate to the polyball project directory and run:
 
-from the project root.  The process will persist and report builds and changes.
+        cd node_modules
+        mklink /D .\polyball ..\polyball
+
+   and confirm the symlink file replacement if prompted.  Now avoid pushing that new symlink to the repo:
+
+       cd ..     # now in project root directory
+       git update-index --skip-worktree node_modules/polyball
+
+
+4. To automatically watch all client source files and build them on change,  run
+
+        gulp watch-js
+
+   from the project root.  The gulp process will persist and report builds and changes.
