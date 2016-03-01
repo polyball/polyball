@@ -18,6 +18,25 @@
   "homepage": "https://github.com/polyball/polyball#readme",
   "dependencies": {
     "express": "^4.13.4",
+    "log4js": "^0.6.31",
+    "pixi-particles": "^1.5.1",
+    "pixi.js": "^3.0.9",
     "socket.io": "^1.4.4"
+  },
+  "devDependencies": {
+    "bower": "^1.7.7",
+    "browserify": "^13.0.0",
+    "browserify-shim": "^3.8.12"
+  },
+  "browserify": {
+    "transform": "browserify-shim"
+  },
+  "browser": {
+    "physicsjs": "./bower_components/PhysicsJS/dist/physicsjs-full.js",
+    "tween": "./bower_components/tween.js/src/Tween.js"
+  },
+  "browserify-shim": {
+    "physicsjs": "Physics",
+    "tween": "TWEEN"
   }
 }
