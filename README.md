@@ -1,21 +1,22 @@
 # polyball
 
-Fast multiplayer tennis in two dimensions.
+Fast, multiplayer, physics-driven tennis in two dimensions.
 
 ## setup
 
-1. Install node, npm, & bower.
-    
-    (use your googlefu)
+1. Install `node` & `npm`.
 
-2. Clone the repo.
+2. Install `bower` globally.
+    
+        npm install -g bower
+
+3. Clone and enter the polyball repo.
 
         git clone git@github.com:polyball/polyball.git
 
-3. Install the dependencies.
+4. Install dependencies.
 
-        cd polyball/
-        npm install
+        npm install --production
         bower install
 
 ## run
@@ -28,10 +29,17 @@ Fast multiplayer tennis in two dimensions.
 
 ## dev
 
+1. Install `gulp` globally.
+
+        npm install -g gulp
+
+2. Install dev dependencies.
+
+        cd polyball/
+        npm install --production
+
 To automatically watch all client source files and build them on change,  run
 
-    gulp js
+    gulp watch-js
 
 from the project root.  The process will persist and report builds and changes.
-
-#TODO global dev dependencies!

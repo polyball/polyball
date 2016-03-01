@@ -1,6 +1,8 @@
 var Physics = require('physicsjs');
-var PIXI = require('pixi.js');
 var TWEEN = require('tween');
+var logger = require('polyball/shared/loggers').mainLogger;
+
+var PIXI = require('pixi');
 
 /// /
 // PhysicsJS
@@ -16,6 +18,9 @@ Physics(function (world) {
     ,height = window.innerHeight
     ,renderer
     ;
+
+    logger.info("width: " + width);
+    logger.info("height: " + height);
 
     // create a renderer
     renderer = Physics.renderer('pixi', {
