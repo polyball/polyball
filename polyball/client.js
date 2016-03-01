@@ -1,7 +1,14 @@
+//
+// THIS IS A MONOLITHIC DUMMY TO TEST MODULARIZATION WITH PHYSICS
+//
+// DELETE ME
+// 
+
 var Physics = require('physicsjs');
 var TWEEN = require('tween');
 var logger = require('polyball/shared/loggers').mainLogger;
 
+// This is necessary to use the PhysicsJS PIXI renderer.  It appears unused below, but is used within Physics.
 var PIXI = require('pixi');
 
 /// /
