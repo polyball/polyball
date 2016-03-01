@@ -40,10 +40,12 @@
   },
   "browser": {
     "physicsjs": "./bower_components/PhysicsJS/dist/physicsjs-full.js",
-    "tween": "./bower_components/tween.js/src/Tween.js"
+    "tween": "./bower_components/tween.js/src/Tween.js",
+    "jquery": "./bower_components/jquery/dist/jquery.min.js"
   },
   "browserify-shim": {
     "physicsjs": "Physics",
-    "tween": "TWEEN"
+    "tween": "TWEEN",
+    "jquery": "$"
   }
 }
