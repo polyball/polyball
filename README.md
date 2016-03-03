@@ -2,6 +2,8 @@
 
 Fast, multiplayer, physics-driven tennis in two dimensions.
 
+![A polyball arena mockup.](http://i.imgur.com/DZzRF3H.png)
+
 ## setup
 
 1. Install `node` & `npm`.
