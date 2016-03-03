@@ -16,6 +16,7 @@ var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
 var assign = require('lodash.assign');
 var mocha = require('gulp-mocha');
+var jshint = require('gulp-jshint');
 
 // add custom browserify options here
 var customOpts = {
@@ -23,6 +24,7 @@ var customOpts = {
     debug: true
 };
 var testFile = './polyball/tests/test.js';
+var testReporter = 'nyan'
 var opts = assign({}, watchify.args, customOpts);
 var b = watchify(browserify(opts));
 
@@ -31,6 +33,7 @@ var b = watchify(browserify(opts));
 
 gulp.task('watch-js', bundle); // so you can run `gulp js` to build the file
 gulp.task('run-tests', tests);
+gulp.task('lint', lint);
 b.on('update', bundle); // on any dep update, runs the bundler
 b.on('log', gutil.log); // output build logs to terminal
 
@@ -50,5 +53,12 @@ function bundle() {
 
 function tests(){
     return gulp.src(testFile, {read: false})
-        .pipe(mocha({reporter: 'nyan'}));
+        .pipe(mocha({reporter: testReporter}));
+}
+
+function lint(){
+    return gulp.src('./polyball/**/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('jshint-stylish'))
+        .pipe(jshint.reporter('fail'));
 }
