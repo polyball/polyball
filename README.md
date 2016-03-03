@@ -36,7 +36,7 @@ Fast, multiplayer, physics-driven tennis in two dimensions.
 2. Install dev dependencies.
 
         cd polyball/
-        npm install --production
+        npm install
 
 3. [WINDOWS ONLY] Replace the polyball module symlink for browserify with a windows symlink
 
