@@ -15,12 +15,14 @@ var buffer = require('vinyl-buffer');
 var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
 var assign = require('lodash.assign');
+var mocha = require('gulp-mocha');
 
 // add custom browserify options here
 var customOpts = {
     entries: ['./polyball/client.js'],
     debug: true
 };
+var testFile = './polyball/tests/test.js';
 var opts = assign({}, watchify.args, customOpts);
 var b = watchify(browserify(opts));
 
@@ -28,6 +30,7 @@ var b = watchify(browserify(opts));
 // i.e. b.transform(coffeeify);
 
 gulp.task('watch-js', bundle); // so you can run `gulp js` to build the file
+gulp.task('run-tests', tests);
 b.on('update', bundle); // on any dep update, runs the bundler
 b.on('log', gutil.log); // output build logs to terminal
 
@@ -43,4 +46,9 @@ function bundle() {
         // Add transformation tasks to the pipeline here.
         .pipe(sourcemaps.write('./')) // writes .map file
         .pipe(gulp.dest('./public/bin'));
+}
+
+function tests(){
+    return gulp.src(testFile, {read: false})
+        .pipe(mocha({reporter: 'nyan'}));
 }
