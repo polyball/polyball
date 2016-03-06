@@ -1,18 +1,10 @@
-var express = require('express');
-var app = express();
-var log4js = require('log4js');
-var loggers = require('./shared/loggers');
+var loggers = require('polyball/shared/loggers');
+var FileServer = require('polyball/server/FileServer');
+var socketWrapServer = require('socket.io');
 
-var server = require('http').createServer(app);
-// var io = require('socket.io')(server);
 
-app.use(log4js.connectLogger(loggers.mainLogger));
-app.use(express.static('bower_components'));
-app.use(express.static('public'));
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/public/index.html');
-});
+var server = FileServer.getHttpServer();
+var socketIO = socketWrapServer(server); // TODO wrap socket IO and replace this line with our Comms
 
 loggers.mainLogger.info('Polyball server starting.');
-
 server.listen(8080);
