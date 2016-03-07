@@ -2,7 +2,10 @@ var loggers = require('polyball/shared/loggers');
 var FileServer = require('polyball/server/FileServer');
 
 
-var server = new FileServer({staticDir: 'public', indexPath: 'public/index.html'}).getHttpServer();
+var server = new FileServer({
+    staticDir: __dirname + '/../public',
+    indexPath: 'index.html'
+}).getHttpServer();
 
 //TODO wrap socket IO and replace this line with our Comms
 //var socketWrapServer = require('socket.io');
