@@ -1,21 +1,35 @@
+'use strict';
+
 /**
  * Created by kdban on 3/6/2016.
  */
 
-var expressLogger = require('log4js').connectLogger;
+var log4js = require('log4js');
 var express = require('express');
 var http = require('http');
 
 var loggers = require('polyball/shared/loggers');
 
-var app = express();
-app.use(expressLogger(loggers.mainLogger));
-app.use(express.static('public'));
-app.use(express.static('public'));
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/public/index.html');
-});
+/**
+ * Serves files from a directory.
+ *
+ * @param {{staticDir: string}} spec
+ * @constructor
+ */
+function FileServer(spec) {
+    var app = express();
+    app.use(log4js.connectLogger(loggers.mainLogger));
 
-exports.getHttpServer = function () {
-    return http.createServer(app)
+    app.use(express.static(spec.staticDir));
+
+    this.app = app;
+}
+
+/**
+ * @return {node.http.Server} A new http server that will serve FileServer's static files.
+ */
+FileServer.prototype.getHttpServer = function () {
+    return http.createServer(this.app);
 };
+
+module.exports = FileServer;
