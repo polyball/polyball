@@ -5,6 +5,16 @@
 
 var Physics = require("physicsjs");
 
+/**
+ * The paddle stores information about the bounds of the player goal.
+ * @param {{leftBound: Physics.vector,
+ * rightBound: Physics.vector,
+ * x: number,
+ * y: number,
+ * size: number,
+ * styles: Object}} config
+ * @constructor
+ */
 var Paddle = function(config) {
     this.leftBound = config.leftBound;
     this.rightBound = config.rightBound;
