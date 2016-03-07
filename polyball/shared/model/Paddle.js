@@ -23,3 +23,5 @@ var Paddle = function(config) {
 Paddle.prototype.setPosition = function(x) {
     this.body.x = x;
 };
+
+module.exports = Paddle;
