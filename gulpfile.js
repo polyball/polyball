@@ -25,7 +25,7 @@ var assign = require('lodash.assign');
 
 // CONFIGURATION
 var browserifyConfig = {
-    entries: ['./polyball/client.js'],
+    entries: ['./polyball/Client.js'],
     debug: true
 };
 
