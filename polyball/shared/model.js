@@ -3,5 +3,5 @@ var Model = function () {
 
 };
 
-exports = Model;
+module.exports = Model;
 
