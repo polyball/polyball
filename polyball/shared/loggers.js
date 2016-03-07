@@ -11,4 +11,4 @@ log4js.setGlobalLogLevel(process.env.PBALL_LOGLEVEL ? process.env.PBALL_LOGLEVEL
 
 var mainLogger = log4js.getLogger();
 
-exports.mainLogger = mainLogger;
+module.exports = mainLogger;
