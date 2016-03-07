@@ -27,7 +27,7 @@ var Ball = function(config) {
     );
 
     this.id = config.id;
-}
+};
 
 /**
  *
@@ -35,6 +35,6 @@ var Ball = function(config) {
  */
 Ball.prototype.setLastTouched = function(lastTouched) {
     this.lastTouched = lastTouched;
-}
+};
 
 module.exports = Ball;
