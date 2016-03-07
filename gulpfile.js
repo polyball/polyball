@@ -7,48 +7,67 @@
 
 'use strict';
 
-var watchify = require('watchify');
-var browserify = require('browserify');
+// REQUIREMENTS
 var gulp = require('gulp');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
 var gutil = require('gulp-util');
-var sourcemaps = require('gulp-sourcemaps');
-var assign = require('lodash.assign');
 var mocha = require('gulp-mocha');
 var jshint = require('gulp-jshint');
+var sourcemaps = require('gulp-sourcemaps');
 
-// add custom browserify options here
-var customOpts = {
+var browserify = require('browserify');
+var watchify = require('watchify');
+
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+
+var assign = require('lodash.assign');
+
+
+// CONFIGURATION
+var browserifyConfig = {
     entries: ['./polyball/client.js'],
     debug: true
 };
+
 var testFile = './polyball/tests/test.js';
 var testReporter = 'nyan'
-var opts = assign({}, watchify.args, customOpts);
-var b = watchify(browserify(opts));
 
-// add transformations here
-// i.e. b.transform(coffeeify);
+var lintReporter = 'jshint-stylish';
+var lintConfig = {
+    verbose: true
+};
 
-gulp.task('watch-js', bundle); // so you can run `gulp js` to build the file
+
+// TASKS
+gulp.task('watch-js', watchifyBundle);
+gulp.task('build-js', browserifyBundle);
 gulp.task('run-tests', tests);
 gulp.task('lint', lint);
-b.on('update', bundle); // on any dep update, runs the bundler
-b.on('log', gutil.log); // output build logs to terminal
+gulp.task('default', ['lint', 'build-js', 'run-tests']);
 
-function bundle() {
-    return b.bundle()
+function bundle(bundler) {
+    return bundler.bundle()
         // log errors if they happen
         .on('error', gutil.log.bind(gutil, 'Browserify Error'))
         .pipe(source('client-bundle.js'))
-        // optional, remove if you don't need to buffer file contents
         .pipe(buffer())
-        // optional, remove if you dont want sourcemaps
-        .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
+        .pipe(sourcemaps.init({loadMaps: true}))
         // Add transformation tasks to the pipeline here.
         .pipe(sourcemaps.write('./')) // writes .map file
         .pipe(gulp.dest('./public/bin'));
+}
+
+function browserifyBundle() {
+    var bify = browserify(browserifyConfig);
+    return bundle(bify);
+}
+
+function watchifyBundle() {
+    var opts = assign({}, watchify.args, browserifyConfig);
+    var wify = watchify(browserify(opts));
+    wify.on('update', bundle); // on any dep update, runs the bundler
+    wify.on('log', gutil.log); // output build logs to terminal
+    return bundle(wify);
 }
 
 function tests(){
@@ -59,6 +78,6 @@ function tests(){
 function lint(){
     return gulp.src('./polyball/**/*.js')
         .pipe(jshint())
-        .pipe(jshint.reporter('jshint-stylish'))
+        .pipe(jshint.reporter(lintReporter, lintConfig))
         .pipe(jshint.reporter('fail'));
 }
