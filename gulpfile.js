@@ -28,8 +28,14 @@ var browserifyConfig = {
     entries: ['./polyball/client.js'],
     debug: true
 };
+
 var testFile = './polyball/tests/test.js';
 var testReporter = 'nyan'
+
+var lintReporter = 'jshint-stylish';
+var lintConfig = {
+    verbose: true
+};
 
 
 // TASKS
@@ -72,6 +78,6 @@ function tests(){
 function lint(){
     return gulp.src('./polyball/**/*.js')
         .pipe(jshint())
-        .pipe(jshint.reporter('jshint-stylish'))
+        .pipe(jshint.reporter(lintReporter, lintConfig))
         .pipe(jshint.reporter('fail'));
 }
