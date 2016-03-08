@@ -51,4 +51,9 @@ bower_components
 # POLYBALL STUFF
 
 # node_modules is conventionally ignored, but browserify *really* wants our stuff in there
-!polyball
+!node_modules/polyball
+
+# to consistently share between client and server, keep the following dummy directories
+!node_modules/jquery
+!node_modules/tween
+!node_modules/physicsjs
