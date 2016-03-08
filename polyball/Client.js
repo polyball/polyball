@@ -1,5 +1,7 @@
 var $ = require('jquery');
-var logger = require('polyball/shared/loggers').mainLogger;
+var logger = require('polyball/shared/loggers');
+
+var Model = require('polyball/shared/Model');
 
 $(document).ready(function() {
 
@@ -8,5 +10,8 @@ $(document).ready(function() {
 
     logger.info(width);
     logger.info(height);
+
+    var model = new Model();
+    console.log(Object.keys(model));
 
 }); // end on DOM ready

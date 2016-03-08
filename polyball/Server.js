@@ -11,5 +11,5 @@ var server = new FileServer({
 //var socketWrapServer = require('socket.io');
 //var socketIO = socketWrapServer(server);
 
-loggers.mainLogger.info('Polyball server starting.');
+loggers.info('Polyball server starting.');
 server.listen(8080);
