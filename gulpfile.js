@@ -39,11 +39,12 @@ var lintConfig = {
 
 
 // TASKS
-gulp.task('watch-js', watchifyBundle);
 gulp.task('build-js', browserifyBundle);
 gulp.task('run-tests', tests);
 gulp.task('lint', lint);
 gulp.task('default', ['lint', 'build-js', 'run-tests']);
+
+gulp.task('watch-js', watchifyBundle);
 
 function bundle(bundler) {
     return bundler.bundle()
@@ -62,14 +63,6 @@ function browserifyBundle() {
     return bundle(bify);
 }
 
-function watchifyBundle() {
-    var opts = assign({}, watchify.args, browserifyConfig);
-    var wify = watchify(browserify(opts));
-    wify.on('update', bundle); // on any dep update, runs the bundler
-    wify.on('log', gutil.log); // output build logs to terminal
-    return bundle(wify);
-}
-
 function tests(){
     return gulp.src(testFile, {read: false})
         .pipe(mocha({reporter: testReporter}));
@@ -80,4 +73,13 @@ function lint(){
         .pipe(jshint())
         .pipe(jshint.reporter(lintReporter, lintConfig))
         .pipe(jshint.reporter('fail'));
+}
+
+function watchifyBundle() {
+    var opts = assign({}, watchify.args, browserifyConfig);
+    var wify = watchify(browserify(opts));
+    wify.on('update', bundle); // on any dep update, run the bundler
+    wify.on('update', lint);   // on any dep update, run the linter
+    wify.on('log', gutil.log); // output build logs to terminal
+    return bundle(wify);
 }
