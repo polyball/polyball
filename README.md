@@ -27,7 +27,7 @@ Fast, multiplayer, physics-driven tennis in two dimensions.
 2. Edit polyball config file, `polyball.json`.
 3. Run the server.
 
-        node polyball/server.js
+        node polyball/Server.js
 
 ## dev
 
