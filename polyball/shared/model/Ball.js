@@ -7,8 +7,12 @@ var Physics = require("physicsjs");
 
 /**
  *
- * @param {{x: number,
+ * @param {{
+ *  id: number,
+ *  x: number,
  *  y: number,
+ *  vx: number,
+ *  vy: number,
  *  radius: number,
  *  styles: Object}} config
  * @constructor
@@ -19,10 +23,12 @@ var Ball = function(config) {
         {
             x: config.x,
             y: config.y,
-            radius: config.ballRadius,
+            vx: config.vx,
+            vy: config.vy,
+            radius: config.radius,
             mass: 1,
             restitution: 1,
-            styles: config.style
+            styles: config.styles
         }
     );
 
