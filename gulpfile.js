@@ -29,7 +29,7 @@ var browserifyConfig = {
     debug: true
 };
 
-var testFile = './polyball/tests/test.js';
+var testFile = './polyball/tests/shared/model/ArenaTest.js';
 var testReporter = 'nyan'
 
 var lintReporter = 'jshint-stylish';
