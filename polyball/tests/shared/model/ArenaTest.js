@@ -30,5 +30,24 @@ describe('Arena', function() {
             test4.x.should.approximately(1, fpDelta);
             test4.y.should.approximately(0, fpDelta);
         });
+
+        it('should match the unit circles non-cardinal values', function() {
+            var test1 = Arena.getCoordinates((1/4)*Math.PI, 1, 0, 0);
+            var test2 = Arena.getCoordinates((3/4)*Math.PI, 1, 0, 0);
+            var test3 = Arena.getCoordinates((5/4)*Math.PI, 1, 0, 0);
+            var test4 = Arena.getCoordinates((7/4)*Math.PI, 1, 0, 0);
+
+            test1.x.should.approximately(Math.sqrt(2)/2, fpDelta);
+            test1.y.should.approximately(Math.sqrt(2)/2, fpDelta);
+
+            test2.x.should.approximately(-Math.sqrt(2)/2, fpDelta);
+            test2.y.should.approximately(Math.sqrt(2)/2, fpDelta);
+
+            test3.x.should.approximately(-Math.sqrt(2)/2, fpDelta);
+            test3.y.should.approximately(-Math.sqrt(2)/2, fpDelta);
+
+            test4.x.should.approximately(Math.sqrt(2)/2, fpDelta);
+            test4.y.should.approximately(-Math.sqrt(2)/2, fpDelta);
+        });
     });
 });
