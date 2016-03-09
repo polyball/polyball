@@ -22,7 +22,7 @@ var Arena = function(config) {
     var midY = this.arenaRadius;
 
     var theta = 2* Math.PI / this.numberPlayers;
-    var thetaOffset = (3/4) * Math.PI - theta / 2;
+    var thetaOffset = (3/2) * Math.PI - theta / 2;
 
     for (var i = 0; i < this.numberPlayers; i++) {
         this.points.push(Arena.getCoordinates(theta * i + thetaOffset, this.arenaRadius, midX, midY));
@@ -70,7 +70,7 @@ var Arena = function(config) {
 Arena.getCoordinates = function(theta, radius, midX, midY) {
 
     var x = midX + radius * Math.cos(theta);
-    var y = midY + radius * Math.sin(theta);
+    var y = midY - radius * Math.sin(theta);
 
     return new Physics.vector(x, y);
 };
@@ -79,9 +79,16 @@ Arena.getCoordinates = function(theta, radius, midX, midY) {
  * This returns the location of the players score interface in arena physical coordinates.
  * This will be used to draw the HUD. UNIMPLEMENTED
  * @param playerId: number
+ * @returns {position: Physics.vector}
  */
 Arena.prototype.getScorePosition = function(playerId) {
-    return playerId;
+    var theta = 2* Math.PI / this.numberPlayers;
+    var thetaOffset = (3/4) * Math.PI - theta / 2;
+
+    var midX = this.getCenter().x;
+    var midY = this.getCenter().y;
+
+    return Arena.getCoordinates(theta * playerId + thetaOffset, this.arenaRadius, midX, midY);
 };
 
 /**
