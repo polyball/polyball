@@ -5,6 +5,14 @@
 
 var Physics = require("physicsjs");
 
+
+/**
+ * Creates a paddle
+ *
+ * @param {{leftBound: Number,
+ *          rightBound: Number}} config
+ * @constructor
+ */
 var Paddle = function(config) {
     this.leftBound = config.leftBound;
     this.rightBound = config.rightBound;
@@ -20,8 +28,14 @@ var Paddle = function(config) {
     );
 };
 
-Paddle.prototype.setPosition = function(x) {
+/**
+ * sets the position of the paddle
+ * @param {Number} x
+ * @param {Number} y
+ */
+Paddle.prototype.setPosition = function(x, y) {
     this.body.x = x;
+    this.body.y = y;
 };
 
 module.exports = Paddle;

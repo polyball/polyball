@@ -6,3 +6,6 @@ before_script:
   - npm install
   - bower install
 script: gulp
+notifications:
+  slack: ece493capstone:hkULBLq0cnAz0XmKiROm06r7
+  
