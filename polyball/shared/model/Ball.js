@@ -9,12 +9,13 @@ var Physics = require("physicsjs");
  *
  * @param {{
  *  id: number,
- *  x: number,
- *  y: number,
- *  vx: number,
- *  vy: number,
- *  radius: number,
- *  styles: Object}} config
+ *  body: {
+ *    x: number,
+ *    y: number,
+ *    vx: number,
+ *    vy: number,
+ *    radius: number,
+ *    styles: Object}}} config
  * @constructor
  */
 var Ball = function(config) {
@@ -32,15 +33,8 @@ var Ball = function(config) {
         }
     );
 
-    this.id = config.id;
-};
 
-/**
- *
- * @param {Player} lastTouched
- */
-Ball.prototype.setLastTouched = function(lastTouched) {
-    this.lastTouched = lastTouched;
+    this.id = config.id;
 };
 
 module.exports = Ball;

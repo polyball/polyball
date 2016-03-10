@@ -53,6 +53,21 @@ var Model = function () {
         return _.find(balls, function (ball) { return ball.id === id; });
     };
 
+    this.hasBall = function (id) {
+        return this.getBall(id) !== undefined;
+    };
+
+    this.updateBall = function (id, newState) {
+        var ball = this.getBall(id);
+        if (ball != null) {
+            _.assign(ball, newState);
+        }
+    };
+
+    this.deleteBall = function (id) {
+        _.remove(balls, function (ball) { return ball.id === id; });
+    };
+
     this.addPlayer = function () {
     };
 
@@ -60,15 +75,6 @@ var Model = function () {
      * @return
      */
     this.getSnapshot = function() {
-
-    };
-
-    /**
-     * Mutates internal state to reflect all configurations included in the provided snapshot.
-     *
-     * @param snapshot As returned from getSnapshot().
-     */
-    this.setFromSnapshot = function () {
 
     };
 };
