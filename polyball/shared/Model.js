@@ -1,7 +1,8 @@
 "use strict";
 
 var _ = require('lodash');
-//var Physics = require('physicsjs');
+var Physics = require('physicsjs');
+var Logger = require('polyball/shared/Loggers');
 var Util = require('polyball/shared/Util');
 var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
@@ -46,11 +47,18 @@ var updateByID = function (array, id, newState) {
 
 /**
  * Remove element from array by its id.
+ * @template T
  * @param {Array} array The array to search
  * @param {Number} id The id of the desired element (in field `element.id`)
+ * @return {T} The removed object, null if not found.
  */
 var removeByID = function (array, id) {
-    _.remove(array, function (element) { return element.id === id; });
+    var removed = _.remove(array, function (element) { return element.id === id; });
+    if (removed.length > 1) {
+        Logger.error("More than one object of id " + id + " found in array " + array);
+    }
+
+    return removed[0];
 };
 
 
@@ -60,7 +68,7 @@ var Model = function () {
     //var players = [];
     var spectators = [];
 
-    //var world = Physics();
+    var world = Physics();
 
     var balls = [];
     //var powerups = [];
@@ -88,6 +96,8 @@ var Model = function () {
 
         var ball = new Ball(ballConfig);
         balls.push(ball);
+
+        world.addBody(ball);
 
         return ball;
     };
@@ -138,7 +148,11 @@ var Model = function () {
      * @param {Number} id
      */
     this.deleteBall = function (id) {
-        _.remove(balls, function (ball) { return ball.id === id; });
+        var ball = _.remove(balls, function (ball) { return ball.id === id; });
+
+        if (ball != null) {
+            world.removeBody(ball);
+        }
     };
 
     //
