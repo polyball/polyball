@@ -19,6 +19,7 @@
 function Spectator(config) {
     this.name = config.name;
     this.id = config.id;
+    this.queued = false;
     this.socket = config.socket;
 }
 

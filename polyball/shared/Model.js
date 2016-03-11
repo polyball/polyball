@@ -2,8 +2,9 @@
 
 var _ = require('lodash');
 //var Physics = require('physicsjs');
-
+var Util = require('polyball/shared/Util');
 var Ball = require('polyball/shared/model/Ball');
+var Spectator = require('polyball/shared/model/Spectator');
 //var Paddle = require('polyball/model/Paddle');
 //var Player = require('polyball/model/Player');
 
@@ -15,18 +16,60 @@ var IDGenerator = function () {
     };
 };
 
+/**
+ * Search an array for an element by its id.
+ * @template T
+ * @param {T[]} array The array to search
+ * @param {Number} id The id of the desired element (in field `element.id`)
+ * @returns {T} The identified array element (or undefined).
+ */
+var findByID = function (array, id) {
+    return _.find(array, function (element) { return element.id === id; });
+};
+
+/**
+ * Search for an element by id in an array, and assign all properties from newState if found.
+ * @param {Array} array The array to search.
+ * @param {Number} id The id of the desired element (in field `element.id`)
+ * @param {Object} newState The new state for the update (object structure must match source structure).
+ */
+var updateByID = function (array, id, newState) {
+    if (newState.id != null) {
+        delete newState.id;
+    }
+
+    var element = findByID(array, id);
+    if (element != null) {
+        _.assign(element, newState);
+    }
+};
+
+/**
+ * Remove element from array by its id.
+ * @param {Array} array The array to search
+ * @param {Number} id The id of the desired element (in field `element.id`)
+ */
+var removeByID = function (array, id) {
+    _.remove(array, function (element) { return element.id === id; });
+};
+
+
 var Model = function () {
     var ids = new IDGenerator();
 
     //var players = [];
-    //var spectators = [];
-    //var playerQueue = [];
+    var spectators = [];
 
     //var world = Physics();
 
     var balls = [];
     //var powerups = [];
     //var election = undefined;
+
+    //
+    //             BALLS
+    //             -----
+    //
 
     /**
      * Add a ball at the centre of the arena with a random velocity.
@@ -54,7 +97,7 @@ var Model = function () {
      * @return {Ball} Ball identified by id.
      */
     this.getBall = function (id) {
-        return _.find(balls, function (ball) { return ball.id === id; });
+        return findByID(balls, id);
     };
 
     /**
@@ -62,7 +105,7 @@ var Model = function () {
      * @returns {boolean} True iff the model has the ball identified by id.
      */
     this.hasBall = function (id) {
-        return this.getBall(id) !== undefined;
+        return this.getBall(id) != null;
     };
 
     /**
@@ -98,7 +141,94 @@ var Model = function () {
         _.remove(balls, function (ball) { return ball.id === id; });
     };
 
-    this.addPlayer = function () {
+    //
+    //             SPECTATORS
+    //             ----------
+    //
+
+    /**
+     * Adds a spectator to the model.
+     * @param socket The socket connecting the server to the spectator client.
+     * @return {Spectator} The new Spectator.
+     */
+    this.addSpectator = function (socket) {
+        var spectatorConfig = {
+            name: Util.randomUsername(),
+            id: ids.nextID(),
+            socket: socket
+        };
+
+        var spectator = new Spectator(spectatorConfig);
+        spectators.push(spectator);
+
+        return spectator;
+    };
+
+    /**
+     * @param {Number} id The id of the spectator.
+     * @return {Spectator} The spectator from the model (undefined if not found).
+     */
+    this.getSpectator = function (id) {
+        return findByID(spectators, id);
+    };
+
+    this.queueSpectatorToPlay = function (id) {
+        var spectator = this.getSpectator(id);
+
+        if (spectator != null) {
+            spectator.queued = true;
+        }
+    };
+
+    this.unqueueSpectator = function (id) {
+        var spectator = this.getSpectator(id);
+
+        if (spectator != null) {
+            spectator.queued = false;
+        }
+    };
+
+    /**
+     * @param {Number} id
+     * @returns {boolean} True iff the model has the spectator identified by id.
+     */
+    this.hasSpectator = function (id) {
+        return this.getSpectator(id) != null;
+    };
+
+    /**
+     * @returns {Number} The number of spectators in the model.
+     */
+    this.spectatorCount = function () {
+        return spectators.length;
+    };
+
+    /**
+     * Change the state of the identified spectator to match the supplied state.
+     *
+     * @param {Number} id
+     * @param newState (See Spectator constructor config). **id field is ignored!**
+     */
+    this.updateSpectator = function (id, newState) {
+        updateByID(spectators, id, newState);
+    };
+
+    /**
+     * Delete the identified spectator from the model.
+     *
+     * @param {Number} id
+     */
+    this.deleteSpectator = function (id) {
+        removeByID(spectators, id);
+    };
+
+    //
+    //             PLAYERS
+    //             -------
+    //
+
+    this.convertQueuedSpectatorsToPlayers = function () {
+
     };
 
     /**
