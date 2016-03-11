@@ -3,11 +3,13 @@
  */
 
 'use strict';
-require('socket');
-
 
 /**
- * Elects a powerup to be spawned in the arena.
+ * @external Socket A socket.io client socket.
+ */
+
+/**
+ * Creates a new Spectator.
  *
  * @param {{name: String,
  *          id: Number,
