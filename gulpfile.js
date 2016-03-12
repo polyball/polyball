@@ -8,6 +8,8 @@
 'use strict';
 
 // REQUIREMENTS
+var fs = require('fs');
+
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var mocha = require('gulp-mocha');
@@ -23,6 +25,8 @@ var buffer = require('vinyl-buffer');
 var assign = require('lodash.assign');
 
 
+var insideTravis = fs.existsSync('/home/travis') || true;
+
 // CONFIGURATION
 var browserifyConfig = {
     entries: ['./polyball/Client.js'],
@@ -30,7 +34,7 @@ var browserifyConfig = {
 };
 
 var testFile = './polyball/tests/**/*.js';
-var testReporter = 'nyan'
+var testReporter = insideTravis ? 'spec' : 'nyan';
 
 var lintReporter = 'jshint-stylish';
 var lintConfig = {
@@ -50,6 +54,8 @@ function bundle(bundler) {
     return bundler.bundle()
         // log errors if they happen
         .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+        .on('error', function(){
+            process.exit(1);})
         .pipe(source('client-bundle.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))

@@ -1,4 +1,4 @@
-var loggers = require('polyball/shared/loggers');
+var Logger = require('polyball/shared/Logger');
 var FileServer = require('polyball/server/FileServer');
 
 
@@ -11,5 +11,5 @@ var server = new FileServer({
 //var socketWrapServer = require('socket.io');
 //var socketIO = socketWrapServer(server);
 
-loggers.info('Polyball server starting.');
+Logger.info('Polyball server starting.');
 server.listen(8080);

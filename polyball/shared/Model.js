@@ -1,75 +1,171 @@
 "use strict";
 
 var _ = require('lodash');
-//var Physics = require('physicsjs');
-var Util = require('polyball/shared/Util');
+var Physics = require('physicsjs');
+var Logger = require('polyball/shared/Logger');
+var Arena = require('polyball/shared/model/Arena');
 var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
-//var Paddle = require('polyball/model/Paddle');
-//var Player = require('polyball/model/Player');
+var Player = require('polyball/shared/model/Player');
+//var Paddle = require('polyball/shared/model/Paddle');
 
-var IDGenerator = function () {
-    var nextID = 0;
-
-    this.nextID = function () {
-        return nextID++;
-    };
-};
 
 /**
- * Search an array for an element by its id.
- * @template T
- * @param {T[]} array The array to search
- * @param {Number} id The id of the desired element (in field `element.id`)
- * @returns {T} The identified array element (or undefined).
+ * Holds all data for client and server game instances.  Exposes CRUD operations for data.
+ *
+ * @constructor
  */
-var findByID = function (array, id) {
-    return _.find(array, function (element) { return element.id === id; });
-};
-
-/**
- * Search for an element by id in an array, and assign all properties from newState if found.
- * @param {Array} array The array to search.
- * @param {Number} id The id of the desired element (in field `element.id`)
- * @param {Object} newState The new state for the update (object structure must match source structure).
- */
-var updateByID = function (array, id, newState) {
-    if (newState.id != null) {
-        delete newState.id;
-    }
-
-    var element = findByID(array, id);
-    if (element != null) {
-        _.assign(element, newState);
-    }
-};
-
-/**
- * Remove element from array by its id.
- * @param {Array} array The array to search
- * @param {Number} id The id of the desired element (in field `element.id`)
- */
-var removeByID = function (array, id) {
-    _.remove(array, function (element) { return element.id === id; });
-};
-
-
 var Model = function () {
-    var ids = new IDGenerator();
 
-    //var players = [];
+    //
+    //    ########  ########  #### ##     ##    ###    ######## ########
+    //    ##     ## ##     ##  ##  ##     ##   ## ##      ##    ##
+    //    ##     ## ##     ##  ##  ##     ##  ##   ##     ##    ##
+    //    ########  ########   ##  ##     ## ##     ##    ##    ######
+    //    ##        ##   ##    ##   ##   ##  #########    ##    ##
+    //    ##        ##    ##   ##    ## ##   ##     ##    ##    ##
+    //    ##        ##     ## ####    ###    ##     ##    ##    ########
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    //
+    //             PRIVATE STATE
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    var world = Physics();
+    var arena;
+
+    /**
+     * @type {Player[]}
+     */
+    var players = [];
+    /**
+     * @type {Spectator[]}
+     */
     var spectators = [];
 
-    //var world = Physics();
-
+    /**
+     * @type {Ball[]}
+     */
     var balls = [];
     //var powerups = [];
     //var election = undefined;
 
     //
-    //             BALLS
-    //             -----
+    //             PRIVATE METHODS
     //
+    ///////////////////////////////////////////////////////////////////////////
+
+    var nextID = (function () {
+        var nextID = 0;
+
+        return function () {
+            return nextID++;
+        };
+    }());
+
+    /**
+     * Search an array for an element by its id.
+     * @template T
+     * @param {T[]} array The array to search
+     * @param {Number} id The id of the desired element (in field `element.id`)
+     * @returns {T} The identified array element (or undefined).
+     */
+    var findByID = function (array, id) {
+        return _.find(array, function (element) { return element.id === id; });
+    };
+
+    /**
+     * Search an array and get all elements by a given predicate.
+     * @template T
+     * @param {T[]} array The array to search
+     * @param {Predicate} [predicate] The boolean-returning predicate callback to filter by.
+     * @returns {T[]} All elements of the array matching the predicate
+     */
+    var findAll = function (array, predicate) {
+        if (predicate == null) {
+            return Array.apply(undefined, array);
+        }
+        return _.filter(array, predicate);
+    };
+
+    /**
+     * Search for an element by id in an array, and assign all properties from newState if found.
+     * @param {Array} array The array to search.
+     * @param {Number} id The id of the desired element (in field `element.id`)
+     * @param {Object} newState The new state for the update (object structure must match source structure).
+     */
+    var updateByID = function (array, id, newState) {
+        if (newState.id != null) {
+            delete newState.id;
+        }
+
+        var element = findByID(array, id);
+        if (element != null) {
+            _.assign(element, newState);
+        }
+    };
+
+    /**
+     * Remove element from array by its id.
+     * @template T
+     * @param {Array} array The array to search
+     * @param {Number} id The id of the desired element (in field `element.id`)
+     * @return {T} The removed object, null if not found.
+     */
+    var removeByID = function (array, id) {
+        var removed = _.remove(array, function (element) { return element.id === id; });
+        if (removed.length > 1) {
+            Logger.error("More than one object of id " + id + " found in array " + array);
+        }
+
+        return removed[0];
+    };
+
+    //
+    //    ########  ##     ## ########  ##       ####  ######
+    //    ##     ## ##     ## ##     ## ##        ##  ##    ##
+    //    ##     ## ##     ## ##     ## ##        ##  ##
+    //    ########  ##     ## ########  ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##    ##
+    //    ##         #######  ########  ######## ####  ######
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * If there is not yet an arena in the model, add one according to the config.
+     * If there is an arena in the model, replace it with a new one from the config.
+     * @param {Object} config (See Arena constructor.)
+     * @return {Arena} The new arena
+     */
+    this.addOrResetArena = function (config) {
+        if (arena != null) {
+            // clear out old arena
+            world.remove(arena.getBumpers());
+            world.remove(arena.getGoals());
+        }
+
+        arena = new Arena(config);
+
+        world.add(arena.getBumpers());
+        world.add(arena.getGoals());
+
+        return arena;
+    };
+
+    /**
+     * @return {Arena} The current arena.
+     */
+    this.getArena = function () {
+        return arena;
+    };
+
+    //
+    //             BALLS
+    //
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Add a ball at the centre of the arena with a random velocity.
@@ -78,7 +174,7 @@ var Model = function () {
      */
     this.addBall  = function () {
         var ballConfig = {
-            id: ids.nextID(),
+            id: nextID(),
             x: 0,
             y: 0,
             vx: 0.1,
@@ -89,6 +185,8 @@ var Model = function () {
         var ball = new Ball(ballConfig);
         balls.push(ball);
 
+        world.addBody(ball.body);
+
         return ball;
     };
 
@@ -98,6 +196,15 @@ var Model = function () {
      */
     this.getBall = function (id) {
         return findByID(balls, id);
+    };
+
+    /**
+     * Get all balls satisfying the predicate callback.
+     * @param {Predicate} [predicate]  Callback to evaluate for each ball. (matches all if null.)
+     * @returns {Ball[]} All balls matching the predicate. (may be empty.)
+     */
+    this.getBalls = function (predicate) {
+        return findAll(balls, predicate);
     };
 
     /**
@@ -138,24 +245,27 @@ var Model = function () {
      * @param {Number} id
      */
     this.deleteBall = function (id) {
-        _.remove(balls, function (ball) { return ball.id === id; });
+        var ball = _.remove(balls, function (ball) { return ball.id === id; });
+
+        if (ball != null) {
+            world.removeBody(ball.body);
+        }
     };
 
     //
     //             SPECTATORS
-    //             ----------
     //
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Adds a spectator to the model.
-     * @param socket The socket connecting the server to the spectator client.
+     * @param {Client} client The client information for the Spectator.
      * @return {Spectator} The new Spectator.
      */
-    this.addSpectator = function (socket) {
+    this.addSpectator = function (client) {
         var spectatorConfig = {
-            name: Util.randomUsername(),
-            id: ids.nextID(),
-            socket: socket
+            id: nextID(),
+            client: client
         };
 
         var spectator = new Spectator(spectatorConfig);
@@ -172,20 +282,13 @@ var Model = function () {
         return findByID(spectators, id);
     };
 
-    this.queueSpectatorToPlay = function (id) {
-        var spectator = this.getSpectator(id);
-
-        if (spectator != null) {
-            spectator.queued = true;
-        }
-    };
-
-    this.unqueueSpectator = function (id) {
-        var spectator = this.getSpectator(id);
-
-        if (spectator != null) {
-            spectator.queued = false;
-        }
+    /**
+     * Get all spectators satisfying the predicate callback.
+     * @param {Predicate} [predicate]  Callback to evaluate for each spectator.  (matches all if null.)
+     * @returns {Spectator[]} All spectators matching the predicate. (may be empty.)
+     */
+    this.getSpectators = function (predicate) {
+        return findAll(spectators, predicate);
     };
 
     /**
@@ -224,12 +327,81 @@ var Model = function () {
 
     //
     //             PLAYERS
-    //             -------
     //
+    ///////////////////////////////////////////////////////////////////////////
 
-    this.convertQueuedSpectatorsToPlayers = function () {
+    /**
+     * Adds a player to the model.
+     * @param {Client} client The client information for the Player.
+     * @return {Player} The new Player.
+     */
+    this.addPlayer = function (client) {
+        var playerConfig = {
+            id: nextID(),
+            client: client
+        };
 
+        var player = new Player(playerConfig);
+        players.push(player);
+
+        return player;
     };
+
+    /**
+     * @param {Number} id The id of the player.
+     * @return {Player} The player from the model (undefined if not found).
+     */
+    this.getPlayer = function (id) {
+        return findByID(players, id);
+    };
+
+    /**
+     * Get all players satisfying the predicate callback.
+     * @param {Predicate} [predicate]  Callback to evaluate for each player.  (matches all if null.)
+     * @returns {Player[]} All players matching the predicate. (may be empty.)
+     */
+    this.getPlayers = function (predicate) {
+        return findAll(players, predicate);
+    };
+
+    /**
+     * @param {Number} id
+     * @returns {boolean} True iff the model has the player identified by id.
+     */
+    this.hasPlayer = function (id) {
+        return this.getPlayer(id) != null;
+    };
+
+    /**
+     * @returns {Number} The number of players in the model.
+     */
+    this.playerCount = function () {
+        return players.length;
+    };
+
+    /**
+     * Change the state of the identified player to match the supplied state.
+     *
+     * @param {Number} id
+     * @param newState (See Player constructor config). **id field is ignored!**
+     */
+    this.updatePlayer = function (id, newState) {
+        updateByID(players, id, newState);
+    };
+
+    /**
+     * Delete the identified player from the model.
+     *
+     * @param {Number} id
+     */
+    this.deletePlayer = function (id) {
+        removeByID(players, id);
+    };
+
+    //
+    //             SNAPSHOT
+    //
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * @return
@@ -238,6 +410,15 @@ var Model = function () {
 
     };
 };
+
+
+/**
+ * A callback that returns true or false.
+ * @callback Predicate
+ * @param {Object} Instance of the type being queried.
+ * @return {Boolean}
+ */
+
 
 module.exports = Model;
 

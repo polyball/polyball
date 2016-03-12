@@ -5,6 +5,7 @@
 
 var Physics = require("physicsjs");
 
+
 /**
  * @param {{numberPlayers: number,
  * arenaRadius: number}} config
@@ -65,7 +66,7 @@ var Arena = function(config) {
  * @param radius: number
  * @param midX: number
  * @param midY: number
- * @returns {*|Physics.vector}
+ * @returns {Physics.vector}
  */
 Arena.getCoordinates = function(theta, radius, midX, midY) {
 
@@ -79,7 +80,7 @@ Arena.getCoordinates = function(theta, radius, midX, midY) {
  * This returns the location of the players score interface in arena physical coordinates.
  * This will be used to draw the HUD. UNIMPLEMENTED
  * @param playerId: number
- * @returns {position: Physics.vector}
+ * @returns {Physics.vector}
  */
 Arena.prototype.getScorePosition = function(playerId) {
     var theta = 2* Math.PI / this.numberPlayers;
@@ -93,16 +94,16 @@ Arena.prototype.getScorePosition = function(playerId) {
 
 /**
  * Gets the center of the arena.
- * @returns {center: Physics.vector}
+ * @returns {Physics.vector}
  */
 Arena.prototype.getCenter = function() {
-    return new Physics.vector(this.radius, this.radius);
+    return new Physics.vector(this.arenaRadius, this.arenaRadius);
 };
 
 /**
  * Grabs a bumper. The index should be that players left bumper.
  * @param index: number
- * @returns {bumper: Physics.body}
+ * @returns {Physics.body}
  */
 Arena.prototype.getBumper = function(index) {
     return this.bumpers[index];
@@ -111,10 +112,34 @@ Arena.prototype.getBumper = function(index) {
 /**
  * Returns the players goal given by index.
  * @param index: number
- * @returns {goal: Physics.body}
+ * @returns {Physics.body}
  */
 Arena.prototype.getGoal = function(index) {
     return this.goals[index];
 };
+
+/**
+ * Get an array containing all of the bumpers in the arena.
+ * @return {Physics.body[]}
+ */
+Arena.prototype.getBumpers = function () {
+    return Array.apply(undefined, this.bumpers);
+};
+
+/**
+ * Get an array containing all of the goals in the arena.
+ * @return {Physics.body[]}
+ */
+Arena.prototype.getGoals = function () {
+    return Array.apply(undefined, this.goals);
+};
+
+/**
+ * @external Physics.vector See http://wellcaffeinated.net/PhysicsJS/docs/#Physics-vector
+ */
+
+/**
+ * @external Physics.body http://wellcaffeinated.net/PhysicsJS/docs/#Physics-body
+ */
 
 module.exports = Arena;
