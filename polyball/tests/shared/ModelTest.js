@@ -81,84 +81,150 @@ describe('Model', function () {
     });
 
     describe("spectator CRUD", function () {
-        it('should add 2 spectators to the model, then query, update, and delete them.', function () {
-            var model = new Model();
+        var model, spectator, spectator2;
 
-            model.spectatorCount().should.equal(0);
+        describe("#addSpectator", function () {
+            it('should add a queryable spectator to the model.', function () {
+                model = new Model();
+                model.spectatorCount().should.equal(0);
 
-            var spectator = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'socket'}));
+                spectator = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
 
-            model.spectatorCount().should.equal(1);
-            model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
+                model.spectatorCount().should.equal(1);
+                model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
+            });
 
-            var spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'socket'}));
+            it('should add a second, distinct queryable spectator to the model.', function () {
+                spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
 
-            model.spectatorCount().should.equal(2);
-            model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
-            model.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
+                model.spectatorCount().should.equal(2);
 
-            model.updateSpectator(spectator2.id, {client: {name: 'some_guy'}});
+                spectator.should.not.equal(spectator2);
 
-            spectator2.client.name.should.equal('some_guy');
-            spectator2.queued.should.be.false; // jshint ignore:line
+                model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
+                model.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
+            });
+        });
 
-            model.deleteSpectator(spectator.id);
+        describe("#updateSpectator", function () {
+            it('should update a spectator, and delete them.', function () {
 
-            model.spectatorCount().should.equal(1);
-            model.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
-            model.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
+                model.updateSpectator(spectator2.id, {client: {name: 'some_guy'}});
 
-            spectator2.client.name.should.equal('some_guy');
-            spectator2.queued.should.be.false; // jshint ignore:line
+                spectator2.client.name.should.equal('some_guy');
+                spectator2.queued.should.be.false; // jshint ignore:line
 
-            model.getSpectators(function (spectator) {return !spectator.queued;}).length.should.equal(1);
+            });
+        });
 
-            model.deleteSpectator(spectator2.id);
+        describe('#getSpectators', function () {
+            it('should get all spectators when passed nothing or null', function () {
+                model.getSpectators().length.should.equal(2);
+            });
 
-            model.spectatorCount().should.equal(0);
-            model.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
-            model.hasSpectator(spectator2.id).should.be.false; // jshint ignore:line
+            it('should get only a spectator specified by a predicate', function () {
+                var spectators = model.getSpectators(function (spectator) {
+                    return spectator.id === spectator2.id;
+                });
+                spectators.length.should.equal(1);
+                spectators[0].should.equal(spectator2);
+            });
+        });
+
+        describe("#deleteSpectator", function () {
+            it('should delete a spectator and only that spectator.', function () {
+
+                model.deleteSpectator(spectator.id);
+
+                model.spectatorCount().should.equal(1);
+                model.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
+                model.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
+
+                spectator2.client.name.should.equal('some_guy');
+                spectator2.queued.should.be.false; // jshint ignore:line
+            });
+
+            it('should delete a second spectator.', function () {
+                model.deleteSpectator(spectator2.id);
+
+                model.spectatorCount().should.equal(0);
+                model.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
+                model.hasSpectator(spectator2.id).should.be.false; // jshint ignore:line
+            });
         });
     });
 
     describe("player CRUD", function () {
-        it('should add 2 players to the model, then query, update, and delete them.', function () {
-            var model = new Model();
+        var model, player, player2;
 
-            model.playerCount().should.equal(0);
+        describe("#addPlayer", function () {
+            it('should add a queryable player to the model.', function () {
+                model = new Model();
+                model.playerCount().should.equal(0);
 
-            var player = model.addPlayer(new Client({name: Util.randomUsername(), socket: 'socket'}));
+                player = model.addPlayer(new Client({name: Util.randomUsername(), socket: 'dummy'}));
 
-            model.playerCount().should.equal(1);
-            model.hasPlayer(player.id).should.be.true; // jshint ignore:line
+                model.playerCount().should.equal(1);
+                model.hasPlayer(player.id).should.be.true; // jshint ignore:line
+            });
 
-            var player2 = model.addPlayer(new Client({name: Util.randomUsername(), socket: 'socket'}));
+            it('should add a second, distinct queryable player to the model.', function () {
+                player2 = model.addPlayer(new Client({name: Util.randomUsername(), socket: 'dummy'}));
 
-            model.playerCount().should.equal(2);
-            model.hasPlayer(player.id).should.be.true; // jshint ignore:line
-            model.hasPlayer(player2.id).should.be.true; // jshint ignore:line
+                model.playerCount().should.equal(2);
 
-            model.updatePlayer(player2.id, {client: {name: 'some_guy'}});
+                player.should.not.equal(player2);
 
-            player2.client.name.should.equal('some_guy');
-            player2.score.should.equal(0); // jshint ignore:line
+                model.hasPlayer(player.id).should.be.true; // jshint ignore:line
+                model.hasPlayer(player2.id).should.be.true; // jshint ignore:line
+            });
+        });
 
-            model.deletePlayer(player.id);
+        describe("#updatePlayer", function () {
+            it('should update a player, and delete them.', function () {
 
-            model.playerCount().should.equal(1);
-            model.hasPlayer(player.id).should.be.false; // jshint ignore:line
-            model.hasPlayer(player2.id).should.be.true; // jshint ignore:line
+                model.updatePlayer(player2.id, {client: {name: 'some_guy'}});
 
-            player2.client.name.should.equal('some_guy');
-            player2.score.should.equal(0); // jshint ignore:line
+                player2.client.name.should.equal('some_guy');
+                player2.score.should.equal(0); // jshint ignore:line
 
-            model.getPlayers(function (player) {return player.score === 0;}).length.should.equal(1);
+            });
+        });
 
-            model.deletePlayer(player2.id);
+        describe('#getPlayers', function () {
+            it('should get all players when passed nothing or null', function () {
+                model.getPlayers().length.should.equal(2);
+            });
 
-            model.playerCount().should.equal(0);
-            model.hasPlayer(player.id).should.be.false; // jshint ignore:line
-            model.hasPlayer(player2.id).should.be.false; // jshint ignore:line
+            it('should get only a player specified by a predicate', function () {
+                var players = model.getPlayers(function (player) {
+                    return player.id === player2.id;
+                });
+                players.length.should.equal(1);
+                players[0].should.equal(player2);
+            });
+        });
+
+        describe("#deletePlayer", function () {
+            it('should delete a player and only that player.', function () {
+
+                model.deletePlayer(player.id);
+
+                model.playerCount().should.equal(1);
+                model.hasPlayer(player.id).should.be.false; // jshint ignore:line
+                model.hasPlayer(player2.id).should.be.true; // jshint ignore:line
+
+                player2.client.name.should.equal('some_guy');
+                player2.score.should.equal(0); // jshint ignore:line
+            });
+
+            it('should delete a second player.', function () {
+                model.deletePlayer(player2.id);
+
+                model.playerCount().should.equal(0);
+                model.hasPlayer(player.id).should.be.false; // jshint ignore:line
+                model.hasPlayer(player2.id).should.be.false; // jshint ignore:line
+            });
         });
     });
 });
