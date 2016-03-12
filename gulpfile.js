@@ -49,10 +49,9 @@ gulp.task('watch-js', watchifyBundle);
 function bundle(bundler) {
     return bundler.bundle()
         // log errors if they happen
-        //.on('error', gutil.log.bind(gutil, 'Browserify Error'))
-        .on('error', function(err){
-            console.log(err);
-            this.emit('end');})
+        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+        .on('error', function(){
+            process.exit(1);})
         .pipe(source('client-bundle.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))
