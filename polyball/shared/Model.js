@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 var Physics = require('physicsjs');
-var Logger = require('polyball/shared/Loggers');
+var Logger = require('polyball/shared/Logger');
 var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
 var Player = require('polyball/shared/model/Player');
