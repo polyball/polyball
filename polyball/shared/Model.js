@@ -5,6 +5,7 @@ var Physics = require('physicsjs');
 var Logger = require('polyball/shared/Loggers');
 var Util = require('polyball/shared/Util');
 var Ball = require('polyball/shared/model/Ball');
+var Client = require('polyball/shared/model/Client');
 var Spectator = require('polyball/shared/model/Spectator');
 //var Player = require('polyball/model/Player');
 //var Paddle = require('polyball/model/Paddle');

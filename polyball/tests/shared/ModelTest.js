@@ -46,4 +46,45 @@ describe('Model', function () {
             model.hasBall(ball2.id).should.be.false; // jshint ignore:line
         });
     });
+
+    describe("spectator CRUD", function () {
+        it('should add 2 spectators to the model, then query, update, and delete them.', function () {
+            var model = new Model();
+
+            model.spectatorCount().should.equal(0);
+
+            var spectator = model.addSpectator({dummy: 'socket'});
+
+            model.spectatorCount().should.equal(1);
+            model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
+
+            var spectator2 = model.addSpectator({dummy: 'socket_2'});
+
+            model.spectatorCount().should.equal(2);
+            model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
+            model.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
+
+            model.updateSpectator(spectator2.id, {client: {name: 'some_guy'}});
+
+            spectator2.client.name.should.equal('some_guy');
+            spectator2.queued.should.be.false; // jshint ignore:line
+
+            model.deleteSpectator(spectator.id);
+
+            model.spectatorCount().should.equal(1);
+            model.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
+            model.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
+
+            spectator2.client.name.should.equal('some_guy');
+            spectator2.queued.should.be.false; // jshint ignore:line
+
+            model.getSpectators(function (spectator) {return !spectator.queued;}).length.should.equal(1);
+
+            model.deleteSpectator(spectator2.id);
+
+            model.spectatorCount().should.equal(0);
+            model.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
+            model.hasSpectator(spectator2.id).should.be.false; // jshint ignore:line
+        });
+    });
 });
