@@ -1,5 +1,5 @@
 var $ = require('jquery');
-var logger = require('polyball/shared/loggers');
+var logger = require('polyball/shared/Loggers');
 
 var Model = require('polyball/shared/Model');
 
