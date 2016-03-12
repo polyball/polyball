@@ -3,83 +3,12 @@
 var _ = require('lodash');
 var Physics = require('physicsjs');
 var Logger = require('polyball/shared/Logger');
+var Arena = require('polyball/shared/model/Arena');
 var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
 var Player = require('polyball/shared/model/Player');
 //var Paddle = require('polyball/shared/model/Paddle');
 
-var IDGenerator = function () {
-    var nextID = 0;
-
-    this.nextID = function () {
-        return nextID++;
-    };
-};
-
-/**
- * Search an array for an element by its id.
- * @template T
- * @param {T[]} array The array to search
- * @param {Number} id The id of the desired element (in field `element.id`)
- * @returns {T} The identified array element (or undefined).
- */
-var findByID = function (array, id) {
-    return _.find(array, function (element) { return element.id === id; });
-};
-
-/**
- * Search an array and get all elements by a given predicate.
- * @template T
- * @param {T[]} array The array to search
- * @param {Predicate} [predicate] The boolean-returning predicate callback to filter by.
- * @returns {T[]} All elements of the array matching the predicate
- */
-var findAll = function (array, predicate) {
-    if (predicate == null) {
-        return Array.apply(undefined, array);
-    }
-    return _.filter(array, predicate);
-};
-
-/**
- * Search for an element by id in an array, and assign all properties from newState if found.
- * @param {Array} array The array to search.
- * @param {Number} id The id of the desired element (in field `element.id`)
- * @param {Object} newState The new state for the update (object structure must match source structure).
- */
-var updateByID = function (array, id, newState) {
-    if (newState.id != null) {
-        delete newState.id;
-    }
-
-    var element = findByID(array, id);
-    if (element != null) {
-        _.assign(element, newState);
-    }
-};
-
-/**
- * Remove element from array by its id.
- * @template T
- * @param {Array} array The array to search
- * @param {Number} id The id of the desired element (in field `element.id`)
- * @return {T} The removed object, null if not found.
- */
-var removeByID = function (array, id) {
-    var removed = _.remove(array, function (element) { return element.id === id; });
-    if (removed.length > 1) {
-        Logger.error("More than one object of id " + id + " found in array " + array);
-    }
-
-    return removed[0];
-};
-
-/**
- * A callback that returns true or false.
- * @callback Predicate
- * @param {Object} Instance of the type being queried.
- * @return {Boolean}
- */
 
 /**
  * Holds all data for client and server game instances.  Exposes CRUD operations for data.
@@ -87,7 +16,25 @@ var removeByID = function (array, id) {
  * @constructor
  */
 var Model = function () {
-    var ids = new IDGenerator();
+
+    //
+    //    ########  ########  #### ##     ##    ###    ######## ########
+    //    ##     ## ##     ##  ##  ##     ##   ## ##      ##    ##
+    //    ##     ## ##     ##  ##  ##     ##  ##   ##     ##    ##
+    //    ########  ########   ##  ##     ## ##     ##    ##    ######
+    //    ##        ##   ##    ##   ##   ##  #########    ##    ##
+    //    ##        ##    ##   ##    ## ##   ##     ##    ##    ##
+    //    ##        ##     ## ####    ###    ##     ##    ##    ########
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    //
+    //             PRIVATE STATE
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    var world = Physics();
+    var arena;
 
     /**
      * @type {Player[]}
@@ -98,14 +45,122 @@ var Model = function () {
      */
     var spectators = [];
 
-    var world = Physics();
-
     /**
      * @type {Ball[]}
      */
     var balls = [];
     //var powerups = [];
     //var election = undefined;
+
+    //
+    //             PRIVATE METHODS
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    var nextID = (function () {
+        var nextID = 0;
+
+        return function () {
+            return nextID++;
+        };
+    }());
+
+    /**
+     * Search an array for an element by its id.
+     * @template T
+     * @param {T[]} array The array to search
+     * @param {Number} id The id of the desired element (in field `element.id`)
+     * @returns {T} The identified array element (or undefined).
+     */
+    var findByID = function (array, id) {
+        return _.find(array, function (element) { return element.id === id; });
+    };
+
+    /**
+     * Search an array and get all elements by a given predicate.
+     * @template T
+     * @param {T[]} array The array to search
+     * @param {Predicate} [predicate] The boolean-returning predicate callback to filter by.
+     * @returns {T[]} All elements of the array matching the predicate
+     */
+    var findAll = function (array, predicate) {
+        if (predicate == null) {
+            return Array.apply(undefined, array);
+        }
+        return _.filter(array, predicate);
+    };
+
+    /**
+     * Search for an element by id in an array, and assign all properties from newState if found.
+     * @param {Array} array The array to search.
+     * @param {Number} id The id of the desired element (in field `element.id`)
+     * @param {Object} newState The new state for the update (object structure must match source structure).
+     */
+    var updateByID = function (array, id, newState) {
+        if (newState.id != null) {
+            delete newState.id;
+        }
+
+        var element = findByID(array, id);
+        if (element != null) {
+            _.assign(element, newState);
+        }
+    };
+
+    /**
+     * Remove element from array by its id.
+     * @template T
+     * @param {Array} array The array to search
+     * @param {Number} id The id of the desired element (in field `element.id`)
+     * @return {T} The removed object, null if not found.
+     */
+    var removeByID = function (array, id) {
+        var removed = _.remove(array, function (element) { return element.id === id; });
+        if (removed.length > 1) {
+            Logger.error("More than one object of id " + id + " found in array " + array);
+        }
+
+        return removed[0];
+    };
+
+    //
+    //    ########  ##     ## ########  ##       ####  ######
+    //    ##     ## ##     ## ##     ## ##        ##  ##    ##
+    //    ##     ## ##     ## ##     ## ##        ##  ##
+    //    ########  ##     ## ########  ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##    ##
+    //    ##         #######  ########  ######## ####  ######
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * If there is not yet an arena in the model, add one according to the config.
+     * If there is an arena in the model, replace it with a new one from the config.
+     * @param {Object} config (See Arena constructor.)
+     * @return {Arena} The new arena
+     */
+    this.addOrResetArena = function (config) {
+        if (arena != null) {
+            // clear out old arena
+            world.remove(arena.getBumpers());
+            world.remove(arena.getGoals());
+        }
+
+        arena = new Arena(config);
+
+        world.add(arena.getBumpers());
+        world.add(arena.getGoals());
+
+        return arena;
+    };
+
+    /**
+     * @return {Arena} The current arena.
+     */
+    this.getArena = function () {
+        return arena;
+    };
 
     //
     //             BALLS
@@ -119,7 +174,7 @@ var Model = function () {
      */
     this.addBall  = function () {
         var ballConfig = {
-            id: ids.nextID(),
+            id: nextID(),
             x: 0,
             y: 0,
             vx: 0.1,
@@ -209,7 +264,7 @@ var Model = function () {
      */
     this.addSpectator = function (client) {
         var spectatorConfig = {
-            id: ids.nextID(),
+            id: nextID(),
             client: client
         };
 
@@ -282,7 +337,7 @@ var Model = function () {
      */
     this.addPlayer = function (client) {
         var playerConfig = {
-            id: ids.nextID(),
+            id: nextID(),
             client: client
         };
 
@@ -355,6 +410,15 @@ var Model = function () {
 
     };
 };
+
+
+/**
+ * A callback that returns true or false.
+ * @callback Predicate
+ * @param {Object} Instance of the type being queried.
+ * @return {Boolean}
+ */
+
 
 module.exports = Model;
 

@@ -1,12 +1,32 @@
 /**
  * Created by kdban on 3/10/2016.
  */
+var should = require('should');
 var Util = require('polyball/shared/Util');
 var Model = require('polyball/shared/Model');
 var Client = require('polyball/shared/model/Client');
 
 describe('Model', function () {
    'use strict';
+
+    describe("#addOrResetArena", function () {
+        var model, arena, arena2;
+        it('should add an arena to the model.', function () {
+            model = new Model();
+            should.not.exist(model.getArena());
+
+            arena = model.addOrResetArena({numberPlayers: 4, arenaRadius: 1000});
+
+            model.getArena().should.equal(arena);
+        });
+
+        it('should reset the arena.', function () {
+            arena2 = model.addOrResetArena({numberPlayers: 9, arenaRadius: 400});
+
+            model.getArena().should.not.equal(arena);
+            model.getArena().should.equal(arena2);
+        });
+    });
 
     describe("ball CRUD", function () {
         var model, ball, ball2;
