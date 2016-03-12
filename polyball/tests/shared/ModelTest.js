@@ -1,7 +1,7 @@
 /**
  * Created by kdban on 3/10/2016.
  */
-var Model = require('polyball/shared/model');
+var Model = require('polyball/shared/Model');
 
 describe('Model', function () {
    'use strict';
