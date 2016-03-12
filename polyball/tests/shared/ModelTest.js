@@ -1,7 +1,9 @@
 /**
  * Created by kdban on 3/10/2016.
  */
+var Util = require('polyball/shared/Util');
 var Model = require('polyball/shared/Model');
+var Client = require('polyball/shared/model/Client');
 
 describe('Model', function () {
    'use strict';
@@ -53,12 +55,12 @@ describe('Model', function () {
 
             model.spectatorCount().should.equal(0);
 
-            var spectator = model.addSpectator({dummy: 'socket'});
+            var spectator = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'socket'}));
 
             model.spectatorCount().should.equal(1);
             model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
 
-            var spectator2 = model.addSpectator({dummy: 'socket_2'});
+            var spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'socket'}));
 
             model.spectatorCount().should.equal(2);
             model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
@@ -85,6 +87,47 @@ describe('Model', function () {
             model.spectatorCount().should.equal(0);
             model.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
             model.hasSpectator(spectator2.id).should.be.false; // jshint ignore:line
+        });
+    });
+
+    describe("player CRUD", function () {
+        it('should add 2 players to the model, then query, update, and delete them.', function () {
+            var model = new Model();
+
+            model.playerCount().should.equal(0);
+
+            var player = model.addPlayer(new Client({name: Util.randomUsername(), socket: 'socket'}));
+
+            model.playerCount().should.equal(1);
+            model.hasPlayer(player.id).should.be.true; // jshint ignore:line
+
+            var player2 = model.addPlayer(new Client({name: Util.randomUsername(), socket: 'socket'}));
+
+            model.playerCount().should.equal(2);
+            model.hasPlayer(player.id).should.be.true; // jshint ignore:line
+            model.hasPlayer(player2.id).should.be.true; // jshint ignore:line
+
+            model.updatePlayer(player2.id, {client: {name: 'some_guy'}});
+
+            player2.client.name.should.equal('some_guy');
+            player2.score.should.equal(0); // jshint ignore:line
+
+            model.deletePlayer(player.id);
+
+            model.playerCount().should.equal(1);
+            model.hasPlayer(player.id).should.be.false; // jshint ignore:line
+            model.hasPlayer(player2.id).should.be.true; // jshint ignore:line
+
+            player2.client.name.should.equal('some_guy');
+            player2.score.should.equal(0); // jshint ignore:line
+
+            model.getPlayers(function (player) {return player.score === 0;}).length.should.equal(1);
+
+            model.deletePlayer(player2.id);
+
+            model.playerCount().should.equal(0);
+            model.hasPlayer(player.id).should.be.false; // jshint ignore:line
+            model.hasPlayer(player2.id).should.be.false; // jshint ignore:line
         });
     });
 });

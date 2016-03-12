@@ -3,12 +3,10 @@
 var _ = require('lodash');
 var Physics = require('physicsjs');
 var Logger = require('polyball/shared/Loggers');
-var Util = require('polyball/shared/Util');
 var Ball = require('polyball/shared/model/Ball');
-var Client = require('polyball/shared/model/Client');
 var Spectator = require('polyball/shared/model/Spectator');
-//var Player = require('polyball/model/Player');
-//var Paddle = require('polyball/model/Paddle');
+var Player = require('polyball/shared/model/Player');
+//var Paddle = require('polyball/shared/model/Paddle');
 
 var IDGenerator = function () {
     var nextID = 0;
@@ -91,7 +89,10 @@ var removeByID = function (array, id) {
 var Model = function () {
     var ids = new IDGenerator();
 
-    //var players = [];
+    /**
+     * @type {Player[]}
+     */
+    var players = [];
     /**
      * @type {Spectator[]}
      */
@@ -108,8 +109,8 @@ var Model = function () {
 
     //
     //             BALLS
-    //             -----
     //
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Add a ball at the centre of the arena with a random velocity.
@@ -198,20 +199,15 @@ var Model = function () {
 
     //
     //             SPECTATORS
-    //             ----------
     //
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Adds a spectator to the model.
-     * @param socket The socket connecting the server to the spectator client.
+     * @param {Client} client The client information for the Spectator.
      * @return {Spectator} The new Spectator.
      */
-    this.addSpectator = function (socket) {
-        var client = new Client({
-            name: Util.randomUsername(),
-            socket: socket
-        });
-
+    this.addSpectator = function (client) {
         var spectatorConfig = {
             id: ids.nextID(),
             client: client
@@ -276,9 +272,81 @@ var Model = function () {
 
     //
     //             PLAYERS
-    //             -------
     //
+    ///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Adds a player to the model.
+     * @param {Client} client The client information for the Player.
+     * @return {Player} The new Player.
+     */
+    this.addPlayer = function (client) {
+        var playerConfig = {
+            id: ids.nextID(),
+            client: client
+        };
+
+        var player = new Player(playerConfig);
+        players.push(player);
+
+        return player;
+    };
+
+    /**
+     * @param {Number} id The id of the player.
+     * @return {Player} The player from the model (undefined if not found).
+     */
+    this.getPlayer = function (id) {
+        return findByID(players, id);
+    };
+
+    /**
+     * Get all players satisfying the predicate callback.
+     * @param {Predicate} [predicate]  Callback to evaluate for each player.  (matches all if null.)
+     * @returns {Player[]} All players matching the predicate. (may be empty.)
+     */
+    this.getPlayers = function (predicate) {
+        return findAll(players, predicate);
+    };
+
+    /**
+     * @param {Number} id
+     * @returns {boolean} True iff the model has the player identified by id.
+     */
+    this.hasPlayer = function (id) {
+        return this.getPlayer(id) != null;
+    };
+
+    /**
+     * @returns {Number} The number of players in the model.
+     */
+    this.playerCount = function () {
+        return players.length;
+    };
+
+    /**
+     * Change the state of the identified player to match the supplied state.
+     *
+     * @param {Number} id
+     * @param newState (See Player constructor config). **id field is ignored!**
+     */
+    this.updatePlayer = function (id, newState) {
+        updateByID(players, id, newState);
+    };
+
+    /**
+     * Delete the identified player from the model.
+     *
+     * @param {Number} id
+     */
+    this.deletePlayer = function (id) {
+        removeByID(players, id);
+    };
+
+    //
+    //             SNAPSHOT
+    //
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * @return
