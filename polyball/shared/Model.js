@@ -6,8 +6,8 @@ var Logger = require('polyball/shared/Loggers');
 var Util = require('polyball/shared/Util');
 var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
-//var Paddle = require('polyball/model/Paddle');
 //var Player = require('polyball/model/Player');
+//var Paddle = require('polyball/model/Paddle');
 
 var IDGenerator = function () {
     var nextID = 0;
@@ -26,6 +26,20 @@ var IDGenerator = function () {
  */
 var findByID = function (array, id) {
     return _.find(array, function (element) { return element.id === id; });
+};
+
+/**
+ * Search an array and get all elements by a given predicate.
+ * @template T
+ * @param {T[]} array The array to search
+ * @param {Predicate} [predicate] The boolean-returning predicate callback to filter by.
+ * @returns {T[]} All elements of the array matching the predicate
+ */
+var findAll = function (array, predicate) {
+    if (predicate == null) {
+        return Array.apply(undefined, array);
+    }
+    return _.filter(array, predicate);
 };
 
 /**
@@ -61,15 +75,32 @@ var removeByID = function (array, id) {
     return removed[0];
 };
 
+/**
+ * A callback that returns true or false.
+ * @callback Predicate
+ * @param {Object} Instance of the type being queried.
+ * @return {Boolean}
+ */
 
+/**
+ * Holds all data for client and server game instances.  Exposes CRUD operations for data.
+ *
+ * @constructor
+ */
 var Model = function () {
     var ids = new IDGenerator();
 
     //var players = [];
+    /**
+     * @type {Spectator[]}
+     */
     var spectators = [];
 
     var world = Physics();
 
+    /**
+     * @type {Ball[]}
+     */
     var balls = [];
     //var powerups = [];
     //var election = undefined;
@@ -97,7 +128,7 @@ var Model = function () {
         var ball = new Ball(ballConfig);
         balls.push(ball);
 
-        world.addBody(ball);
+        world.addBody(ball.body);
 
         return ball;
     };
@@ -108,6 +139,15 @@ var Model = function () {
      */
     this.getBall = function (id) {
         return findByID(balls, id);
+    };
+
+    /**
+     * Get all balls satisfying the predicate callback.
+     * @param {Predicate} [predicate]  Callback to evaluate for each ball. (matches all if null.)
+     * @returns {Ball[]} All balls matching the predicate. (may be empty.)
+     */
+    this.getBalls = function (predicate) {
+        return findAll(balls, predicate);
     };
 
     /**
@@ -151,7 +191,7 @@ var Model = function () {
         var ball = _.remove(balls, function (ball) { return ball.id === id; });
 
         if (ball != null) {
-            world.removeBody(ball);
+            world.removeBody(ball.body);
         }
     };
 
@@ -166,10 +206,14 @@ var Model = function () {
      * @return {Spectator} The new Spectator.
      */
     this.addSpectator = function (socket) {
-        var spectatorConfig = {
+        var client = new Client({
             name: Util.randomUsername(),
-            id: ids.nextID(),
             socket: socket
+        });
+
+        var spectatorConfig = {
+            id: ids.nextID(),
+            client: client
         };
 
         var spectator = new Spectator(spectatorConfig);
@@ -186,20 +230,13 @@ var Model = function () {
         return findByID(spectators, id);
     };
 
-    this.queueSpectatorToPlay = function (id) {
-        var spectator = this.getSpectator(id);
-
-        if (spectator != null) {
-            spectator.queued = true;
-        }
-    };
-
-    this.unqueueSpectator = function (id) {
-        var spectator = this.getSpectator(id);
-
-        if (spectator != null) {
-            spectator.queued = false;
-        }
+    /**
+     * Get all spectators satisfying the predicate callback.
+     * @param {Predicate} [predicate]  Callback to evaluate for each spectator.  (matches all if null.)
+     * @returns {Spectator[]} All spectators matching the predicate. (may be empty.)
+     */
+    this.getSpectators = function (predicate) {
+        return findAll(spectators, predicate);
     };
 
     /**
@@ -241,9 +278,6 @@ var Model = function () {
     //             -------
     //
 
-    this.convertQueuedSpectatorsToPlayers = function () {
-
-    };
 
     /**
      * @return

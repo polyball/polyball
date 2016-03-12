@@ -5,22 +5,16 @@
 'use strict';
 
 /**
- * @external Socket A socket.io client socket.
- */
-
-/**
  * Creates a new Spectator.
  *
- * @param {{name: String,
- *          id: Number,
- *          socket: Socket}} config
+ * @param {{id: Number,
+ *          client: Client}} config
  * @constructor
  */
 function Spectator(config) {
-    this.name = config.name;
     this.id = config.id;
+    this.client = config.client;
     this.queued = false;
-    this.socket = config.socket;
 }
 
 module.exports = Spectator;

@@ -10,7 +10,9 @@ var Physics = require("physicsjs");
  * Creates a paddle
  *
  * @param {{leftBound: Number,
- *          rightBound: Number}} config
+ *          rightBound: Number,
+ *          size: Number,
+ *          styles: Object}} config
  * @constructor
  */
 var Paddle = function(config) {
@@ -22,8 +24,8 @@ var Paddle = function(config) {
             x: config.x,
             y: config.y,
             radius: config.size,
-            treatment: static,
-            styles: config.style
+            treatment: 'static',
+            styles: config.styles
         }
     );
 };

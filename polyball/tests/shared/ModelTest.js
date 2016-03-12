@@ -37,6 +37,8 @@ describe('Model', function () {
             ball2.body.x.should.equal(35);
             ball2.body.y.should.equal(3);
 
+            model.getBalls(function (ball) {return (typeof ball.id) === 'number';}).length.should.equal(1);
+
             model.deleteBall(ball2.id);
 
             model.ballCount().should.equal(0);
