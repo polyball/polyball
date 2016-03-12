@@ -9,43 +9,74 @@ describe('Model', function () {
    'use strict';
 
     describe("ball CRUD", function () {
-        it('should add 2 balls to the model, then query, update, and delete them.', function () {
-            var model = new Model();
+        var model, ball, ball2;
 
-            model.ballCount().should.equal(0);
+        describe("#addBall", function () {
+            it('should add a queryable ball to the model.', function () {
+                model = new Model();
+                model.ballCount().should.equal(0);
 
-            var ball = model.addBall();
+                ball = model.addBall();
 
-            model.ballCount().should.equal(1);
-            model.hasBall(ball.id).should.be.true; // jshint ignore:line
+                model.ballCount().should.equal(1);
+                model.hasBall(ball.id).should.be.true; // jshint ignore:line
+            });
 
-            var ball2 = model.addBall();
+            it('should add a second, distinct queryable ball to the model.', function () {
+                ball2 = model.addBall();
 
-            model.ballCount().should.equal(2);
-            model.hasBall(ball.id).should.be.true; // jshint ignore:line
-            model.hasBall(ball2.id).should.be.true; // jshint ignore:line
+                model.ballCount().should.equal(2);
 
-            model.updateBall(ball2.id, {body: {x: 35, y: 3}});
+                ball.should.not.equal(ball2);
 
-            ball2.body.x.should.equal(35);
-            ball2.body.y.should.equal(3);
+                model.hasBall(ball.id).should.be.true; // jshint ignore:line
+                model.hasBall(ball2.id).should.be.true; // jshint ignore:line
+            });
+        });
 
-            model.deleteBall(ball.id);
+        describe("#updateBall", function () {
+            it('should update a ball, and delete them.', function () {
 
-            model.ballCount().should.equal(1);
-            model.hasBall(ball.id).should.be.false; // jshint ignore:line
-            model.hasBall(ball2.id).should.be.true; // jshint ignore:line
+                model.updateBall(ball2.id, {body: {x: 35, y: 3}});
 
-            ball2.body.x.should.equal(35);
-            ball2.body.y.should.equal(3);
+                ball2.body.x.should.equal(35);
+                ball2.body.y.should.equal(3);
 
-            model.getBalls(function (ball) {return (typeof ball.id) === 'number';}).length.should.equal(1);
+            });
+        });
 
-            model.deleteBall(ball2.id);
+        describe('#getBalls', function () {
+            it('should get all balls when passed nothing or null', function () {
+                model.getBalls().length.should.equal(2);
+            });
 
-            model.ballCount().should.equal(0);
-            model.hasBall(ball.id).should.be.false; // jshint ignore:line
-            model.hasBall(ball2.id).should.be.false; // jshint ignore:line
+            it('should get only a ball specified by a predicate', function () {
+                var balls = model.getBalls(function (ball) { return ball.id === ball2.id; });
+                balls.length.should.equal(1);
+                balls[0].should.equal(ball2);
+            });
+        });
+
+        describe("#deleteBall", function () {
+            it('should delete a ball and only that ball.', function () {
+
+                model.deleteBall(ball.id);
+
+                model.ballCount().should.equal(1);
+                model.hasBall(ball.id).should.be.false; // jshint ignore:line
+                model.hasBall(ball2.id).should.be.true; // jshint ignore:line
+
+                ball2.body.x.should.equal(35);
+                ball2.body.y.should.equal(3);
+            });
+
+            it('should delete a second ball.', function () {
+                model.deleteBall(ball2.id);
+
+                model.ballCount().should.equal(0);
+                model.hasBall(ball.id).should.be.false; // jshint ignore:line
+                model.hasBall(ball2.id).should.be.false; // jshint ignore:line
+            });
         });
     });
 
