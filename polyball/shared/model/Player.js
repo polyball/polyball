@@ -8,13 +8,15 @@
  * the constructor of Player in config.
  *
  * @param {{id: number,
- *          paddle: Paddle
+ *          paddle: Paddle,
+ *          arenaPosition: Number,
  *          client: Client}} config
  * @constructor
  */
 var Player = function(config) {
     this.id = config.id;
     this.paddle = config.paddle;
+    this.arenaPosition = config.arenaPosition;
     this.client = config.client;
     this.score = 0;
 };
