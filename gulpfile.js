@@ -25,7 +25,7 @@ var buffer = require('vinyl-buffer');
 var assign = require('lodash.assign');
 
 
-var insideTravis = fs.existsSync('/home/travis') || true;
+var insideTravis = fs.existsSync('/home/travis');
 
 // CONFIGURATION
 var browserifyConfig = {
