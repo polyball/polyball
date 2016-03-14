@@ -49,12 +49,6 @@ var Model = function () {
      * @type {Ball[]}
      */
     var balls = [];
-
-    /**
-     * @type {Spectator[]}
-     */
-    var playerQueue = [];
-
     //var powerups = [];
     //var election = undefined;
 
@@ -329,42 +323,6 @@ var Model = function () {
      */
     this.deleteSpectator = function (id) {
         removeByID(spectators, id);
-    };
-
-    /**
-     * Add a spectator to the end of the player queue
-     *
-     * @param {Number} id
-     */
-    this.addToPlayerQueue = function (id) {
-        if (!findByID(playerQueue, id)) {
-            playerQueue.push(findByID(spectators, id));
-        }
-    };
-
-    /**
-     * Remove a spectator from the player queue
-     * @param {Number} id
-     */
-    this.removeFromPlayerQueue = function (id) {
-        removeByID(playerQueue, id);
-    };
-
-
-    /**
-     * Returns how many players there are in the queue
-     * @return {Number}
-     */
-    this.numberOfQueuedPlayers = function () {
-        return playerQueue.length;
-    };
-
-    /**
-     * Returns how many players there are in the queue
-     * @return {Spectator[]}
-     */
-    this.getAllQueuedPlayers = function () {
-        return playerQueue.slice();
     };
 
     //
