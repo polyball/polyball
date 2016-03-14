@@ -51,7 +51,7 @@ var Model = function () {
     var balls = [];
 
     /**
-     * @type {Spectator[]}
+     * @type {Number[]}
      */
     var playerQueue = [];
 
@@ -344,8 +344,12 @@ var Model = function () {
      * @param {Number} id
      */
     this.addToPlayerQueue = function (id) {
-        if (!findByID(playerQueue, id)) {
-            playerQueue.push(findByID(spectators, id));
+        if (!findByID(spectators, id)) {
+            Logger.Error('Tried to add id to Player Queue that does not exist in spectators');
+        }
+
+        if (!_.includes(playerQueue, id)){
+            playerQueue.push(id);
         }
     };
 
@@ -354,7 +358,7 @@ var Model = function () {
      * @param {Number} id
      */
     this.removeFromPlayerQueue = function (id) {
-        removeByID(playerQueue, id);
+        _.remove(playerQueue, function(x) {return x === id;});
     };
 
 
@@ -371,7 +375,18 @@ var Model = function () {
      * @return {Spectator[]}
      */
     this.getAllQueuedPlayers = function () {
-        return playerQueue.slice();
+        var out = [];
+        playerQueue.forEach(function(x){out.push(findByID(spectators, x));});
+        return out;
+    };
+
+    /**
+     * Returns the first spectator in the player queue
+     * @return {Spectator}
+     */
+    this.popPlayerQueue = function () {
+        var id = playerQueue.shift();
+        return findByID(spectators, id);
     };
 
     //
