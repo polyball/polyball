@@ -1,5 +1,6 @@
 var Logger = require('polyball/shared/Logger');
 var FileServer = require('polyball/server/FileServer');
+//var Comms = require('polyball/server/Comms');
 
 
 var server = new FileServer({
