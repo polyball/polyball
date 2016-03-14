@@ -168,6 +168,13 @@ var Model = function () {
         return arena;
     };
 
+    /**
+     * @returns {World}
+     */
+    this.getWorld = function () {
+        return world;
+    };
+
     //
     //             BALLS
     //

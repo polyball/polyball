@@ -8,7 +8,7 @@ var Physics = require('physicsjs'); //jshint ignore:line
 var EngineStatus = require('polyball/server/EngineStatus.js');
 var Comms = require('polyball/server/Comms'); //jshint ignore:line
 var Configuration = require('polyball/server/Configuration'); //jshint ignore:line
-
+var _ = require('lodash');
 
 /**
  * Initializes the engine
@@ -21,12 +21,22 @@ var Configuration = require('polyball/server/Configuration'); //jshint ignore:li
 function Engine(config) {
     this.comms = config.comms;
     this.configuration = config.configuration;
+    this.model = config.model;
 
     // TODO Add Comms Subs
     // - Need to pub sub "Add Spectator"
     // - Need to pub sub "Add Player to queue"
     // - Need to pub sub "Add Vote"
     // - Need to pub sub collect input
+
+    // Initialize some physics stuff, probably need a shared class to do this properly
+    // Since client will perform a similar setup
+    this.model.getWorld().add([
+        Physics.behavior('constant-acceleration'),
+        Physics.behavior('body-impulse-response'),
+        Physics.behavior('body-collision-detection'),
+        Physics.behavior('sweep-prune')
+    ]);
 
     this.initializeGame();
 }
@@ -44,13 +54,18 @@ Engine.prototype.initializeGame = function(){
 
     //TODO Change this "3" constant to a reference to some "Constants" Object containing minPlayers
     if (this.model.playerCount() > 3){
-        //TODO set up arena
-        //TODO get longest client latency
+        //TODO figure out radius as a function of # players
+        this.model.addOrResetArena({
+            numberPlayers: this.model.playerCount(),
+            arenaRadius: 1000
+        });
 
-        //TODO broadcast to all clients, start in startTime miliseconds
+        //TODO get longest client latency
         var startTime = 10;
 
-        setTimeout(startTime, this.startGame());
+        //TODO broadcast to all clients, start in startTime miliseconds
+
+        setTimeout(this.startGame(), startTime);
     }
 };
 
@@ -60,6 +75,11 @@ Engine.prototype.initializeGame = function(){
  *  - Schedules the main loop
 */
 Engine.prototype.startGame = function(){
+    //Add the balls to the game
+    _.times(this.model.playerCount(), function(x){
+        setTimeout(this.model.addBall, x * 500);
+    });
+
     //TODO change this 30 constant to reference to some "Constants" Object containing serverTick
     this.gameLoop = setInterval(this.update(), 30);
 };
@@ -69,6 +89,7 @@ Engine.prototype.startGame = function(){
  */
 Engine.prototype.update = function(){
     // TODO progress game simulation
+    this.model.getWorld().step();
     // TODO Broadcast new model
     this.broadcastModel();
 };
