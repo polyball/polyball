@@ -8,8 +8,6 @@ var log4js = require('log4js');
 var express = require('express');
 var http = require('http');
 
-var Logger = require('polyball/shared/Logger');
-
 /**
  * Serves files from a directory.
  *
