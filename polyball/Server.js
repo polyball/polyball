@@ -1,5 +1,7 @@
 var Logger = require('polyball/shared/Logger');
 var FileServer = require('polyball/server/FileServer');
+var Model = require('polyball/shared/Model');
+var Comms = require('polyball/server/Comms');
 //var Comms = require('polyball/server/Comms');
 
 
@@ -8,9 +10,13 @@ var server = new FileServer({
     indexPath: 'index.html'
 }).getHttpServer();
 
-//TODO wrap socket IO and replace this line with our Comms
-//var socketWrapServer = require('socket.io');
-//var socketIO = socketWrapServer(server);
+var model = new Model();
+
+var comms = new Comms({httpServer: server, model: model});
+
+setInterval(function () {
+    comms.broadcastSnapshot({test: 'thing'});
+}, 40);
 
 Logger.info('Polyball server starting.');
 server.listen(8080);

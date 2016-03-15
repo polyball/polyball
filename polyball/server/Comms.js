@@ -2,8 +2,8 @@
  * Created by kdbanman on 2/29/16.
  */
 
-
-var socket = require('socket.io');
+var Logger = require('polyball/shared/Logger');
+var Server = require('socket.io');
 var Util = require('polyball/shared/Util');
 var Client = require('polyball/shared/model/Client');
 
@@ -11,19 +11,28 @@ var Client = require('polyball/shared/model/Client');
 /**
  *
  * @param {{
- *   httpServer: Object,
+ *   httpServer: node.http.Server,
  *   model: Model
  * }}config
  * @constructor
  */
 var Comms = function (config) {
-    var io = socket(config.httpServer);
+    var io = new Server(config.httpServer, {serveClient: true});
     var model = config.model;
 
     io.on('connection', function (clientSocket) {
+        Logger.info('New client connected.');
+
+        // create a spectator with the socket in the model
+        var client = new Client({
+            name: Util.randomUsername(),
+            socket: clientSocket
+        });
+
+        model.addSpectator(client);
 
         clientSocket.on('disconnect', function () {
-
+            Logger.info('Client disconnected');
         });
 
         clientSocket.on('vote', function () {
@@ -31,26 +40,15 @@ var Comms = function (config) {
             //listeners.notify('vote', voteData);
         });
 
-        // create a spectator with the socket in the model
-        var client = new Client({
-            name: Util.randomUsername(),
-            socket: clientSocket
-            });
-
-        model.addSpectator(client);
+        clientSocket.emit('logLevel', Logger.getLevel());
     });
 
-
-
-    this.broadcastSnapshot = function () {
-        // get spectators (get their clients)
-        // get players (same)
-
-        // for each client, socket.emit('newSnapshot', snapshot);
-
+    this.broadcastSnapshot = function (snapshot) {
+        Logger.debug("Comms broadcasting snapshot.");
+        io.sockets.emit('snapshot', snapshot);
     };
 
 
 };
 
-module.export = Comms;
+module.exports = Comms;

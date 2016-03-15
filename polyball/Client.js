@@ -1,5 +1,5 @@
 var $ = require('jquery');
-//var logger = require('polyball/shared/loggers');
+var Logger = require('polyball/shared/Logger');
 var Physics = require('physicsjs');
 //var Model = require('polyball/shared/Model');
 var Pixi = require('pixi.js');
@@ -77,6 +77,17 @@ $(document).ready(function() {
         Physics.util.ticker.on(function( time ) {
             world.step( time );
         });
+    });
+
+    var socket = io.connect('http://localhost:8080');
+
+    socket.on('logLevel', function (logLevel) {
+        var newLevel = Logger.setLevel(logLevel);
+        Logger.info('Log level set: ' + newLevel);
+    });
+
+    socket.on('snapshot', function (snapshot) {
+        Logger.debug(snapshot);
     });
 
 }); // end on DOM ready
