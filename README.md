@@ -1,4 +1,12 @@
-[![Stories in Ready](https://badge.waffle.io/polyball/polyball.png?label=ready&title=Ready)](https://waffle.io/polyball/polyball)
+| Issues Ready | Build Status |
+|--------------|--------------|
+| [![][STORIES_IMG]][STORIES_LINK] | [![][TRAVIS_IMG]][TRAVIS_LINK] |
+
+[STORIES_IMG]:      https://badge.waffle.io/polyball/polyball.png?label=ready&title=Ready
+[STORIES_LINK]:     https://waffle.io/polyball/polyball
+[TRAVIS_IMG]:       https://travis-ci.org/polyball/polyball.svg?branch=master
+[TRAVIS_LINK]:      https://travis-ci.org/polyball/polyball
+
 # polyball
 
 Fast, multiplayer, physics-driven tennis in two dimensions.
