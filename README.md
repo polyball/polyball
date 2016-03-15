@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/polyball/polyball.png?label=ready&title=Ready)](https://waffle.io/polyball/polyball)
 # polyball
 
 Fast, multiplayer, physics-driven tennis in two dimensions.
