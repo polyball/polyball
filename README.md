@@ -1,9 +1,11 @@
-| Issues Ready | Build Status |
-|--------------|--------------|
-| [![][STORIES_IMG]][STORIES_LINK] | [![][TRAVIS_IMG]][TRAVIS_LINK] |
+| Issues Ready | Issues In Progress | Build Status |
+|--------------|--------------------|--------------|
+| [![][READY_IMG]][READY_LINK] | [![][PROGRESS_IMG]][PROGRESS_LINK] | [![][TRAVIS_IMG]][TRAVIS_LINK] |
 
-[STORIES_IMG]:      https://badge.waffle.io/polyball/polyball.png?label=ready&title=Ready
-[STORIES_LINK]:     https://waffle.io/polyball/polyball
+[READY_IMG]:      https://badge.waffle.io/polyball/polyball.png?label=ready&title=Ready
+[READY_LINK]:     https://waffle.io/polyball/polyball
+[PROGRESS_IMG]:      https://badge.waffle.io/polyball/polyball.png?label=in+progress&title=In+Progress
+[PROGRESS_LINK]:     https://waffle.io/polyball/polyball
 [TRAVIS_IMG]:       https://travis-ci.org/polyball/polyball.svg?branch=master
 [TRAVIS_LINK]:      https://travis-ci.org/polyball/polyball
 
