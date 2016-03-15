@@ -19,10 +19,8 @@ var Configuration = function (config){
     };
 
     var customComfig = JSON.parse(fs.readFileSync(config.configPath, 'utf8'));
-
     _.assign(this.values, customComfig);
-
-    this.values.freeze();
+    Object.freeze(this.values);
 };
 
-module.exports = Configuration.values;
+module.exports = Configuration;

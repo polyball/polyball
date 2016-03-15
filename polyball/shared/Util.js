@@ -1,9 +1,11 @@
 /**
  * Created by kdban on 3/10/2016.
  */
+var fs = require('fs');
 
+var Util = function(){
 
-
+};
 /**
  * Adjectives 10 characters or less.
  * @type {string[]}
@@ -208,7 +210,7 @@ var capitalizeFirstLetter = function (str) {
 /**
  * @returns {string} A random username less than 20 characters long.
  */
-var randomUsername = function () {
+Util.randomUsername = function () {
     var adjIdx = Math.floor(Math.random() * adjectives.length);
     var nounIdx = Math.floor(Math.random() * nouns.length);
 
@@ -218,5 +220,31 @@ var randomUsername = function () {
     return capitalizeFirstLetter(adjective) + capitalizeFirstLetter(noun);
 };
 
+/**
+ * @param {Object} config
+ * @returns {string} The file path of the config file.
+ */
+Util.createJSONConfigFile = function (config){
+    var path = './config-' + Util.randomUsername();
+    fs.writeFileSync(path, JSON.stringify(config), 'utf-8');
+    return path;
+};
 
-exports.randomUsername = randomUsername;
+/**
+ * @param {String} string
+ * @returns {string} The file path of the config file.
+ */
+Util.createConfigFile = function (string){
+    var path = './config-' + Util.randomUsername();
+    fs.writeFileSync(path, string, 'utf-8');
+    return path;
+};
+
+/**
+ * @param {String} path
+ */
+Util.deleteJSONConfigFile = function (path){
+    fs.unlink(path);
+};
+
+module.exports = Util;
