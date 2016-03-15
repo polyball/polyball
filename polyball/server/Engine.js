@@ -16,7 +16,7 @@ var _ = require('lodash');
  *          model: Model}} config
  * @constructor
  */
-function Engine(config) {
+var Engine = function (config) {
 
     // =========================== Private Variables ==============================
     // ============================================================================
@@ -97,7 +97,7 @@ function Engine(config) {
      * the model
      */
     var broadcastModel = function (){
-        // TODO Interface to comms, and broadcast the model
+        comms.broadcastSnapshot(model.getSnapshot());
     };
 
     // ============================= Public Methods ===============================
@@ -119,44 +119,19 @@ function Engine(config) {
 
     /**
      * Handles the comms event to add a spectator to the model
-     * @param {{spectatorID: Number}} data
-     */
-    //TODO Stop ignoring this line!
-    this.handleAddSpectator = function (data){      //jshint ignore:line
-        //TODO handle add spectator to model
-    };
-
-    /**
-     * Handles the comms event to add a spectator to the model
      * @param {{vote: Vote}} data
      */
-        //TODO Stop ignoring this line!
-    this.handleAddVote = function (data){      //jshint ignore:line
-        //TODO handle add vote to model
-    };
-
-    //TODO change this jsdoc to have a proper type for input
-    /**
-     * Handles the comms event to add client input
-     * @param {{input: Object}} data
-     */
-        //TODO Stop ignoring this line!
-    this.handleInput = function (data){      //jshint ignore:line
-        //TODO handle add input to model
+    this.handleAddVote = function (data){
+        model.getPowerupElection().addVote(data.vote);
     };
 
     // ========================== Engine Construction =============================
     // ============================================================================
 
-    // TODO Add Comms Subs
-    // - Need to pub sub "Add Spectator"
-    comms.on('Add Spectator', this.handleAddSpectator);
     // - Need to pub sub "Add Player to queue"
     comms.on('Add Player To Queue', this.handleAddPlayerToQueue);
     // - Need to pub sub "Add Vote"
     comms.on('Add Vote', this.handleAddVote);
-    // - Need to pub sub collect input
-    comms.on('Add Input', this.handleAddVote);
 
     // Initialize some physics stuff, probably need a shared class to do this properly
     // Since client will perform a similar setup
@@ -168,6 +143,6 @@ function Engine(config) {
     ]);
 
     initializeGame();
-}
+};
 
 module.exports = Engine;
