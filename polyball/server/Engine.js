@@ -16,7 +16,7 @@ var _ = require('lodash');
  *          model: Model}} config
  * @constructor
  */
-function Engine(config) {
+var Engine = function (config) {
 
     // =========================== Private Variables ==============================
     // ============================================================================
@@ -143,6 +143,6 @@ function Engine(config) {
     ]);
 
     initializeGame();
-}
+};
 
 module.exports = Engine;
