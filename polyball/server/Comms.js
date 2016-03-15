@@ -13,7 +13,7 @@ var Client = require('polyball/shared/model/Client');
  * @param {{
  *   httpServer: node.http.Server,
  *   model: Model
- * }}config
+ * }} config
  * @constructor
  */
 var Comms = function (config) {
