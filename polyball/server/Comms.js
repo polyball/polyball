@@ -153,18 +153,18 @@ var Comms = function (config) {
             return player.client.socket === socket;
         });
 
-        if (candidates.length == 0) {
+        if (candidates.length === 0) {
             candidates = model.getSpectators(function (spectator) {
                 return spectator.client.socket === socket;
             });
         }
 
-        if (candidates.length == 0) {
+        if (candidates.length === 0) {
             Logger.error('Comms could not find player or spectator with a socket.');
-            return;
+            return null;
         } else if (candidates.length > 1) {
             Logger.error('Comms found more than one player or spectator with a socket.');
-            return;
+            return null;
         }
 
         return candidates[0];
