@@ -15,43 +15,17 @@ $(document).ready(function() {
         model: model
     });
 
-    // scale relative to window width
-    function S( n ){
-        return n * window.innerWidth / 600;
-    }
-
     var width = window.innerWidth,
-        height = window.innerHeight,
-        renderer;
+        height = window.innerHeight;
     var viewportBounds = Physics.aabb(0, 0, width, height);
 
-    // some fun colors
-    var colors = {
-        blue: '0x1d6b98',
-        blueDark: '0x14546f',
-        red: '0xdc322f',
-        darkRed: '0xa42222'
-    };
+    Logger.info('Width: ' + width + ' Height: ' + height);
 
-    // create 200 circles placed randomly
-    var l = 100;
-    var circles = [];
-    while( l-- ){
-        circles.push(Physics.body('circle', {
-            x: Math.random() * width,
-            y: Math.random() * height,
-            radius: S(10),
-            mass: 1,
-            restitution: 0.5,
-            styles: {
-                strokeStyle: colors.darkBlue,
-                fillStyle: colors.blue,
-                lineWidth: 1
-            }
-        }));
-    }
+    model.addOrResetArena({
+        numberPlayers: 3,
+        arenaRadius: height / 2
 
-    world.add(circles);
+    });
 
     world.add([
         Physics.behavior('constant-acceleration'),
