@@ -48,26 +48,18 @@ gulp.task('default', ['lint', 'build-js', 'run-tests']);
 
 gulp.task('watch-js', watchifyBundle);
 
-function bundle(bundler) {
-    return bundler.bundle()
+function bundle(bundler, killOnError) {
+    bundler = bundler.bundle()
         // log errors if they happen
-        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-        .on('error', function () {
-            process.exit(1);
-        })
-        .pipe(source('client-bundle.js'))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}))
-        // Add transformation tasks to the pipeline here.
-        .pipe(sourcemaps.write('./')) // writes .map file
-        .pipe(gulp.dest('./public/bin'));
-}
+        .on('error', gutil.log.bind(gutil, 'Browserify Error'));
 
-function bundle_nokill(bundler) {
-    return bundler.bundle()
-        // log errors if they happen
-        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-        .pipe(source('client-bundle.js'))
+    if (killOnError) {
+        bundler = bundler.on('error', function () {
+            process.exit(1);
+        });
+    }
+
+    return bundler.pipe(source('client-bundle.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))
         // Add transformation tasks to the pipeline here.
@@ -104,10 +96,10 @@ function watchifyBundle() {
     var opts = assign({}, watchify.args, browserifyConfig);
     var wify = watchify(browserify(opts));
     wify.on('update', function () {
-        return bundle_nokill(wify);
+        return bundle(wify, false);
     }); // on any dep update, run the bundler
     wify.on('update', lint_nokill);   // on any dep update, run the linter
     wify.on('log', gutil.log); // output build logs to terminal
 
-    return bundle_nokill(wify);
+    return bundle(wify, false);
 }
