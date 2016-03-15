@@ -34,7 +34,7 @@ var browserifyConfig = {
 };
 
 var testFile = './polyball/tests/**/*.js';
-var testReporter = insideTravis ? 'spec' : 'nyan';
+var testReporter = process.env.NO_NYAN === 'true' ? 'spec' : 'nyan';
 
 var lintReporter = 'jshint-stylish';
 var lintConfig = {

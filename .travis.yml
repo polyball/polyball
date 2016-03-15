@@ -5,6 +5,8 @@ before_script:
   - npm install -g gulp bower
   - npm install
   - bower install
+env:
+  - NO_NYAN=true
 script: gulp
 notifications:
   slack: ece493capstone:hkULBLq0cnAz0XmKiROm06r7
