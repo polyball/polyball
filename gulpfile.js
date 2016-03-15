@@ -78,18 +78,15 @@ function tests(){
         .pipe(mocha({reporter: testReporter}));
 }
 
-function lint(){
-    return gulp.src('./polyball/**/*.js')
-        .pipe(jshint())
-        .pipe(jshint.reporter(lintReporter, lintConfig))
-        .pipe(jshint.reporter('fail'));
-}
-
 function lint_nokill() {
     return gulp.src('./polyball/**/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter(lintReporter, lintConfig));
 
+}
+
+function lint(){
+    return lint_nokill().pipe(jshint.reporter('fail'));
 }
 
 function watchifyBundle() {
