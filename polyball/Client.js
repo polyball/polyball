@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var io = require('socket.io-client');
 var Logger = require('polyball/shared/Logger');
 var Physics = require('physicsjs');
 //var Model = require('polyball/shared/Model');
