@@ -53,7 +53,7 @@ var Arena = function(config) {
                 angle: theta * j,
                 width: this.points[j].x - this.points[j + 1].x,
                 height: 20,
-                mass: 20
+                treatment: 'static'
             }));
         }
     }

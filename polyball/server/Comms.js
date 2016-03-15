@@ -48,6 +48,14 @@ var Comms = function (config) {
         io.sockets.emit('snapshot', snapshot);
     };
 
+    /**
+     * @param {String} eventName
+     * @param {function} callback
+     */
+    //TODO stop ignoring this line!
+    this.on = function (eventName, callback){ //jshint ignore:line
+        // TODO implement pub sub
+    };
 
 };
 
