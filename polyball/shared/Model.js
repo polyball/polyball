@@ -49,6 +49,12 @@ var Model = function () {
      * @type {Ball[]}
      */
     var balls = [];
+
+    /**
+     * @type {Number[]}
+     */
+    var playerQueue = [];
+
     //var powerups = [];
     //var election = undefined;
 
@@ -160,6 +166,13 @@ var Model = function () {
      */
     this.getArena = function () {
         return arena;
+    };
+
+    /**
+     * @returns {World}
+     */
+    this.getWorld = function () {
+        return world;
     };
 
     //
@@ -323,6 +336,57 @@ var Model = function () {
      */
     this.deleteSpectator = function (id) {
         removeByID(spectators, id);
+    };
+
+    /**
+     * Add a spectator to the end of the player queue
+     *
+     * @param {Number} id
+     */
+    this.addToPlayerQueue = function (id) {
+        if (!findByID(spectators, id)) {
+            Logger.Error('Tried to add id to Player Queue that does not exist in spectators');
+        }
+
+        if (!_.includes(playerQueue, id)){
+            playerQueue.push(id);
+        }
+    };
+
+    /**
+     * Remove a spectator from the player queue
+     * @param {Number} id
+     */
+    this.removeFromPlayerQueue = function (id) {
+        _.remove(playerQueue, function(x) {return x === id;});
+    };
+
+
+    /**
+     * Returns how many players there are in the queue
+     * @return {Number}
+     */
+    this.numberOfQueuedPlayers = function () {
+        return playerQueue.length;
+    };
+
+    /**
+     * Returns how many players there are in the queue
+     * @return {Spectator[]}
+     */
+    this.getAllQueuedPlayers = function () {
+        var out = [];
+        playerQueue.forEach(function(x){out.push(findByID(spectators, x));});
+        return out;
+    };
+
+    /**
+     * Returns the first spectator in the player queue
+     * @return {Spectator}
+     */
+    this.popPlayerQueue = function () {
+        var id = playerQueue.shift();
+        return findByID(spectators, id);
     };
 
     //

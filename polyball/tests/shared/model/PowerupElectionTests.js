@@ -12,7 +12,7 @@ describe('Powerup Election', function() {
             pe.addVote(new Vote({spectatorID: 1, powerup:1}));
             pe.votes.length.should.equal(1);
         });
-        it('should increase the size of the votes array by 1', function() {
+        it('should increase the size of the votes array by 1 for each added vote', function() {
             var pe = new PowerupElection({powerups: [1,2,3]});
             var n = 10;
             for (var i = 0; i < n; i++){
@@ -27,7 +27,8 @@ describe('Powerup Election', function() {
             pe.votes.length.should.equal(1);
             (pe.votes[0]).powerup.should.equal(2);
         });
-        it('should increase the size of the votes array by 1', function() {
+        it('should replace the current vote with new vote for each additional ' +
+            'vote from same spectator', function() {
             var pe = new PowerupElection({powerups: [1,2,3]});
             var n = 10;
 
@@ -50,7 +51,7 @@ describe('Powerup Election', function() {
             pe.removeVote(1);
             pe.votes.length.should.equal(0);
         });
-        it('should increase the size of the votes array by 1', function() {
+        it('should decrease the size of the votes array by 1 for each additional call', function() {
             var pe = new PowerupElection({powerups: [1,2,3]});
             var n = 10;
             for (var i = 0; i < n; i++){
