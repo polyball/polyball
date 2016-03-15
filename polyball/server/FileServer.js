@@ -18,7 +18,7 @@ var Logger = require('polyball/shared/Logger');
  */
 function FileServer(spec) {
     var app = express();
-    app.use(log4js.connectLogger(Logger));
+    app.use(log4js.connectLogger(log4js.getDefaultLogger()));
 
     app.use(express.static(spec.staticDir, {index: spec.indexFile}));
 
