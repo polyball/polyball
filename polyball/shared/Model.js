@@ -509,6 +509,5 @@ var Model = function () {
  * @return {Boolean}
  */
 
-
 module.exports = Model;
 

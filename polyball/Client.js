@@ -22,7 +22,7 @@ $(document).ready(function() {
     Logger.info('Width: ' + width + ' Height: ' + height);
 
     model.addOrResetArena({
-        numberPlayers: 3,
+        numberPlayers: 5,
         arenaRadius: height / 2
 
     });
