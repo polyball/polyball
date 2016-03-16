@@ -25,8 +25,6 @@ var buffer = require('vinyl-buffer');
 var assign = require('lodash.assign');
 
 
-var insideTravis = fs.existsSync('/home/travis');
-
 // CONFIGURATION
 var browserifyConfig = {
     entries: ['./polyball/Client.js'],
@@ -34,7 +32,9 @@ var browserifyConfig = {
 };
 
 var testFile = './polyball/tests/**/*.js';
-var testReporter = process.env.NO_NYAN === 'true' ? 'spec' : 'nyan';
+var testConfig = {
+    reporter: process.env.NO_NYAN === 'true' ? 'spec' : 'nyan'
+};
 
 var lintReporter = 'jshint-stylish';
 var lintConfig = {
@@ -50,13 +50,18 @@ gulp.task('default', ['lint', 'build-js', 'run-tests']);
 
 gulp.task('watch-js', watchifyBundle);
 
-function bundle(bundler) {
-    return bundler.bundle()
+function bundle(bundler, killOnError) {
+    bundler = bundler.bundle()
         // log errors if they happen
-        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-        .on('error', function(){
-            process.exit(1);})
-        .pipe(source('client-bundle.js'))
+        .on('error', gutil.log.bind(gutil, 'Browserify Error'));
+
+    if (killOnError) {
+        bundler = bundler.on('error', function () {
+            process.exit(1);
+        });
+    }
+
+    return bundler.pipe(source('client-bundle.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))
         // Add transformation tasks to the pipeline here.
@@ -66,26 +71,34 @@ function bundle(bundler) {
 
 function browserifyBundle() {
     var bify = browserify(browserifyConfig);
-    return bundle(bify);
+
+    return bundle(bify, true);
 }
 
 function tests(){
     return gulp.src(testFile, {read: false})
-        .pipe(mocha({reporter: testReporter}));
+        .pipe(mocha(testConfig));
+}
+
+function lint_nokill() {
+    return gulp.src('./polyball/**/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter(lintReporter, lintConfig));
+
 }
 
 function lint(){
-    return gulp.src('./polyball/**/*.js')
-        .pipe(jshint())
-        .pipe(jshint.reporter(lintReporter, lintConfig))
-        .pipe(jshint.reporter('fail'));
+    return lint_nokill().pipe(jshint.reporter('fail'));
 }
 
 function watchifyBundle() {
     var opts = assign({}, watchify.args, browserifyConfig);
     var wify = watchify(browserify(opts));
-    wify.on('update', bundle); // on any dep update, run the bundler
-    wify.on('update', lint);   // on any dep update, run the linter
+    wify.on('update', function () {
+        return bundle(wify, false);
+    }); // on any dep update, run the bundler
+    wify.on('update', lint_nokill);   // on any dep update, run the linter
     wify.on('log', gutil.log); // output build logs to terminal
-    return bundle(wify);
+
+    return bundle(wify, false);
 }

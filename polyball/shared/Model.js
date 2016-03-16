@@ -55,6 +55,11 @@ var Model = function () {
      */
     var playerQueue = [];
 
+    /**
+     * @type PowerupElection
+     */
+    var powerupElection;
+
     //var powerups = [];
     //var election = undefined;
 
@@ -390,6 +395,27 @@ var Model = function () {
     };
 
     //
+    //             Powerup Election
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns the internal instance of Powerup Election
+     * @Returns {PowerupElection}
+     */
+    this.getPowerupElection = function (){
+        return powerupElection;
+    };
+
+    /**
+     * Sets the internal instance of Powerup Election
+     * @param {PowerupElection} election
+     */
+    this.setPowerupElection = function(election){
+        powerupElection = election;
+    };
+
+    //
     //             PLAYERS
     //
     ///////////////////////////////////////////////////////////////////////////
@@ -482,7 +508,6 @@ var Model = function () {
  * @param {Object} Instance of the type being queried.
  * @return {Boolean}
  */
-
 
 module.exports = Model;
 
