@@ -3,6 +3,7 @@
  */
 
 var ServerToServer = {
+    clientDisconnected: 'clientDisconnected',
     newVote: 'newVote',
     newPlayerQueued: 'newPlayerQueued'
 };

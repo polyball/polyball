@@ -41,7 +41,7 @@ var Comms = function (config) {
      * @returns {Object<string, function>}  Map from event strings to arrays of callbacks.
      */
     var buildEventSubscribers = function () {
-        var eventStrings = lodash.map(CommsEvents.ServerToServer.keys, function (key) {
+        var eventStrings = lodash.map(Object.keys(CommsEvents.ServerToServer), function (key) {
             return CommsEvents.ServerToServer[key];
         });
 
@@ -59,16 +59,17 @@ var Comms = function (config) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
-    var io = new Server(config.httpServer, {serveClient: true});
-    /**
-     * @type {Model}
-     */
-    var model = config.model;
     /**
      * For server side event subscribers, like the Engine.
      * @type {Object.<string, Function>}
      */
     var eventSubscribers = buildEventSubscribers();
+
+    var io = new Server(config.httpServer, {serveClient: true});
+    /**
+     * @type {Model}
+     */
+    var model = config.model;
 
 
     //
@@ -92,16 +93,23 @@ var Comms = function (config) {
 
         clientSocket.on('disconnect', function () {
             Logger.info('Client disconnected');
+
+            var clientID = getPlayerOrSpectatorID(clientSocket);
+            model.deleteSpectator(clientID);
+            model.deletePlayer(clientID);
+
+            fireEvent(CommsEvents.ServerToServer.clientDisconnected, {clientID: clientID});
         });
+
+        // TODO how do I document these callback parameters??
 
         clientSocket.on(CommsEvents.ClientToServer.queueToPlay, function () {
-            var spectatorID = getPlayerOrSpectator(clientSocket).client.id;
-            fireNewPlayerQueued({spectatorID: spectatorID});
+            var spectatorID = getPlayerOrSpectatorID(clientSocket);
+            fireEvent(CommsEvents.ServerToServer.newPlayerQueued, {spectatorID: spectatorID});
         });
 
-        clientSocket.on(CommsEvents.ClientToServer.vote, function () {
-            //broadcast to listeners (like the engine).
-            //listeners.notify('vote', voteData);
+        clientSocket.on(CommsEvents.ClientToServer.vote, function (voteConfig) {
+            fireEvent(CommsEvents.ServerToServer.newVote, voteConfig);
         });
 
         clientSocket.emit('logLevel', Logger.getLevel());
@@ -121,21 +129,14 @@ var Comms = function (config) {
     var fireEvent = function (eventName, params) {
         if (eventSubscribers[eventName] == null) {
             Logger.warn('Comms#fire called with unrecognized event: ' + eventName);
+            Logger.warn('Regonized Events: ' + Object.keys(eventSubscribers));
+
+            return;
         }
 
         eventSubscribers[eventName].forEach(function (callback) {
             callback(params);
         });
-    };
-
-    /**
-     * Notify subscribers that a spectator has queued to be a player.
-     *
-     * @param params
-     * @param {Number} params.spectatorID
-     */
-    var fireNewPlayerQueued = function (params) {
-        fireEvent(CommsEvents.ServerToServer.newPlayerQueued, params);
     };
 
 
@@ -146,16 +147,16 @@ var Comms = function (config) {
 
     /**
      * @param socket
-     * @returns {Player|Spectator}
+     * @returns {Number} The id of the player or spectator.  null if it doesn't exist.
      */
-    var getPlayerOrSpectator = function (socket) {
+    var getPlayerOrSpectatorID = function (socket) {
         var candidates = model.getPlayers(function (player) {
-            return player.client.socket === socket;
+            return player.client.socket.id === socket.id;
         });
 
         if (candidates.length === 0) {
             candidates = model.getSpectators(function (spectator) {
-                return spectator.client.socket === socket;
+                return spectator.client.socket.id === socket.id;
             });
         }
 
@@ -167,7 +168,7 @@ var Comms = function (config) {
             return null;
         }
 
-        return candidates[0];
+        return candidates[0].id;
     };
 
 
@@ -201,6 +202,9 @@ var Comms = function (config) {
     this.on = function (eventName, callback) {
         if (eventSubscribers[eventName] == null) {
             Logger.warn('Comms#on called with unrecognized event: ' + eventName);
+            Logger.warn('Regonized Events: ' + Object.keys(eventSubscribers));
+
+            return;
         }
 
         eventSubscribers[eventName].push(callback);
