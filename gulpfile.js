@@ -32,7 +32,9 @@ var browserifyConfig = {
 };
 
 var testFile = './polyball/tests/**/*.js';
-var testReporter = process.env.NO_NYAN === 'true' ? 'spec' : 'nyan';
+var testConfig = {
+    reporter: process.env.NO_NYAN === 'true' ? 'spec' : 'nyan'
+};
 
 var lintReporter = 'jshint-stylish';
 var lintConfig = {
@@ -75,7 +77,7 @@ function browserifyBundle() {
 
 function tests(){
     return gulp.src(testFile, {read: false})
-        .pipe(mocha({reporter: testReporter}));
+        .pipe(mocha(testConfig));
 }
 
 function lint_nokill() {
