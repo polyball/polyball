@@ -14,6 +14,12 @@
 function Vote(config) {
     this.powerup = config.powerup;
     this.spectatorID = config.spectatorID;
+
+    this.toConfig = function () {
+        return {
+            spectatorID: this.spectatorID, powerup: this.powerup
+        };
+    };
 }
 
 module.exports = Vote;
