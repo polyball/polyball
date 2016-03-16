@@ -59,7 +59,7 @@ describe('Server Comms', function() {
     });
 
     describe('new client connection)', function () {
-        it('should add a spectator to the model', function (done) {
+        it('should add a spectator to the model', function () {
 
             client1 = ioClient.connect(IO_URL, IO_OPTS);
 
@@ -78,12 +78,9 @@ describe('Server Comms', function() {
                 }, 3000);
             });
 
-            connectionComplete.then(function () {
+            return connectionComplete.should.be.fulfilled()
+                .then(function () {
                 model.spectatorCount().should.equal(1);
-                done();
-            }, function (err) {
-                assert.fail(err);
-                done();
             });
         });
     });
@@ -109,8 +106,6 @@ describe('Server Comms', function() {
                     }
                 }, 3000);
             });
-
-            // model.spectatorCount().should.equal(0);
 
             return disconnectionComplete.should.be.fulfilled()
                 .then(function () {
