@@ -81,7 +81,8 @@ var Comms = function (config) {
     io.on('connection', function (clientSocket) {
         Logger.info('New client connected.');
 
-        // create a spectator with the socket in the model
+        // CREATE SPECTATOR
+
         var client = new Client({
             name: Util.randomUsername(),
             socket: clientSocket
@@ -90,6 +91,9 @@ var Comms = function (config) {
         // NOTE: Do NOT store spectator - model or engine could convert it to a player or remove
         //       the spectator from under the Comms feet.  Query for IDs when necessary.
         model.addSpectator(client);
+
+
+        // EVENT SUBSCRIPTIONS
 
         clientSocket.on('disconnect', function () {
             Logger.info('Client disconnected');
