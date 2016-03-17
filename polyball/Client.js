@@ -17,14 +17,20 @@ $(document).ready(function() {
 
     var width = window.innerWidth,
         height = window.innerHeight;
-    var viewportBounds = Physics.aabb(0, 0, width, height);
 
     Logger.info('Width: ' + width + ' Height: ' + height);
 
+    var bumperRadius = 35;
+    var arenaRadius = height / 2 - 4 * bumperRadius;
+    var marginX = width / 2 - arenaRadius;
+    var marginY = 2 * bumperRadius;
+
     model.addOrResetArena({
         numberPlayers: 10,
-        arenaRadius: height / 2,
-        bumperRadius: 35
+        arenaRadius: arenaRadius,
+        bumperRadius: bumperRadius,
+        marginX: marginX,
+        marginY: marginY
     });
 
     model.addBall();
@@ -32,12 +38,7 @@ $(document).ready(function() {
     world.add([
         Physics.behavior('body-impulse-response'),
         Physics.behavior('body-collision-detection'),
-        Physics.behavior('sweep-prune'),
-        Physics.behavior('edge-collision-detection', {
-            aabb: viewportBounds,
-            restitution: 0,
-            cof: 0.8
-        })
+        Physics.behavior('sweep-prune')
     ]);
 
     Physics.util.ticker.on(function( time ) {

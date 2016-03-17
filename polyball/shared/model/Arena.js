@@ -40,8 +40,13 @@ var Arena = function(config) {
         return new Physics.vector(x, y);
     };
 
-    var getOffset = function() {
-        return (3/4) * Math.PI - theta / 2;
+    /**
+     * Calculates the offset for the arena.
+     * The first goal drawn is the player at the very bottom of the screen.
+     * @returns {number}
+     */
+    var getOffset = function(numPlayers) {
+        return (3/2) * Math.PI - (2 * Math.PI / numPlayers) / 2;
     };
 
 
@@ -58,13 +63,14 @@ var Arena = function(config) {
 
     /**
      * This returns the location of the players score interface in arena physical coordinates.
-     * This will be used to draw the HUD. UNIMPLEMENTED
+     * This will be used to draw the HUD.
+     * TODO: Implement this
      * @param playerId: number
      * @returns {Physics.vector}
      */
     this.getScorePosition = function(playerId) {
         var theta = 2* Math.PI / this.numberPlayers;
-        var thetaOffset = getOffset();
+        var thetaOffset = getOffset(this.numberPlayers);
 
         var midX = this.getCenter().x;
         var midY = this.getCenter().y;
@@ -77,7 +83,7 @@ var Arena = function(config) {
      * @returns {Physics.vector}
      */
     this.getCenter = function() {
-        return new Physics.vector(this.arenaRadius, this.arenaRadius);
+        return new Physics.vector(this.arenaRadius + this.marginX, this.arenaRadius + this.marginY);
     };
 
     /**
@@ -130,16 +136,18 @@ var Arena = function(config) {
     this.numberPlayers = config.numberPlayers;
     this.arenaRadius = config.arenaRadius;
     this.bumperRadius = config.bumperRadius;
+    this.marginX = config.marginX;
+    this.marginY = config.marginY;
 
     this.goals = [];
     this.bumpers = [];
     this.points = [];
 
-    var midX = this.arenaRadius;
-    var midY = this.arenaRadius;
+    var midX = this.getCenter().x;
+    var midY = this.getCenter().y;
 
     var theta = 2* Math.PI / this.numberPlayers;
-    var thetaOffset = (3/2) * Math.PI - theta / 2;
+    var thetaOffset = getOffset(this.numberPlayers);
 
     for (var i = 0; i < this.numberPlayers; i++) {
         this.points.push(getCoordinates(theta * i + thetaOffset, this.arenaRadius, midX, midY));

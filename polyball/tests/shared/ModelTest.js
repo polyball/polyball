@@ -16,13 +16,25 @@ describe('Model', function () {
             model = new Model();
             should.not.exist(model.getArena());
 
-            arena = model.addOrResetArena({numberPlayers: 4, arenaRadius: 1000, bumperRadius: 25});
+            arena = model.addOrResetArena({
+                numberPlayers: 4,
+                arenaRadius: 1000,
+                bumperRadius: 25,
+                marginX: 0,
+                marginY: 0
+            });
 
             model.getArena().should.equal(arena);
         });
 
         it('should reset the arena.', function () {
-            arena2 = model.addOrResetArena({numberPlayers: 9, arenaRadius: 400, bumperRadius: 25});
+            arena2 = model.addOrResetArena({
+                numberPlayers: 9,
+                arenaRadius: 400,
+                bumperRadius: 25,
+                marginX: 0,
+                marginY: 0
+            });
 
             model.getArena().should.not.equal(arena);
             model.getArena().should.equal(arena2);
@@ -37,7 +49,13 @@ describe('Model', function () {
                 model = new Model();
                 model.ballCount().should.equal(0);
 
-                arena = model.addOrResetArena({numberPlayers: 9, arenaRadius: 400, bumperRadius: 25});
+                arena = model.addOrResetArena({
+                    numberPlayers: 9,
+                    arenaRadius: 400,
+                    bumperRadius: 25,
+                    marginX: 0,
+                    marginY: 0
+                });
 
                 ball = model.addBall();
 
