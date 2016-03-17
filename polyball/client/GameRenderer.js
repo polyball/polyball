@@ -1,6 +1,8 @@
 /**
  * Created by Jared Rewerts on 3/15/2016.
  */
+"use strict";
+
 var Pixi = require('pixi.js');
 var Physics = require('physicsjs');
 
@@ -24,8 +26,15 @@ var GameRenderer = function(config) {
     var world = model.getWorld();
     world.add(this.renderer);
 
+    // ################  PUBLIC METHODS ########### //
+    // ############################################ //
+
     this.render = function() {
         world.render();
+    };
+
+    this.resize = function(width, height) {
+        this.renderer.resize(width, height);
     };
 };
 

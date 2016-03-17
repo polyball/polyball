@@ -20,6 +20,8 @@ $(document).ready(function() {
 
     Logger.info('Width: ' + width + ' Height: ' + height);
 
+    gameRenderer.resize(width - 25, height - 25);
+
     var bumperRadius = 35;
     var arenaRadius = height / 2 - 4 * bumperRadius;
     var marginX = width / 2 - arenaRadius;
