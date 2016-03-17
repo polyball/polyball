@@ -12,7 +12,9 @@ describe('Arena', function() {
             var arena = new Arena({
                 numberPlayers: 3,
                 arenaRadius: 500,
-                bumperRadius: 25
+                bumperRadius: 25,
+                marginX: 0,
+                marginY: 0
             });
 
             // There should be 3 bumpers
@@ -34,7 +36,9 @@ describe('Arena', function() {
             var arena = new Arena({
                 numberPlayers: 4,
                 arenaRadius: 500,
-                bumperRadius: 25
+                bumperRadius: 25,
+                marginX: 0,
+                marginY: 0
             });
 
             // There should be 3 bumpers
@@ -61,7 +65,9 @@ describe('Arena', function() {
             var arena = new Arena({
                 numberPlayers: 3,
                 arenaRadius: 500,
-                bumperRadius: 25
+                bumperRadius: 25,
+                marginX: 0,
+                marginY: 0
             });
 
             // There should be 3 bumpers
