@@ -88,6 +88,21 @@ var Model = function () {
     };
 
     /**
+     * Search an array for an element by its id or by an arbitrary callback.
+     * @template T
+     * @param {T[]} array The array to search
+     * @param {Number|Predicate} id The id or a callback identifying the desired element.
+     * @returns {T} The identified array element (or undefined).
+     */
+    var findSingle = function (array, id) {
+        if (typeof id === 'number') {
+            return findByID(array, id);
+        } else {
+            return _.find(array, id);
+        }
+    };
+
+    /**
      * Search an array and get all elements by a given predicate.
      * @template T
      * @param {T[]} array The array to search
@@ -209,11 +224,11 @@ var Model = function () {
     };
 
     /**
-     * @param {Number} id
+     * @param {Number|Predicate} id - Either the ID of the Ball, or a boolean returning callback that takes a Ball.
      * @return {Ball} Ball identified by id.
      */
     this.getBall = function (id) {
-        return findByID(balls, id);
+        return findSingle(balls, id);
     };
 
     /**
@@ -226,7 +241,7 @@ var Model = function () {
     };
 
     /**
-     * @param {Number} id
+     * @param {Number|Predicate} id - Either the ID of the Ball, or a boolean returning callback that takes a Ball.
      * @returns {boolean} True iff the model has the ball identified by id.
      */
     this.hasBall = function (id) {
@@ -293,11 +308,11 @@ var Model = function () {
     };
 
     /**
-     * @param {Number} id The id of the spectator.
+     * @param {Number|Predicate} id - Either the ID of the Spectator, or a boolean returning callback that takes a Spectator.
      * @return {Spectator} The spectator from the model (undefined if not found).
      */
     this.getSpectator = function (id) {
-        return findByID(spectators, id);
+        return findSingle(spectators, id);
     };
 
     /**
@@ -310,7 +325,7 @@ var Model = function () {
     };
 
     /**
-     * @param {Number} id
+     * @param {Number|Predicate} id - Either the ID of the Spectator, or a boolean returning callback that takes a Spectator.
      * @returns {boolean} True iff the model has the spectator identified by id.
      */
     this.hasSpectator = function (id) {
@@ -438,11 +453,11 @@ var Model = function () {
     };
 
     /**
-     * @param {Number} id The id of the player.
+     * @param {Number|Predicate} id - Either the ID of the Player, or a boolean returning callback that takes a Player.
      * @return {Player} The player from the model (undefined if not found).
      */
     this.getPlayer = function (id) {
-        return findByID(players, id);
+        return findSingle(players, id);
     };
 
     /**
@@ -455,7 +470,7 @@ var Model = function () {
     };
 
     /**
-     * @param {Number} id
+     * @param {Number|Predicate} id - Either the ID of the Player, or a boolean returning callback that takes a Player.
      * @returns {boolean} True iff the model has the player identified by id.
      */
     this.hasPlayer = function (id) {
