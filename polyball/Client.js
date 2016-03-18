@@ -1,9 +1,10 @@
 var $ = require('jquery');
-var io = require('socket.io-client');
 var Logger = require('polyball/shared/Logger');
 var Physics = require('physicsjs');
 var Model = require('polyball/shared/Model');
 var GameRenderer = require('polyball/client/GameRenderer');
+var Comms = require('polyball/client/Comms');
+var Synchronizer = require('polyball/client/Synchronizer');
 
 $(document).ready(function() {
 
@@ -43,20 +44,19 @@ $(document).ready(function() {
         Physics.behavior('sweep-prune')
     ]);
 
+    var comms = new Comms({
+        serverAddress: "http://localhost:8080"
+    });
+
+    var synchronizer = new Synchronizer({
+        comms: comms,
+        model: model
+    });
+
     Physics.util.ticker.on(function( time ) {
-        world.step( time );
         gameRenderer.render();
+        synchronizer.tick(time);
     });
 
-    var socket = io.connect('http://localhost:8080');
-
-    socket.on('logLevel', function (logLevel) {
-        var newLevel = Logger.setLevel(logLevel);
-        Logger.info('Log level set: ' + newLevel);
-    });
-
-    socket.on('snapshot', function (snapshot) {
-        Logger.debug(snapshot);
-    });
 
 }); // end on DOM ready
