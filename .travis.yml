@@ -11,11 +11,7 @@ script: gulp
 notifications:
   slack: ece493capstone:hkULBLq0cnAz0XmKiROm06r7
 before_deploy:
-  - git config --global user.email "travis_deploy@example.com"
-  - git config --global user.name "Travis Deploy"
   - rm public/bin/.gitignore
-  - git add public/bin/*
-  - git commit -m "add build artifacts for deployment."
 deploy:
   provider: azure_web_apps
   skip_cleanup: true
