@@ -197,7 +197,10 @@ var Model = function () {
             y: arena.getCenter().y,
             vx: 0.1,
             vy: 0.1,
-            radius: 10
+            radius: 10,
+            styles: {
+                fillStyle: '0xa42222'
+            }
         };
 
         var ball = new Ball(ballConfig);
