@@ -12,6 +12,9 @@ notifications:
   slack: ece493capstone:hkULBLq0cnAz0XmKiROm06r7
 before_deploy:
   - rm public/bin/.gitignore
+  - git add public/bin/*
+  - git commit -m "add build artifacts for deployment."
 deploy:
   provider: azure_web_apps
+  skip_cleanup: true
   verbose: true
