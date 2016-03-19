@@ -1,13 +1,13 @@
 /**
  * Created by kdbanman on 2/29/16.
  */
-var lodash = require('lodash');
 
 var Logger = require('polyball/shared/Logger');
 var Server = require('socket.io');
 var Util = require('polyball/shared/Util');
 var Client = require('polyball/shared/model/Client');
 var CommsEvents = require('polyball/shared/CommsEvents');
+var PubSub = require('polyball/shared/PubSub');
 
 
 /**
@@ -36,22 +36,7 @@ var Comms = function (config) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Create an new event subscriber object from CommsEvents.ServerToServer.
-     * @returns {Object<string, function>}  Map from event strings to arrays of callbacks.
-     */
-    var buildEventSubscribers = function () {
-        var eventStrings = lodash.map(Object.keys(CommsEvents.ServerToServer), function (key) {
-            return CommsEvents.ServerToServer[key];
-        });
 
-        var eventSubscribers = {};
-        eventStrings.forEach(function (eventString) {
-            eventSubscribers[eventString] = [];
-        });
-
-        return eventSubscribers;
-    };
 
 
     //
@@ -61,9 +46,11 @@ var Comms = function (config) {
 
     /**
      * For server side event subscribers, like the Engine.
-     * @type {Object.<string, Function>}
+     * @type {PubSub}
      */
-    var eventSubscribers = buildEventSubscribers();
+    var pubsub = new PubSub({
+        events: CommsEvents.ServerToServer
+    });
 
     var io = new Server(config.httpServer, {serveClient: true});
     /**
@@ -78,10 +65,11 @@ var Comms = function (config) {
     ///////////////////////////////////////////////////////////////////////////
 
 
-    io.on('connection', function (clientSocket) {
+    io.on(CommsEvents.ClientToServer.connection, function (clientSocket) {
         Logger.info('New client connected.');
 
-        // create a spectator with the socket in the model
+        // CREATE SPECTATOR
+
         var client = new Client({
             name: Util.randomUsername(),
             socket: clientSocket
@@ -91,53 +79,32 @@ var Comms = function (config) {
         //       the spectator from under the Comms feet.  Query for IDs when necessary.
         model.addSpectator(client);
 
-        clientSocket.on('disconnect', function () {
+
+        // EVENT SUBSCRIPTIONS
+
+        clientSocket.on(CommsEvents.ClientToServer.disconnect, function () {
             Logger.info('Client disconnected');
 
             var clientID = getPlayerOrSpectatorID(clientSocket);
             model.deleteSpectator(clientID);
             model.deletePlayer(clientID);
 
-            fireEvent(CommsEvents.ServerToServer.clientDisconnected, {clientID: clientID});
+            pubsub.fireEvent(CommsEvents.ServerToServer.clientDisconnected, {clientID: clientID});
         });
 
         // TODO how do I document these callback parameters??
 
         clientSocket.on(CommsEvents.ClientToServer.queueToPlay, function () {
             var spectatorID = getPlayerOrSpectatorID(clientSocket);
-            fireEvent(CommsEvents.ServerToServer.newPlayerQueued, {spectatorID: spectatorID});
+            pubsub.fireEvent(CommsEvents.ServerToServer.newPlayerQueued, {spectatorID: spectatorID});
         });
 
         clientSocket.on(CommsEvents.ClientToServer.vote, function (voteConfig) {
-            fireEvent(CommsEvents.ServerToServer.newVote, voteConfig);
+            pubsub.fireEvent(CommsEvents.ServerToServer.newVote, voteConfig);
         });
 
-        clientSocket.emit('logLevel', Logger.getLevel());
+        clientSocket.emit(CommsEvents.ServerToClient.setLogLevel, Logger.getLevel());
     });
-
-
-    //
-    //             SERVER TO SERVER EVENTS
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Fire an event by name with a parameters object.
-     * @param {String} eventName
-     * @param {Object} params
-     */
-    var fireEvent = function (eventName, params) {
-        if (eventSubscribers[eventName] == null) {
-            Logger.warn('Comms#fire called with unrecognized event: ' + eventName);
-            Logger.warn('Regonized Events: ' + Object.keys(eventSubscribers));
-
-            return;
-        }
-
-        eventSubscribers[eventName].forEach(function (callback) {
-            callback(params);
-        });
-    };
 
 
     //
@@ -185,7 +152,7 @@ var Comms = function (config) {
 
     this.broadcastSnapshot = function (snapshot) {
         Logger.debug("Comms broadcasting snapshot.");
-        io.sockets.emit('snapshot', snapshot);
+        io.sockets.emit(CommsEvents.ServerToClient.newSnapshot, snapshot);
     };
 
 
@@ -200,14 +167,7 @@ var Comms = function (config) {
      * @param {Function} callback
      */
     this.on = function (eventName, callback) {
-        if (eventSubscribers[eventName] == null) {
-            Logger.warn('Comms#on called with unrecognized event: ' + eventName);
-            Logger.warn('Regonized Events: ' + Object.keys(eventSubscribers));
-
-            return;
-        }
-
-        eventSubscribers[eventName].push(callback);
+        pubsub.on(eventName, callback);
     };
 
 };

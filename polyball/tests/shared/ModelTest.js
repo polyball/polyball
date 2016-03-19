@@ -86,6 +86,22 @@ describe('Model', function () {
             });
         });
 
+        describe('#getBall', function () {
+            it('should get a ball by its id', function () {
+                var tmpBall = model.getBall(ball.id);
+
+                tmpBall.should.equal(ball);
+            });
+
+            it('should get a ball by any predicate', function () {
+                var tmpBall = model.getBall(function (ball) {
+                    return ball.body.x === ball2.body.x;
+                });
+
+                tmpBall.should.equal(ball2);
+            });
+        });
+
         describe('#getBalls', function () {
             it('should get all balls when passed nothing or null', function () {
                 model.getBalls().length.should.equal(2);
@@ -155,6 +171,22 @@ describe('Model', function () {
                 spectator2.client.name.should.equal('some_guy');
                 spectator2.queued.should.be.false; // jshint ignore:line
 
+            });
+        });
+
+        describe('#getSpectator', function () {
+            it('should get a spectator by its id', function () {
+                var tmpSpectator = model.getSpectator(spectator.id);
+
+                tmpSpectator.should.equal(spectator);
+            });
+
+            it('should get a spectator by any predicate', function () {
+                var tmpSpectator = model.getSpectator(function (spectator) {
+                    return spectator.client.name === spectator2.client.name;
+                });
+
+                tmpSpectator.should.equal(spectator2);
             });
         });
 
@@ -229,6 +261,22 @@ describe('Model', function () {
                 player2.client.name.should.equal('some_guy');
                 player2.score.should.equal(0); // jshint ignore:line
 
+            });
+        });
+
+        describe('#getPlayer', function () {
+            it('should get a player by its id', function () {
+                var tmpPlayer = model.getPlayer(player.id);
+
+                tmpPlayer.should.equal(player);
+            });
+
+            it('should get a player by any predicate', function () {
+                var tmpPlayer = model.getPlayer(function (player) {
+                    return player.client.name === player2.client.name;
+                });
+
+                tmpPlayer.should.equal(player2);
             });
         });
 

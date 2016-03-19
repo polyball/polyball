@@ -13,10 +13,13 @@ var ClientToClient = {
 };
 
 var ServerToClient = {
+    setLogLevel: "setLogLevel",
     newSnapshot: 'newSnapshot'
 };
 
 var ClientToServer = {
+    connection: 'connection',  // socket.io builtin - do not change!
+    disconnect: 'disconnect',  // socket.io builtin - do not change!
     queueToPlay: 'queueToPlay',
     vote: 'vote'
 };

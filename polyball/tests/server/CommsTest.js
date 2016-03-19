@@ -90,8 +90,6 @@ describe('Server Comms', function() {
             this.timeout(5000);
 
             model.spectatorCount().should.equal(1);
-
-            client1.disconnect();
             var disconnectionComplete = new Promise( function (fulfill, reject) {
 
                 var disconnected = false;
@@ -106,6 +104,8 @@ describe('Server Comms', function() {
                     }
                 }, 3000);
             });
+
+            client1.disconnect();
 
             return disconnectionComplete.should.be.fulfilled()
                 .then(function () {
