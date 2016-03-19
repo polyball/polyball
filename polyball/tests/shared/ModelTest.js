@@ -60,14 +60,14 @@ describe('Model', function () {
                     marginY: 0
                 });
 
-                ball = model.addBall();
+                ball = model.addBall({radius: 10});
 
                 model.ballCount().should.equal(1);
                 model.hasBall(ball.id).should.be.true; // jshint ignore:line
             });
 
             it('should add a second, distinct queryable ball to the model.', function () {
-                ball2 = model.addBall();
+                ball2 = model.addBall({radius: 10});
 
                 model.ballCount().should.equal(2);
 
@@ -136,6 +136,20 @@ describe('Model', function () {
                 model.ballCount().should.equal(0);
                 model.hasBall(ball.id).should.be.false; // jshint ignore:line
                 model.hasBall(ball2.id).should.be.false; // jshint ignore:line
+            });
+        });
+
+        describe("#clearBalls", function () {
+            it('should delete all model balls.', function () {
+                model.addBall({radius: 10});
+                model.addBall({radius: 10});
+                model.addBall({radius: 10});
+
+                model.ballCount().should.equal(3);
+
+                model.clearBalls();
+
+                model.ballCount().should.equal(0);
             });
         });
     });
@@ -490,8 +504,8 @@ describe('Model', function () {
                     marginY: 0
                 });
 
-                var ball = model.addBall();
-                var ball2 = model.addBall();
+                var ball = model.addBall({radius: 10});
+                var ball2 = model.addBall({radius: 10});
 
                 var modelConfig = model.getSnapshot();
 

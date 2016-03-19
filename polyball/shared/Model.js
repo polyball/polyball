@@ -44,6 +44,12 @@ var Model = function (snapshot) {
     ///////////////////////////////////////////////////////////////////////////
 
     var world = Physics();
+    world.add([
+        Physics.behavior('body-impulse-response'),
+        Physics.behavior('body-collision-detection'),
+        Physics.behavior('sweep-prune')
+    ]);
+
     var arena;
 
     /**
@@ -214,16 +220,18 @@ var Model = function (snapshot) {
     /**
      * Add a ball at the centre of the arena with a random velocity.
      *
+     * @param {Object} config
+     * @property {Number} radius
      * @return {Ball} The new Ball.
      */
-    this.addBall  = function () {
+    this.addBall  = function (config) {
         var ballConfig = {
             id: nextID(),
             x: arena.getCenter().x,
             y: arena.getCenter().y,
-            vx: 0.1,
-            vy: 0.1,
-            radius: 10,
+            vx: Util.getRandomArbitrary(0.05, 1.0),
+            vy: Util.getRandomArbitrary(0.05, 1.0),
+            radius: config.radius,
             styles: {
                 fillStyle: '0xa42222'
             }
@@ -297,6 +305,18 @@ var Model = function (snapshot) {
         if (ball != null) {
             world.removeBody(ball.body);
         }
+    };
+
+    /**
+     * Delete all balls from the model.
+     */
+    this.clearBalls = function () {
+        var ballIDs = _.map(balls, function (ball) { return ball.id; });
+
+        var me = this;
+        ballIDs.forEach(function (id) {
+            me.deleteBall(id);
+        });
     };
 
     //
