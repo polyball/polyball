@@ -273,4 +273,21 @@ Util.arrayToConfig = function (array){
     return configs;
 };
 
+/**
+ * Returns a random number between min (inclusive) and max (exclusive)
+ * From http://stackoverflow.com/a/1527820/3367144, Ionuț G. Stan
+ */
+Util.getRandomArbitrary = function (min, max) {
+    return Math.random() * (max - min) + min;
+};
+
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ * Using Math.round() will give you a non-uniform distribution!
+ * From http://stackoverflow.com/a/1527820/3367144, Ionuț G. Stan
+ */
+Util.getRandomInt = function (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
 module.exports = Util;
