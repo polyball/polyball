@@ -6,12 +6,13 @@
 
 /**
  * Holds vote information for a Powerup Election.
- *
- * @param {{spectatorID: number,
- *          powerup: Powerup}} config
+ * @param {Object} config
+ * @param {number} config.spectatorID
+ * @param {Object} config.powerup
  * @constructor
  */
 function Vote(config) {
+    //TODO expand from powerup config (and update tests)
     this.powerup = config.powerup;
     this.spectatorID = config.spectatorID;
 

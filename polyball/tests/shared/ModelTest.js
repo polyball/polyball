@@ -6,6 +6,7 @@ var Util = require('polyball/shared/Util');
 var Model = require('polyball/shared/Model');
 var Client = require('polyball/shared/model/Client');
 var _ = require('lodash');
+var Logger = require('polyball/shared/Logger');
 
 describe('Model', function () {
    'use strict';
@@ -230,19 +231,23 @@ describe('Model', function () {
     describe("player CRUD", function () {
         var model, player, player2;
 
+        before(function (){
+            Logger.setLevel('ERROR');
+        });
+
         describe("#addPlayer", function () {
             it('should add a queryable player to the model.', function () {
                 model = new Model();
                 model.playerCount().should.equal(0);
 
-                player = model.addPlayer(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                player = model.addPlayer({name: Util.randomUsername(), socket: 'dummy'});
 
                 model.playerCount().should.equal(1);
                 model.hasPlayer(player.id).should.be.true; // jshint ignore:line
             });
 
             it('should add a second, distinct queryable player to the model.', function () {
-                player2 = model.addPlayer(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                player2 = model.addPlayer({name: Util.randomUsername(), socket: 'dummy'});
 
                 model.playerCount().should.equal(2);
 
@@ -315,6 +320,11 @@ describe('Model', function () {
                 model.hasPlayer(player2.id).should.be.false; // jshint ignore:line
             });
         });
+
+        after(function(){
+            Logger.setLevel('INFO');
+        });
+
     });
 
     describe("Player Queue CRUD", function () {

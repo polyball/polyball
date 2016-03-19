@@ -6,16 +6,14 @@
 var Physics = require("physicsjs");
 
 /**
- *
- * @param {{
- *  id: number,
- *  body: {
- *    x: number,
- *    y: number,
- *    vx: number,
- *    vy: number,
- *    radius: number,
- *    styles: Object}}} config
+ * @param {object} config
+ * @param {number} config.x
+ * @param {number} config.y
+ * @param {number} config.vx
+ * @param {number} config.vy
+ * @param {number} config.id
+ * @param {number} config.radius
+ * @param {Object} config.styles
  * @constructor
  */
 var Ball = function(config) {

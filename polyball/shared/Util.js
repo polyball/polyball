@@ -247,4 +247,18 @@ Util.deleteJSONConfigFile = function (path){
     fs.unlink(path);
 };
 
+/**
+ * A helper function to expand an array of configs into their fully instantiated form
+ * @param {Object[]} array
+ * @param {Object[]} config
+ * @Param {function} constructor
+ */
+Util.expandArray = function (array, config, constructor){
+    if (config != null){
+        config.forEach(function(x) {
+            array.push(new constructor(x));
+        });
+    }
+};
+
 module.exports = Util;

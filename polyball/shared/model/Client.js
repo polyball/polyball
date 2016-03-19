@@ -11,8 +11,9 @@
 /**
  * A model object for holding client information.
  *
- * @param {{name: String,
- *          socket: Socket}} config
+ * @param {Object} config
+ * @param {String} config.name
+ * @param {Socket} config.socket
  * @constructor
  */
 var Client = function(config) {

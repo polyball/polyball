@@ -7,8 +7,12 @@ var Physics = require("physicsjs");
 
 
 /**
- * @param {{numberPlayers: number,
- * arenaRadius: number}} config
+ * @param {Object} config
+ * @param {number} config.numberPlayers
+ * @param {number} config.arenaRadius
+ * @param {number} config.bumperRadius
+ * @param {number} config.marginX
+ * @param {number} config.marginY
  * @constructor
  */
 var Arena = function(config) {
