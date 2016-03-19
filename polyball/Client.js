@@ -36,7 +36,9 @@ $(document).ready(function() {
         marginY: marginY
     });
 
-    model.addBall();
+    setInterval(function () {
+        model.addBall();
+    }, 200);
 
     world.add([
         Physics.behavior('body-impulse-response'),
