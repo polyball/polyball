@@ -7,8 +7,12 @@ var Physics = require("physicsjs");
 
 
 /**
- * @param {{numberPlayers: number,
- * arenaRadius: number}} config
+ * @param {Object} config
+ * @param {number} config.numberPlayers
+ * @param {number} config.arenaRadius
+ * @param {number} config.bumperRadius
+ * @param {number} config.marginX
+ * @param {number} config.marginY
  * @constructor
  */
 var Arena = function(config) {
@@ -128,9 +132,21 @@ var Arena = function(config) {
         return Array.apply(undefined, this.goals);
     };
 
+    /**
+     * Converts this arena object into it's config (serializable) form
+     * @return {Object}
+     */
+    this.toConfig = function () {
+        return {
+            numberPlayers: this.numberPlayers,
+            arenaRadius: this.arenaRadius,
+            bumperRadius: this.bumperRadius,
+            marginX: this.marginX,
+            marginY: this.marginY
+        };
+    };
 
-
-    // STATE
+    // Constructor
 
 
     this.numberPlayers = config.numberPlayers;
@@ -142,6 +158,14 @@ var Arena = function(config) {
     this.goals = [];
     this.bumpers = [];
     this.points = [];
+
+    var colors = {
+        black: '0x171717',
+        blue: '0x1d6b98',
+        blueDark: '0x14546f',
+        red: '0xdc322f',
+        redDark: '0xa42222'
+    };
 
     var midX = this.getCenter().x;
     var midY = this.getCenter().y;
@@ -170,7 +194,10 @@ var Arena = function(config) {
             angle: -theta * curr,
             width: goalWidth,
             height: 30,
-            treatment: 'static'
+            treatment: 'static',
+            styles: {
+                fillStyle: colors.red
+            }
         }));
 
         this.bumpers.push(
@@ -178,7 +205,10 @@ var Arena = function(config) {
                 x: this.points[j].x,
                 y: this.points[j].y,
                 radius: this.bumperRadius,
-                treatment: 'static'
+                treatment: 'static',
+                styles: {
+                    fillStyle: colors.blue
+                }
             })
         );
     }

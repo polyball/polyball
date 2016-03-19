@@ -7,6 +7,8 @@ var Arena = require('polyball/shared/model/Arena');
 var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
 var Player = require('polyball/shared/model/Player');
+var PowerupElection = require('polyball/shared/model/PowerupElection');
+var Util = require('polyball/shared/Util');
 //var Paddle = require('polyball/shared/model/Paddle');
 
 
@@ -14,8 +16,16 @@ var Player = require('polyball/shared/model/Player');
  * Holds all data for client and server game instances.  Exposes CRUD operations for data.
  *
  * @constructor
+ * @param {Object}      snapshot - The server authoritative game state snapshot.
+ * @property {Object}   snapshot.arena           - An Arena config.  See Arena constructor.
+ * @property {Object[]} snapshot.players         - An Array of Player configs.  See Player constructor.
+ * @property {Object[]} snapshot.spectators      - An Array of Spectator configs.  See Spectator constructor.
+ * @property {Object[]} snapshot.balls           - An Array of Ball configs.  See Ball constructor.
+ * @property {Object[]} snapshot.powerups        - An Array of Powerup configs.  See Powerup constructor.
+ * @property {Number[]} snapshot.playerQueue     - An Array of Spectator IDs.
+ * @property {Object}   snapshot.powerupElection - A PowerupElection config.  See PowerupElection constructor.
  */
-var Model = function () {
+var Model = function (snapshot) {
 
     //
     //    ########  ########  #### ##     ##    ###    ######## ########
@@ -149,6 +159,7 @@ var Model = function () {
         return removed[0];
     };
 
+
     //
     //    ########  ##     ## ########  ##       ####  ######
     //    ##     ## ##     ## ##     ## ##        ##  ##    ##
@@ -212,7 +223,10 @@ var Model = function () {
             y: arena.getCenter().y,
             vx: 0.1,
             vy: 0.1,
-            radius: 10
+            radius: 10,
+            styles: {
+                fillStyle: '0xa42222'
+            }
         };
 
         var ball = new Ball(ballConfig);
@@ -437,7 +451,7 @@ var Model = function () {
 
     /**
      * Adds a player to the model.
-     * @param {Client} client The client information for the Player.
+     * @param {Object} client The client config for the Player.
      * @return {Player} The new Player.
      */
     this.addPlayer = function (client) {
@@ -509,11 +523,61 @@ var Model = function () {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * @return
+     * Converts this Model object into it's config (serializable) form
+     * @return {Object}
      */
     this.getSnapshot = function() {
 
+        var toConfig = function(variable) {
+            return variable != null ? variable.toConfig() : null;
+        };
+
+        return{
+            arena: toConfig(arena),
+            players: Util.arrayToConfig(players),
+            spectators: Util.arrayToConfig(spectators),
+            balls: Util.arrayToConfig(balls),
+            //TODO add powerups
+            playerQueue: playerQueue,
+            powerupElection: toConfig(powerupElection)
+        };
     };
+
+    //
+    //             Model Construction
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+
+
+    if (snapshot != null){
+
+        // Expand Arena
+        if (snapshot.arena != null){
+            this.addOrResetArena(snapshot.arena);
+        }
+
+        // Expand players
+        Util.expandArray(players, snapshot.players, Player);
+
+        //Expand Spectators
+        Util.expandArray(spectators, snapshot.spectators, Spectator);
+
+        //Expand balls
+        Util.expandArray(balls, snapshot.balls, Ball);
+
+        //TODO Expand Powerups
+
+        //Expand Player Queue
+        if (snapshot.playerQueue != null){
+            snapshot.playerQueue.forEach(this.addToPlayerQueue);
+        }
+
+        if (snapshot.powerupElection != null){
+            powerupElection = new PowerupElection(snapshot.powerupElection);
+        }
+    }
+
 };
 
 

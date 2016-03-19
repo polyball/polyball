@@ -11,13 +11,25 @@
 /**
  * A model object for holding client information.
  *
- * @param {{name: String,
- *          socket: Socket}} config
+ * @param {Object} config
+ * @param {String} config.name
+ * @param {Socket} config.socket
  * @constructor
  */
 var Client = function(config) {
     this.name = config.name;
     this.socket = config.socket;
+
+    /**
+     * Converts this client object into it's config (serializable) form
+     * @return {Object}
+     */
+    this.toConfig = function (){
+        return {
+            name: this.name,
+            socket: config.socket
+        };
+    };
 };
 
 module.exports = Client;
