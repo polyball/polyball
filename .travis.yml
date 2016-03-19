@@ -12,3 +12,8 @@ notifications:
   slack: ece493capstone:hkULBLq0cnAz0XmKiROm06r7
 deploy:
   provider: azure_web_apps
+after_deploy:
+  - gulp build-js
+  - npm install -g forever
+  - forever stopall
+  - forever start polyball/Server.js
