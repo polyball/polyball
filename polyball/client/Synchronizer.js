@@ -14,12 +14,40 @@ var CommsEvents = require('polyball/shared/CommsEvents');
  */
 var Synchronizer = function (config) {
 
+    //
+    //    ########  ########  #### ##     ##    ###    ######## ########
+    //    ##     ## ##     ##  ##  ##     ##   ## ##      ##    ##
+    //    ##     ## ##     ##  ##  ##     ##  ##   ##     ##    ##
+    //    ########  ########   ##  ##     ## ##     ##    ##    ######
+    //    ##        ##   ##    ##   ##   ##  #########    ##    ##
+    //    ##        ##    ##   ##    ## ##   ##     ##    ##    ##
+    //    ##        ##     ## ####    ###    ##     ##    ##    ########
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    //
+    //             PRIVATE STATE
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
     var comms = config.comms;
     var model = config.model;
 
+
+    //
+    //             INTERNAL METHODS
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
     /**
-     * @param {Object} snapshot - The server authoritative game state snapshot.
-     * @property {Object} snapshot.arena - An Arena config.  See Arena constructor.
+     * @param {Object}      snapshot - The server authoritative game state snapshot.
+     * @property {Object}   snapshot.arena           - An Arena config.  See Arena constructor.
+     * @property {Object[]} snapshot.players         - An Array of Player configs.  See Player constructor.
+     * @property {Object[]} snapshot.spectators      - An Array of Spectator configs.  See Spectator constructor.
+     * @property {Object[]} snapshot.balls           - An Array of Ball configs.  See Ball constructor.
+     * @property {Object[]} snapshot.powerups        - An Array of Powerup configs.  See Powerup constructor.
+     * @property {Number[]} snapshot.playerQueue     - An Array of Spectator IDs.
+     * @property {Object}   snapshot.powerupElection - A PowerupElection config.  See PowerupElection constructor.
      */
     var synchronizeSnapshot = function (snapshot) {
         if (snapshot == null) {
@@ -32,9 +60,31 @@ var Synchronizer = function (config) {
         }
     };
 
+
+    //
+    //             EVENT SUBSCRIPTION
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
     comms.on(CommsEvents.ClientToClient.snapshotReceived, synchronizeSnapshot);
 
 
+    //
+    //    ########  ##     ## ########  ##       ####  ######
+    //    ##     ## ##     ## ##     ## ##        ##  ##    ##
+    //    ##     ## ##     ## ##     ## ##        ##  ##
+    //    ########  ##     ## ########  ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##    ##
+    //    ##         #######  ########  ######## ####  ######
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * Use received snapshots and current time to mutate the model towards server authority.
+     * @param {Number} currentTime - The current time in millis.
+     */
     this.tick = function (currentTime) {
         model.getWorld().step(currentTime);
     };

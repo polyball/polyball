@@ -26,11 +26,6 @@ var Comms = function (config) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
-    //
-    //             INITIALIZATION
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
 
     //
     //             PRIVATE STATE
@@ -42,6 +37,12 @@ var Comms = function (config) {
         events: CommsEvents.ClientToClient
     });
 
+
+    //
+    //             EVENT SUBSCRIPTION
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
     socket.on(CommsEvents.ServerToClient.setLogLevel, function (logLevel) {
         var newLevel = Logger.setLevel(logLevel);
         Logger.info('Log level set: ' + newLevel);
@@ -52,6 +53,23 @@ var Comms = function (config) {
         pubsub.fireEvent(CommsEvents.ClientToClient.snapshotReceived, snapshot);
     });
 
+
+    //
+    //    ########  ##     ## ########  ##       ####  ######
+    //    ##     ## ##     ## ##     ## ##        ##  ##    ##
+    //    ##     ## ##     ## ##     ## ##        ##  ##
+    //    ########  ##     ## ########  ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##    ##
+    //    ##         #######  ########  ######## ####  ######
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Subscribe to an event
+     * @param {String} eventName - The name of the event.  Use CommsEvents.ClientToClient.
+     * @param {Function} callback - The callback to call when the event is fired.
+     */
     this.on = function(eventName, callback) {
         pubsub.on(eventName, callback);
     };
