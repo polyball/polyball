@@ -16,6 +16,10 @@ function Vote(config) {
     this.powerup = config.powerup;
     this.spectatorID = config.spectatorID;
 
+    /**
+     * Converts this Vote object into it's config (serializable) form
+     * @return {Object}
+     */
     this.toConfig = function () {
         return {
             spectatorID: this.spectatorID, powerup: this.powerup

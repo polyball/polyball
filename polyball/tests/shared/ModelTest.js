@@ -7,6 +7,8 @@ var Model = require('polyball/shared/Model');
 var Client = require('polyball/shared/model/Client');
 var _ = require('lodash');
 var Logger = require('polyball/shared/Logger');
+var Vote = require('polyball/shared/model/Vote');
+var PowerupElection = require('polyball/shared/model/PowerupElection.js');
 
 describe('Model', function () {
    'use strict';
@@ -170,8 +172,6 @@ describe('Model', function () {
                 model.updateSpectator(spectator2.id, {client: {name: 'some_guy'}});
 
                 spectator2.client.name.should.equal('some_guy');
-                spectator2.queued.should.be.false; // jshint ignore:line
-
             });
         });
 
@@ -215,7 +215,6 @@ describe('Model', function () {
                 model.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
 
                 spectator2.client.name.should.equal('some_guy');
-                spectator2.queued.should.be.false; // jshint ignore:line
             });
 
             it('should delete a second spectator.', function () {
@@ -440,6 +439,114 @@ describe('Model', function () {
                 queuedPlayers.length.should.equal(0);
                 out.should.equal(spectator2);
 
+            });
+        });
+        describe("#toConfig", function () {
+
+            before(function (){
+                Logger.setLevel('ERROR');
+            });
+
+            it('should serialize and deserialize players properly.', function () {
+                var model;
+                model = new Model();
+                model.playerCount().should.equal(0);
+
+                var player = model.addPlayer({name: Util.randomUsername(), socket: 'dummy'});
+                var player2 = model.addPlayer({name: Util.randomUsername(), socket: 'dummy'});
+
+                var modelConfig = model.getSnapshot();
+
+                var model2 = new Model(modelConfig);
+
+                model2.playerCount().should.equal(2);
+                model2.hasPlayer(player.id).should.be.true; // jshint ignore:line
+                model2.hasPlayer(player2.id).should.be.true; // jshint ignore:line
+            });
+            it('should serialize and deserialize spectators properly.', function () {
+                var model = new Model();
+                model.spectatorCount().should.equal(0);
+
+                var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                var spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+
+                var modelConfig = model.getSnapshot();
+
+                var model2 = new Model(modelConfig);
+
+                model2.spectatorCount().should.equal(2);
+                model2.hasSpectator(spectator1.id).should.be.true; // jshint ignore:line
+                model2.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
+            });
+            it('should serialize and deserialize balls properly.', function () {
+                var model = new Model();
+                model.ballCount().should.equal(0);
+
+                model.addOrResetArena({
+                    numberPlayers: 9,
+                    arenaRadius: 400,
+                    bumperRadius: 25,
+                    marginX: 0,
+                    marginY: 0
+                });
+
+                var ball = model.addBall();
+                var ball2 = model.addBall();
+
+                var modelConfig = model.getSnapshot();
+
+                var model2 = new Model(modelConfig);
+
+                model2.ballCount().should.equal(2);
+                model.hasBall(ball.id).should.be.true; // jshint ignore:line
+                model.hasBall(ball2.id).should.be.true; // jshint ignore:line
+            });
+            //TODO add powerups
+            it('should serialize and deserialize the player queue properly.', function () {
+                var model = new Model();
+                var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                model.addToPlayerQueue(spectator1.id);
+
+                var spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                model.addToPlayerQueue(spectator2.id);
+
+                var modelConfig = model.getSnapshot();
+
+                var model2 = new Model(modelConfig);
+
+                var queuedPlayers = model2.getAllQueuedPlayers();
+
+                model2.numberOfQueuedPlayers().should.equal(2);
+                queuedPlayers.length.should.equal(2);
+                queuedPlayers.should.containEql(spectator1);
+                queuedPlayers.should.containEql(spectator2);
+            });
+            it('should serialize and deserialize the powerup election properly.', function() {
+                var model = new Model();
+
+                var pu = [1,2,3];
+                var pe = new PowerupElection({powerups: pu});
+                var vote = new Vote({spectatorID: 1, powerup:1});
+                pe.addVote(vote);
+                pe.votes.length.should.equal(1);
+
+                model.setPowerupElection(pe);
+
+                var modelConfig = model.getSnapshot();
+
+                var model2 = new Model(modelConfig);
+
+                var pe2 = model2.getPowerupElection();
+
+                pe2.votes.length.should.equal(1);
+                pe2.votes.should.containEql(vote);
+                pe2.powerups.should.equal(pu);
+
+
+            });
+
+            after(function(){
+                Logger.setLevel('INFO');
             });
         });
     });

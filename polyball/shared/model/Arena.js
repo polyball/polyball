@@ -132,7 +132,19 @@ var Arena = function(config) {
         return Array.apply(undefined, this.goals);
     };
 
-
+    /**
+     * Converts this arena object into it's config (serializable) form
+     * @return {Object}
+     */
+    this.toConfig = function () {
+        return {
+            numberPlayers: this.numberPlayers,
+            arenaRadius: this.arenaRadius,
+            bumperRadius: this.bumperRadius,
+            marginX: this.marginX,
+            marginY: this.marginY
+        };
+    };
 
     // Constructor
 

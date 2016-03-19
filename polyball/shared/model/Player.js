@@ -24,9 +24,25 @@ var Player = function(config) {
     this.client = new Client(config.client);
     this.score = 0;
 
+    /**
+     * Converts this player object into it's config (serializable) form
+     * @return {Object}
+     */
+    this.toConfig = function (){
+        return {
+            id: this.id,
+            paddle: this.paddle != null? this.paddle.toConfig() : null,
+            arenaPosition: this.arenaPosition,
+            client: config.client,
+            score: this.score
+        };
+    };
+
     if (this.paddle === null){
         Logger.warn('Created player(' + config.id + '): ' + config.client.name + ' without a paddle');
     }
+
+
 };
 
 module.exports = Player;

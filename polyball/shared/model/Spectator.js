@@ -15,7 +15,17 @@ var Client = require('polyball/shared/model/Client');
 function Spectator(config) {
     this.id = config.id;
     this.client = new Client(config.client);
-    this.queued = false;
+
+    /**
+     * Converts this Spectator object into it's config (serializable) form
+     * @return {Object}
+     */
+    this.toConfig = function (){
+      return{
+          id: this.id,
+          client: this.client.toConfig()
+      };
+    };
 }
 
 module.exports = Spectator;

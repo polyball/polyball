@@ -523,10 +523,24 @@ var Model = function (snapshot) {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * @return
+     * Converts this Model object into it's config (serializable) form
+     * @return {Object}
      */
     this.getSnapshot = function() {
 
+        var toConfig = function(variable) {
+            return variable != null ? variable.toConfig() : null;
+        };
+
+        return{
+            arena: toConfig(arena),
+            players: Util.arrayToConfig(players),
+            spectators: Util.arrayToConfig(spectators),
+            balls: Util.arrayToConfig(balls),
+            //TODO add powerups
+            playerQueue: playerQueue,
+            powerupElection: toConfig(powerupElection)
+        };
     };
 
     //

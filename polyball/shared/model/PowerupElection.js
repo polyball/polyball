@@ -15,7 +15,8 @@ var Util = require('polyball/shared/Util');
  */
 function PowerupElection(config) {
     //TODO expand powerups from powerup configs array
-    //this.powerups = config.powerups;
+    //TODO also update toConfig()
+    this.powerups = config.powerups;
     this.votes = [];
 
     Util.expandArray(this.votes, config.votes, Vote);
@@ -59,6 +60,23 @@ PowerupElection.prototype.getPlayerVoteIndex = function (spectatorID) {
         }
     }
     return -1;
+};
+
+/**
+ * Converts this PowerupElection object into it's config (serializable) form
+ * @return {Object}
+ */
+PowerupElection.prototype.toConfig = function (){
+    var voteConfigs = [];
+    this.votes.forEach(function(vote){
+       voteConfigs.push(vote.toConfig());
+    });
+
+    return {
+        votes: voteConfigs,
+        powerups: this.powerups
+        //TODO Add powerups
+    };
 };
 
 module.exports = PowerupElection;

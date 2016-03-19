@@ -261,4 +261,16 @@ Util.expandArray = function (array, config, constructor){
     }
 };
 
+/**
+ * A helper function to turn an array of model objects into their config counterparts
+ * @param {Object[]} array
+ */
+Util.arrayToConfig = function (array){
+    var configs = [];
+    array.forEach(function(elm){
+        configs.push(elm.toConfig());
+    });
+    return configs;
+};
+
 module.exports = Util;

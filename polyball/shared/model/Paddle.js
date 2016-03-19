@@ -30,6 +30,22 @@ var Paddle = function(config) {
             styles: config.styles
         }
     );
+
+    /**
+     * Converts this paddle object into it's config (serializable) form
+     * @return {Object}
+     */
+    this.toConfig = function(){
+        return {
+            x: this.body.state.pos.x,
+            y: this.body.state.pos.y,
+            vx: this.body.state.vel.x,
+            vy: this.body.state.vel.y,
+            radius: this.body.radius,
+            treatment: this.body.treatment,
+            styles: this.body.styles
+        };
+    };
 };
 
 /**

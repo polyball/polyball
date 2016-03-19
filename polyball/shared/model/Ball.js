@@ -31,6 +31,23 @@ var Ball = function(config) {
         }
     );
 
+    /**
+     * Converts this ball object into it's config (serializable) form
+     * @return {Object}
+     */
+    this.toConfig = function(){
+        return {
+            x: this.body.state.pos.x,
+            y: this.body.state.pos.y,
+            vx: this.body.state.vel.x,
+            vy: this.body.state.vel.y,
+            radius: this.body.radius,
+            mass: this.body.mass,
+            restitution: this.body.restitution,
+            styles: this.body.styles
+        };
+    };
+
 
     this.id = config.id;
 };
