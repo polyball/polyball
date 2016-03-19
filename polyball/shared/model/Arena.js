@@ -130,7 +130,7 @@ var Arena = function(config) {
 
 
 
-    // STATE
+    // Constructor
 
 
     this.numberPlayers = config.numberPlayers;
@@ -142,6 +142,14 @@ var Arena = function(config) {
     this.goals = [];
     this.bumpers = [];
     this.points = [];
+
+    var colors = {
+        black: '0x171717',
+        blue: '0x1d6b98',
+        blueDark: '0x14546f',
+        red: '0xdc322f',
+        redDark: '0xa42222'
+    };
 
     var midX = this.getCenter().x;
     var midY = this.getCenter().y;
@@ -170,7 +178,10 @@ var Arena = function(config) {
             angle: -theta * curr,
             width: goalWidth,
             height: 30,
-            treatment: 'static'
+            treatment: 'static',
+            styles: {
+                fillStyle: colors.red
+            }
         }));
 
         this.bumpers.push(
@@ -178,7 +189,10 @@ var Arena = function(config) {
                 x: this.points[j].x,
                 y: this.points[j].y,
                 radius: this.bumperRadius,
-                treatment: 'static'
+                treatment: 'static',
+                styles: {
+                    fillStyle: colors.blue
+                }
             })
         );
     }

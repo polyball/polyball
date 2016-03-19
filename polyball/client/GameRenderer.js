@@ -15,16 +15,10 @@ var Physics = require('physicsjs');
  * @constructor
  */
 var GameRenderer = function(config) {
-    window.PIXI = Pixi;
 
-    this.renderer = Physics.renderer('pixi', {
-        el: 'viewport'
-    });
+    // ################  PRIVATE METHODS ########### //
+    // ############################################ //
 
-    var model = config.model;
-
-    var world = model.getWorld();
-    world.add(this.renderer);
 
     // ################  PUBLIC METHODS ########### //
     // ############################################ //
@@ -36,6 +30,26 @@ var GameRenderer = function(config) {
     this.resize = function(width, height) {
         this.renderer.resize(width, height);
     };
+
+    // ################  CONSTRUCTOR  ############# //
+    // ############################################ //
+    var model = config.model;
+
+    window.PIXI = Pixi;
+
+    this.renderer = Physics.renderer('pixi', {
+        el: 'viewport'
+    });
+
+    this.renderer.renderer = new Pixi.autoDetectRenderer(1000, 1000, {
+        view: this.renderer.renderer.view,
+        transparent: true,
+        resolution: window.devicePixelRatio || 1,
+        antialias: true
+    });
+
+    var world = model.getWorld();
+    world.add(this.renderer);
 };
 
 module.exports = GameRenderer;
