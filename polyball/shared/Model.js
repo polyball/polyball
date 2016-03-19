@@ -43,7 +43,7 @@ var Model = function (snapshot) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
-    var world = Physics();
+    var world = Physics({maxIPF: 10000});
     world.add([
         Physics.behavior('body-impulse-response'),
         Physics.behavior('body-collision-detection'),
