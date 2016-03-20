@@ -16,6 +16,14 @@ var comms = new Comms({httpServer: server, model: model});
 
 // TODO deleteme start
 
+model.addOrResetArena({
+    numberPlayers: Util.getRandomInt(3, 10),
+    arenaRadius: 600,
+    bumperRadius: 35,
+    marginX: 60,
+    marginY: 60
+});
+
 setInterval(function () {
     comms.broadcastSnapshot(model.getSnapshot());
 }, 40);

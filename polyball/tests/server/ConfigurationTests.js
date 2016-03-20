@@ -43,6 +43,14 @@ describe('Configuration', function () {
             config.values.roundIntermission.should.equal(5000);
             Util.deleteJSONConfigFile(path);
         });
+        it('should not allow max players < min players', function(){
+            var path = Util.createJSONConfigFile({maximumPlayers: 1, minimumPlayers: 4});
+            var config = new Configuration({configPath: path});
+
+            config.values.minimumPlayers.should.equal(4);
+            config.values.maximumPlayers.should.equal(config.values.minimumPlayers);
+            Util.deleteJSONConfigFile(path);
+        });
         after(function(){
             Logger.setLevel('INFO');
         });
