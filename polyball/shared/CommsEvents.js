@@ -15,14 +15,16 @@ var ClientToClient = {
 
 var ServerToClient = {
     setLogLevel: "setLogLevel",
+    idAssigned: "idAssigned",
     startNewRound: "startNewRound",
-    newSnapshot: 'newSnapshot'  // Arena is ignored if present
+    newSnapshot: 'newSnapshot'
 };
 
 var ClientToServer = {
     connection: 'connection',  // socket.io builtin - do not change!
     disconnect: 'disconnect',  // socket.io builtin - do not change!
     queueToPlay: 'queueToPlay',
+    newCommandAggregate: 'newCommandAggregate',
     vote: 'vote'
 };
 
