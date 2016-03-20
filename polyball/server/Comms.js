@@ -170,9 +170,12 @@ var Comms = function (config) {
      *
      * @param {Object} newRoundData
      * @property {Object} snapshot - a Model snapshot
-     * @property {Number} minimumDelay - the minimum time in milliseconds that any client will wait before starting a new round
+     * @property {Number} minimumDelay - the minimum time in milliseconds that any client will wait before starting
+     *                                   a new round.
+     * @param {Function} delayedStartCallback - a callback that will be called after a delay.  Ideally called at the
+     *                                          same time all clients are instructed to start.
      */
-    this.broadcastSynchronizedStart = function (newRoundData) {
+    this.broadcastSynchronizedStart = function (newRoundData, delayedStartCallback) {
         Logger .info("Comms broadcasting new round.");
 
         //TODO compute this for each client depending on latency with snapshot packets.
@@ -181,6 +184,8 @@ var Comms = function (config) {
             snapshot: newRoundData.snapshot,
             delay: clientDelay
         });
+
+        setTimeout(delayedStartCallback, newRoundData.minimumDelay);
     };
 
 

@@ -140,6 +140,8 @@ var Synchronizer = function (config) {
     comms.on(CommsEvents.ClientToClient.snapshotReceived, synchronizeSnapshot);
 
     comms.on(CommsEvents.ClientToClient.newRound, startNewRound);
+    
+    
     //
     //    ########  ##     ## ########  ##       ####  ######
     //    ##     ## ##     ## ##     ## ##        ##  ##    ##
@@ -150,7 +152,6 @@ var Synchronizer = function (config) {
     //    ##         #######  ########  ######## ####  ######
     //
     ///////////////////////////////////////////////////////////////////////////
-
 
     /**
      * Use received snapshots and current time to mutate the model towards server authority.

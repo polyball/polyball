@@ -93,6 +93,13 @@ var Comms = function (config) {
     this.on = function(eventName, callback) {
         pubsub.on(eventName, callback);
     };
+
+
+    this.queueToPlay = function () {
+        Logger.info('Comms is queueing to play.');
+
+        socket.emit(CommsEvents.ClientToServer.queueToPlay);
+    };
 };
 
 
