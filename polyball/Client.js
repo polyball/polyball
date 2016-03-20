@@ -3,6 +3,7 @@ var Logger = require('polyball/shared/Logger');
 var Physics = require('physicsjs');
 var Model = require('polyball/shared/Model');
 var GameRenderer = require('polyball/client/GameRenderer');
+var HUD = require('polyball/client/HUD');
 var Comms = require('polyball/client/Comms');
 var Synchronizer = require('polyball/client/Synchronizer');
 
@@ -30,17 +31,13 @@ $(document).ready(function() {
         model: model
     });
 
+    var hud = new HUD({ //jshint ignore: line
+        comms: comms
+    });
+
     Physics.util.ticker.on(function( time ) {
         gameRenderer.render();
         synchronizer.tick(time);
-    });
-
-    //TODO Delete
-    $.get('hudcomponenets/addToQueueButton.html', function(data) {
-        $('#viewport').append(data);
-        $('#addToQueueButton').click(function (){
-            alert( "Hook me up to Comms Add To Player Queue Please!!!" );
-        });
     });
 
 }); // end on DOM ready
