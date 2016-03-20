@@ -52,7 +52,7 @@ var Comms = function (config) {
         events: CommsEvents.ServerToServer
     });
 
-    var io = new Server(config.httpServer, {serveClient: true});
+    var io = new Server(config.httpServer, {serveClient: false});
     /**
      * @type {Model}
      */
