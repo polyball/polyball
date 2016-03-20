@@ -54,6 +54,18 @@ var Model = function () {
     var world = newPhysicsSim();
 
     /**
+     * The number of milliseconds in the current round.
+     * @type {Number}
+     */
+    var roundLength;
+
+    /**
+     * The number of milliseconds elapsed in the current round.
+     * @type {Number}
+     */
+    var currentRoundTime;
+
+    /**
      * @type {Arena}
      */
     var arena;
@@ -204,6 +216,38 @@ var Model = function () {
         return world;
     };
 
+    /**
+     * The round length in milliseconds.
+     * @returns {Number}
+     */
+    this.getRoundLength = function () {
+        return roundLength;
+    };
+
+    /**
+     * Set the round length in milliseconds.
+     * @param newRoundLength
+     */
+    this.setRoundLength = function (newRoundLength) {
+        roundLength = newRoundLength;
+    };
+
+    /**
+     * The current time elapsed in the round.
+     * @returns {Number}
+     */
+    this.getCurrentRoundTime = function () {
+        return currentRoundTime;
+    };
+
+    /**
+     * Set the round length in milliseconds.
+     * @param newRoundLength
+     */
+    this.setCurrentRoundTime = function (newCurrentTime) {
+        currentRoundTime = newCurrentTime;
+    };
+
     //
     //             BALLS
     //
@@ -292,7 +336,7 @@ var Model = function () {
      * @param {Number} id
      */
     this.deleteBall = function (id) {
-        var ball = _.remove(balls, function (ball) { return ball.id === id; });
+        var ball = removeByID(balls, id);
 
         if (ball != null) {
             world.removeBody(ball.body);
