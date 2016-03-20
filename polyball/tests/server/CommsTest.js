@@ -158,7 +158,6 @@ describe('Server Comms', function() {
             done();
         });
         client1.disconnect();
-        console.log(Object.keys(serverSockets));
         Object.keys(serverSockets).forEach(function (socketId) {
             mLog.log('Comms test socket', socketId, 'closed');
             serverSockets[socketId].end();
