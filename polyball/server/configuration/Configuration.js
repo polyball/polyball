@@ -52,12 +52,6 @@ var Configuration = function (config){
     checkLowerBound('serverTick', 1);
     checkLowerBound('roundIntermission', 1);
 
-
-    //checkMinimumPlayers();
-    //checkMaxPlayers();
-    //checkserverTick();
-    //checkroundIntermission();
-
     this.values = values;
 
     Object.freeze(this.values);
