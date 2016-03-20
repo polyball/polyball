@@ -35,5 +35,4 @@ $(document).ready(function() {
         synchronizer.tick(time);
     });
 
-
 }); // end on DOM ready
