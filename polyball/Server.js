@@ -30,7 +30,10 @@ setInterval(function () {
 
 setInterval(function () {
     model.addBall({
-        radius: 10
+        body: {
+            radius: 10,
+            state: model.generateNewBallState()
+        }
     });
 }, 100);
 
@@ -43,8 +46,15 @@ setInterval(function () {
         marginY: 60
     });
 
-    model.clearBalls();
+    comms.broadcastSynchronizedStart({
+        snapshot: model.getSnapshot(),
+        minimumDelay: 0
+    });
 }, 6000);
+
+setInterval(function () {
+    model.getWorld().step(Date.now());
+}, 20);
 
 // TODO deleteme end
 

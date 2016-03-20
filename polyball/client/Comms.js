@@ -48,6 +48,11 @@ var Comms = function (config) {
         Logger.info('Log level set: ' + newLevel);
     });
 
+    socket.on(CommsEvents.ServerToClient.startNewRound, function (newRoundData) {
+        Logger.info('Comms receieved new round');
+        pubsub.fireEvent(CommsEvents.ClientToClient.newRound, newRoundData);
+    });
+
     socket.on(CommsEvents.ServerToClient.newSnapshot, function (snapshot) {
         Logger.debug(snapshot);
         pubsub.fireEvent(CommsEvents.ClientToClient.snapshotReceived, snapshot);

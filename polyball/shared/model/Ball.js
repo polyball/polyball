@@ -10,10 +10,10 @@ var Util = require('polyball/shared/Util');
  * @param {object} config
  * @property {number} config.id
  * @property {number} config.lastTouchedID
- * @property {number} config.body.x
- * @property {number} config.body.y
- * @property {number} config.body.vx
- * @property {number} config.body.vy
+ * @property {number} config.body.state.pos.x
+ * @property {number} config.body.state.pos.y
+ * @property {number} config.body.state.vel.x
+ * @property {number} config.body.state.vel.y
  * @property {number} config.body.radius
  * @property {Object} config.body.styles
  * @constructor
@@ -33,7 +33,12 @@ var Ball = function(config) {
     this.id = config.id;
     this.lastTouchedID = config.lastTouchedID;
 
-    var newBodyConfig = config.body;
+    var newBodyConfig = {
+        x: config.body.state.pos.x,
+        y: config.body.state.pos.y,
+        vx: config.body.state.vel.x,
+        vy: config.body.state.vel.y
+    };
     newBodyConfig.mass = 1;
     newBodyConfig.restitution = 1;
 
@@ -41,7 +46,6 @@ var Ball = function(config) {
 
     /**
      * Converts this ball object into it's serializable form.
-     * Contains physics state, but NOT as constructor expects (EX: body.state.pos.x, not body.x).
      * @return {Object}
      */
     this.toConfig = function(){

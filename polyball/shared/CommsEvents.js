@@ -9,12 +9,14 @@ var ServerToServer = {
 };
 
 var ClientToClient = {
-    snapshotReceived: 'snapshotReceived'
+    snapshotReceived: 'snapshotReceived',
+    newRound: 'newRoundData'
 };
 
 var ServerToClient = {
     setLogLevel: "setLogLevel",
-    newSnapshot: 'newSnapshot'
+    startNewRound: "startNewRound",
+    newSnapshot: 'newSnapshot'  // Arena is ignored if present
 };
 
 var ClientToServer = {

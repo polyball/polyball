@@ -28,18 +28,34 @@ var Model = function () {
     //
     ///////////////////////////////////////////////////////////////////////////
 
+
+    //
+    //             INITIALIZATION
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    var newPhysicsSim = function () {
+        var newWorld = Physics({maxIPF: 10000});
+        newWorld.add([
+            Physics.behavior('body-impulse-response'),
+            Physics.behavior('body-collision-detection'),
+            Physics.behavior('sweep-prune')
+        ]);
+
+        return newWorld;
+    };
+
+
     //
     //             PRIVATE STATE
     //
     ///////////////////////////////////////////////////////////////////////////
 
-    var world = Physics({maxIPF: 10000});
-    world.add([
-        Physics.behavior('body-impulse-response'),
-        Physics.behavior('body-collision-detection'),
-        Physics.behavior('sweep-prune')
-    ]);
+    var world = newPhysicsSim();
 
+    /**
+     * @type {Arena}
+     */
     var arena;
 
     /**
@@ -66,8 +82,6 @@ var Model = function () {
      */
     var powerupElection;
 
-    //var powerups = [];
-    //var election = undefined;
 
     //
     //             PRIVATE METHODS
@@ -75,9 +89,14 @@ var Model = function () {
     ///////////////////////////////////////////////////////////////////////////
 
     var nextID = (function () {
-        var nextID = 0;
+        var nextID = 1;
 
         return function () {
+
+            if (typeof window !== 'undefined') {
+                throw new Error("Client Model must not create its own IDs!");
+            }
+
             return nextID++;
         };
     }());
@@ -191,33 +210,48 @@ var Model = function () {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Add a ball at the centre of the arena with a random velocity.
+     * Add a ball to the model.
      *
-     * @param {Object} config
-     * @property {Number} radius
+     * @param {Object} config - see Ball constructor
      * @return {Ball} The new Ball.
      */
     this.addBall  = function (config) {
-        var ballConfig = {
-            id: nextID(),
+
+        var newConfig = {
+            id: config.id ? config.id : nextID(),
             body: {
-                x: arena.getCenter().x,
-                y: arena.getCenter().y,
-                vx: Util.getRandomArbitrary(-1.0, 1.0),
-                vy: Util.getRandomArbitrary(-1.0, 1.0),
-                radius: config.radius
-            },
-            styles: {
-                fillStyle: '0xa42222'
+                styles: {
+                    fillStyle: '0xa42222'
+                }
             }
         };
 
-        var ball = new Ball(ballConfig);
+        _.assign(newConfig, config);
+
+        var ball = new Ball(newConfig);
         balls.push(ball);
 
         world.addBody(ball.body);
 
         return ball;
+    };
+
+    /**
+     * Generate a physics state at the center of the arena with a random velocity.
+     *
+     * @returns {{pos: {x: Number, y: Number}, vel: {x: Number, y: Number}}}
+     */
+    this.generateNewBallState = function () {
+        return {
+            pos: {
+                x: arena.getCenter().x,
+                y: arena.getCenter().y
+            },
+            vel: {
+                x: Util.getRandomArbitrary(-1.0, 1.0),
+                y: Util.getRandomArbitrary(-1.0, 1.0)
+            }
+        };
     };
 
     /**

@@ -55,9 +55,26 @@ var Synchronizer = function (config) {
             return;
         }
 
-        if (snapshot.arena != null) {
-            model.addOrResetArena(snapshot.arena);
+        if (snapshot.balls) {
+            Logger.debug('synchronizing balls');
         }
+    };
+
+
+    var startNewRound = function (newRoundData) {
+        if (newRoundData == null || newRoundData.snapshot == null || newRoundData.delay < 0) {
+            Logger.error('Synchronizer#startNewRound called with illegal new round data');
+            return;
+        }
+
+        model.addOrResetArena(newRoundData.snapshot.arena);
+
+        setTimeout(function () {
+            synchronizeSnapshot(newRoundData.snapshot);
+        }, newRoundData.delay);
+
+
+        //TODO: HUD.roundCountdown(newRoundData.snapshot);
     };
 
 
@@ -68,7 +85,7 @@ var Synchronizer = function (config) {
 
     comms.on(CommsEvents.ClientToClient.snapshotReceived, synchronizeSnapshot);
 
-
+    comms.on(CommsEvents.ClientToClient.newRound, startNewRound);
     //
     //    ########  ##     ## ########  ##       ####  ######
     //    ##     ## ##     ## ##     ## ##        ##  ##    ##

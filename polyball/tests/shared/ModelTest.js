@@ -13,6 +13,16 @@ var PowerupElection = require('polyball/shared/model/PowerupElection.js');
 describe('Model', function () {
    'use strict';
 
+    var BALL_CONF = {
+        body: {
+            radius: 10,
+            state: {
+                pos: {x: 1, y: 2},
+                vel: {x: 0.1, y: 0.1}
+            }
+        }
+    };
+
     describe("#addOrResetArena", function () {
         var model, arena, arena2;
         it('should add an arena to the model.', function () {
@@ -60,14 +70,14 @@ describe('Model', function () {
                     marginY: 0
                 });
 
-                ball = model.addBall({radius: 10});
+                ball = model.addBall(BALL_CONF);
 
                 model.ballCount().should.equal(1);
                 model.hasBall(ball.id).should.be.true; // jshint ignore:line
             });
 
             it('should add a second, distinct queryable ball to the model.', function () {
-                ball2 = model.addBall({radius: 10});
+                ball2 = model.addBall(BALL_CONF);
 
                 model.ballCount().should.equal(2);
 
@@ -128,9 +138,9 @@ describe('Model', function () {
 
         describe("#clearBalls", function () {
             it('should delete all model balls.', function () {
-                model.addBall({radius: 10});
-                model.addBall({radius: 10});
-                model.addBall({radius: 10});
+                model.addBall(BALL_CONF);
+                model.addBall(BALL_CONF);
+                model.addBall(BALL_CONF);
 
                 model.ballCount().should.equal(3);
 

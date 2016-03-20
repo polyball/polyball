@@ -150,9 +150,30 @@ var Comms = function (config) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
+
     this.broadcastSnapshot = function (snapshot) {
         Logger.debug("Comms broadcasting snapshot.");
         io.sockets.emit(CommsEvents.ServerToClient.newSnapshot, snapshot);
+    };
+
+
+    /**
+     * Tell all clients to start.  Each client is delayed by an estimated time necessary
+     * to synchronize them all.
+     *
+     * @param {Object} newRoundData
+     * @property {Object} snapshot - a Model snapshot
+     * @property {Number} minimumDelay - the minimum time in milliseconds that any client will wait before starting a new round
+     */
+    this.broadcastSynchronizedStart = function (newRoundData) {
+        Logger.info("Comms broadcasting new round.");
+
+        //TODO compute this for each client depending on latency with snapshot packets.
+        var clientDelay = newRoundData.minimumDelay;
+        io.sockets.emit(CommsEvents.ServerToClient.startNewRound, {
+            snapshot: newRoundData.snapshot,
+            delay: clientDelay
+        });
     };
 
 
