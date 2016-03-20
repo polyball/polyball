@@ -35,9 +35,10 @@ setInterval(function () {
             state: model.generateNewBallState()
         }
     });
-}, 100);
+}, 500);
 
 setInterval(function () {
+    model.clearBalls();
     model.addOrResetArena({
         numberPlayers: Util.getRandomInt(3, 10),
         arenaRadius: 300,
@@ -50,7 +51,7 @@ setInterval(function () {
         snapshot: model.getSnapshot(),
         minimumDelay: 0
     });
-}, 6000);
+}, 8000);
 
 setInterval(function () {
     model.getWorld().step(Date.now());
