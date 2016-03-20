@@ -60,27 +60,30 @@ var Comms = function (config) {
 
 
     //
-    //             CLIENT EVENTS
+    //             CLIENT CONNECTION
     //
     ///////////////////////////////////////////////////////////////////////////
 
-
     io.on(CommsEvents.ClientToServer.connection, function (clientSocket) {
         Logger.info('New client connected.');
-
-        // CREATE SPECTATOR
 
         var client = new Client({
             name: Util.randomUsername(),
             socket: clientSocket
         });
 
-        // NOTE: Do NOT store spectator - model or engine could convert it to a player or remove
-        //       the spectator from under the Comms feet.  Query for IDs when necessary.
-        model.addSpectator(client);
-
-
-        // EVENT SUBSCRIPTIONS
+        // Add the client as a spectator and send the new client its ID.
+        // NOTE: Do NOT store spectator or IDs for later use - model or engine could
+        //       change it or remove it at any time.  Query for IDs when necessary.
+        var newSpectator = model.addSpectator(client);
+        clientSocket.emit(CommsEvents.ServerToClient.idAssigned, newSpectator.id);
+        clientSocket.emit(CommsEvents.ServerToClient.setLogLevel, Logger.getLevel());
+        
+        
+        //
+        //             CLIENT EVENTS
+        //
+        ///////////////////////////////////////////////////////////////////////////
 
         clientSocket.on(CommsEvents.ClientToServer.disconnect, function () {
             Logger.info('Client disconnected');
@@ -96,14 +99,18 @@ var Comms = function (config) {
 
         clientSocket.on(CommsEvents.ClientToServer.queueToPlay, function () {
             var spectatorID = getPlayerOrSpectatorID(clientSocket);
+            
+            Logger.info("Client " + spectatorID + " requests to play.");
             pubsub.fireEvent(CommsEvents.ServerToServer.newPlayerQueued, {spectatorID: spectatorID});
         });
 
         clientSocket.on(CommsEvents.ClientToServer.vote, function (voteConfig) {
+            var spectatorID = getPlayerOrSpectatorID(clientSocket);
+
+            Logger.info("Spectator " + spectatorID + " casts powerup vote.");
             pubsub.fireEvent(CommsEvents.ServerToServer.newVote, voteConfig);
         });
 
-        clientSocket.emit(CommsEvents.ServerToClient.setLogLevel, Logger.getLevel());
     });
 
 
@@ -166,7 +173,7 @@ var Comms = function (config) {
      * @property {Number} minimumDelay - the minimum time in milliseconds that any client will wait before starting a new round
      */
     this.broadcastSynchronizedStart = function (newRoundData) {
-        Logger.info("Comms broadcasting new round.");
+        Logger .info("Comms broadcasting new round.");
 
         //TODO compute this for each client depending on latency with snapshot packets.
         var clientDelay = newRoundData.minimumDelay;

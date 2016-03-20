@@ -56,6 +56,11 @@ var Synchronizer = function (config) {
             return;
         }
 
+        if (snapshot.arena && !model.hasArena(snapshot.arena.id)) {
+            Logger.info('Synchronizer constructing new arena');
+            model.addOrResetArena(snapshot.arena);
+        }
+
         if (snapshot.balls) {
             Logger.debug('synchronizing balls');
 
@@ -121,14 +126,7 @@ var Synchronizer = function (config) {
             return;
         }
 
-        model.addOrResetArena(newRoundData.snapshot.arena);
-
-        //setTimeout(function () {
-        //    synchronizeSnapshot(newRoundData.snapshot);
-        //}, newRoundData.delay);
-
-
-        //TODO: HUD.roundCountdown(newRoundData.snapshot);
+        //TODO: HUD.roundCountdown(newRoundData.delay);
     };
 
 
@@ -136,6 +134,8 @@ var Synchronizer = function (config) {
     //             EVENT SUBSCRIPTION
     //
     ///////////////////////////////////////////////////////////////////////////
+
+    comms.on(CommsEvents.ClientToClient.newLocalID, function (id) { model.setLocalClientID(id); });
 
     comms.on(CommsEvents.ClientToClient.snapshotReceived, synchronizeSnapshot);
 

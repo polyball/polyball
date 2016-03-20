@@ -9,6 +9,7 @@ var ServerToServer = {
 };
 
 var ClientToClient = {
+    newLocalID: 'newLocalID',
     snapshotReceived: 'snapshotReceived',
     newRound: 'newRoundData'
 };
