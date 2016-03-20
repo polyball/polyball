@@ -195,13 +195,20 @@ var Model = function () {
      * @return {Arena} The new arena
      */
     this.addOrResetArena = function (config) {
+
+        var newConfig = {
+            id: config.id ? config.id : nextID()
+        };
+
+        _.assign(newConfig, config);
+
         if (arena != null) {
             // clear out old arena
             world.remove(arena.getBumpers());
             world.remove(arena.getGoals());
         }
 
-        arena = new Arena(config);
+        arena = new Arena(newConfig);
 
         world.add(arena.getGoals());
         world.add(arena.getBumpers());
@@ -214,6 +221,25 @@ var Model = function () {
      */
     this.getArena = function () {
         return arena;
+    };
+
+    /**
+     * True if there is an Arena in the model.
+     * @param {Number} [id] - Optional. If present, hasArena() is true if the arena has the passed ID.
+     * @returns {boolean}
+     */
+    this.hasArena = function (id) {
+        if (arena == null) {
+            return false;
+        }
+
+        if (id == null) {
+            // arena known to exist, hasArena() is true
+            return true;
+        } else {
+            // arena and id exists, hasArena(id) true if IDs are equal.
+            return arena.getID() === id;
+        }
     };
 
     /**
