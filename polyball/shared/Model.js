@@ -7,25 +7,15 @@ var Arena = require('polyball/shared/model/Arena');
 var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
 var Player = require('polyball/shared/model/Player');
-var PowerupElection = require('polyball/shared/model/PowerupElection');
 var Util = require('polyball/shared/Util');
-//var Paddle = require('polyball/shared/model/Paddle');
 
 
 /**
  * Holds all data for client and server game instances.  Exposes CRUD operations for data.
  *
  * @constructor
- * @param {Object}      snapshot - The server authoritative game state snapshot.
- * @property {Object}   snapshot.arena           - An Arena config.  See Arena constructor.
- * @property {Object[]} snapshot.players         - An Array of Player configs.  See Player constructor.
- * @property {Object[]} snapshot.spectators      - An Array of Spectator configs.  See Spectator constructor.
- * @property {Object[]} snapshot.balls           - An Array of Ball configs.  See Ball constructor.
- * @property {Object[]} snapshot.powerups        - An Array of Powerup configs.  See Powerup constructor.
- * @property {Number[]} snapshot.playerQueue     - An Array of Spectator IDs.
- * @property {Object}   snapshot.powerupElection - A PowerupElection config.  See PowerupElection constructor.
- */
-var Model = function (snapshot) {
+*/
+var Model = function () {
 
     //
     //    ########  ########  #### ##     ##    ###    ######## ########
@@ -133,23 +123,6 @@ var Model = function (snapshot) {
     };
 
     /**
-     * Search for an element by id in an array, and assign all properties from newState if found.
-     * @param {Array} array The array to search.
-     * @param {Number} id The id of the desired element (in field `element.id`)
-     * @param {Object} newState The new state for the update (object structure must match source structure).
-     */
-    var updateByID = function (array, id, newState) {
-        if (newState.id != null) {
-            delete newState.id;
-        }
-
-        var element = findByID(array, id);
-        if (element != null) {
-            _.assign(element, newState);
-        }
-    };
-
-    /**
      * Remove element from array by its id.
      * @template T
      * @param {Array} array The array to search
@@ -227,11 +200,13 @@ var Model = function (snapshot) {
     this.addBall  = function (config) {
         var ballConfig = {
             id: nextID(),
-            x: arena.getCenter().x,
-            y: arena.getCenter().y,
-            vx: Util.getRandomArbitrary(0.05, 1.0),
-            vy: Util.getRandomArbitrary(0.05, 1.0),
-            radius: config.radius,
+            body: {
+                x: arena.getCenter().x,
+                y: arena.getCenter().y,
+                vx: Util.getRandomArbitrary(-1.0, 1.0),
+                vy: Util.getRandomArbitrary(-1.0, 1.0),
+                radius: config.radius
+            },
             styles: {
                 fillStyle: '0xa42222'
             }
@@ -275,23 +250,6 @@ var Model = function (snapshot) {
      */
     this.ballCount = function () {
         return balls.length;
-    };
-
-    /**
-     * Change the state of the identified ball to match the supplied state.
-     *
-     * @param {Number} id
-     * @param newState (See Ball constructor config). **id field is ignored!**
-     */
-    this.updateBall = function (id, newState) {
-        if (newState.id != null) {
-            delete newState.id;
-        }
-
-        var ball = this.getBall(id);
-        if (ball != null) {
-            _.assign(ball, newState);
-        }
     };
 
     /**
@@ -371,16 +329,6 @@ var Model = function (snapshot) {
      */
     this.spectatorCount = function () {
         return spectators.length;
-    };
-
-    /**
-     * Change the state of the identified spectator to match the supplied state.
-     *
-     * @param {Number} id
-     * @param newState (See Spectator constructor config). **id field is ignored!**
-     */
-    this.updateSpectator = function (id, newState) {
-        updateByID(spectators, id, newState);
     };
 
     /**
@@ -519,16 +467,6 @@ var Model = function (snapshot) {
     };
 
     /**
-     * Change the state of the identified player to match the supplied state.
-     *
-     * @param {Number} id
-     * @param newState (See Player constructor config). **id field is ignored!**
-     */
-    this.updatePlayer = function (id, newState) {
-        updateByID(players, id, newState);
-    };
-
-    /**
      * Delete the identified player from the model.
      *
      * @param {Number} id
@@ -562,41 +500,6 @@ var Model = function (snapshot) {
             powerupElection: toConfig(powerupElection)
         };
     };
-
-    //
-    //             Model Construction
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
-
-
-    if (snapshot != null){
-
-        // Expand Arena
-        if (snapshot.arena != null){
-            this.addOrResetArena(snapshot.arena);
-        }
-
-        // Expand players
-        Util.expandArray(players, snapshot.players, Player);
-
-        //Expand Spectators
-        Util.expandArray(spectators, snapshot.spectators, Spectator);
-
-        //Expand balls
-        Util.expandArray(balls, snapshot.balls, Ball);
-
-        //TODO Expand Powerups
-
-        //Expand Player Queue
-        if (snapshot.playerQueue != null){
-            snapshot.playerQueue.forEach(this.addToPlayerQueue);
-        }
-
-        if (snapshot.powerupElection != null){
-            powerupElection = new PowerupElection(snapshot.powerupElection);
-        }
-    }
 
 };
 

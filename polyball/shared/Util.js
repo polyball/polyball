@@ -2,6 +2,7 @@
  * Created by kdban on 3/10/2016.
  */
 var fs = require('fs');
+var Logger = require('polyball/shared/Logger');
 
 var Util = function(){
 
@@ -288,6 +289,57 @@ Util.getRandomArbitrary = function (min, max) {
  */
 Util.getRandomInt = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+/**
+ * Get a copy of a physics body's state in serializable form.
+ * @param {Physics.body} physicsBody
+ Number @returns {{pos: {x: Number, y: Number}, vel: {x: Number, y: Number}, acc: {x: Number, y: Number}, angular: {pos: Number, vel: Number, acc: Number}, old: {pos: {x: Number, y: Number}, vel: {x: Number, y: Number}, acc: {x: Number, y: Number}, angular: {pos: Number, vel: Number, acc: Number}}}}
+ */
+Util.bodyToStateConfig = function (physicsBody) {
+    
+    if (physicsBody.state != null) {
+        return {
+            pos: {
+                x: physicsBody.state.pos.x,
+                y: physicsBody.state.pos.y
+            },
+            vel: {
+                x: physicsBody.state.vel.x,
+                y: physicsBody.state.vel.y
+            },
+            acc: {
+                x: physicsBody.state.acc.x,
+                y: physicsBody.state.acc.y
+            },
+            angular: {
+                pos: physicsBody.state.angular.pos,
+                vel: physicsBody.state.angular.vel,
+                acc: physicsBody.state.angular.acc
+            }, 
+            old: {
+                pos: {
+                    x: physicsBody.state.old.pos.x,
+                    y: physicsBody.state.old.pos.y
+                },
+                vel: {
+                    x: physicsBody.state.old.vel.x,
+                    y: physicsBody.state.old.vel.y
+                },
+                acc: {
+                    x: physicsBody.state.old.acc.x,
+                    y: physicsBody.state.old.acc.y
+                },
+                angular: {
+                    pos: physicsBody.state.old.angular.pos,
+                    vel: physicsBody.state.old.angular.vel,
+                    acc: physicsBody.state.old.angular.acc
+                }
+            }
+        };
+    } else {
+        Logger.warn('Unrecognized object passed to Util#bodyToPhysicsState');
+    }
 };
 
 module.exports = Util;

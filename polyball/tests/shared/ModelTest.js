@@ -78,17 +78,6 @@ describe('Model', function () {
             });
         });
 
-        describe("#updateBall", function () {
-            it('should update a ball, and delete them.', function () {
-
-                model.updateBall(ball2.id, {body: {x: 35, y: 3}});
-
-                ball2.body.x.should.equal(35);
-                ball2.body.y.should.equal(3);
-
-            });
-        });
-
         describe('#getBall', function () {
             it('should get a ball by its id', function () {
                 var tmpBall = model.getBall(ball.id);
@@ -97,8 +86,9 @@ describe('Model', function () {
             });
 
             it('should get a ball by any predicate', function () {
+                ball2.body.state.pos.x = 987;
                 var tmpBall = model.getBall(function (ball) {
-                    return ball.body.x === ball2.body.x;
+                    return ball.body.state.pos.x === ball2.body.state.pos.x;
                 });
 
                 tmpBall.should.equal(ball2);
@@ -125,9 +115,6 @@ describe('Model', function () {
                 model.ballCount().should.equal(1);
                 model.hasBall(ball.id).should.be.false; // jshint ignore:line
                 model.hasBall(ball2.id).should.be.true; // jshint ignore:line
-
-                ball2.body.x.should.equal(35);
-                ball2.body.y.should.equal(3);
             });
 
             it('should delete a second ball.', function () {
@@ -180,15 +167,6 @@ describe('Model', function () {
             });
         });
 
-        describe("#updateSpectator", function () {
-            it('should update a spectator, and delete them.', function () {
-
-                model.updateSpectator(spectator2.id, {client: {name: 'some_guy'}});
-
-                spectator2.client.name.should.equal('some_guy');
-            });
-        });
-
         describe('#getSpectator', function () {
             it('should get a spectator by its id', function () {
                 var tmpSpectator = model.getSpectator(spectator.id);
@@ -227,8 +205,6 @@ describe('Model', function () {
                 model.spectatorCount().should.equal(1);
                 model.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
                 model.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
-
-                spectator2.client.name.should.equal('some_guy');
             });
 
             it('should delete a second spectator.', function () {
@@ -271,17 +247,6 @@ describe('Model', function () {
             });
         });
 
-        describe("#updatePlayer", function () {
-            it('should update a player, and delete them.', function () {
-
-                model.updatePlayer(player2.id, {client: {name: 'some_guy'}});
-
-                player2.client.name.should.equal('some_guy');
-                player2.score.should.equal(0); // jshint ignore:line
-
-            });
-        });
-
         describe('#getPlayer', function () {
             it('should get a player by its id', function () {
                 var tmpPlayer = model.getPlayer(player.id);
@@ -321,7 +286,6 @@ describe('Model', function () {
                 model.hasPlayer(player.id).should.be.false; // jshint ignore:line
                 model.hasPlayer(player2.id).should.be.true; // jshint ignore:line
 
-                player2.client.name.should.equal('some_guy');
                 player2.score.should.equal(0); // jshint ignore:line
             });
 
@@ -455,87 +419,9 @@ describe('Model', function () {
 
             });
         });
-        describe("#toConfig", function () {
+        describe("#setPowerupElection", function () {
 
-            before(function (){
-                Logger.setLevel('ERROR');
-            });
-
-            it('should serialize and deserialize players properly.', function () {
-                var model;
-                model = new Model();
-                model.playerCount().should.equal(0);
-
-                var player = model.addPlayer({name: Util.randomUsername(), socket: 'dummy'});
-                var player2 = model.addPlayer({name: Util.randomUsername(), socket: 'dummy'});
-
-                var modelConfig = model.getSnapshot();
-
-                var model2 = new Model(modelConfig);
-
-                model2.playerCount().should.equal(2);
-                model2.hasPlayer(player.id).should.be.true; // jshint ignore:line
-                model2.hasPlayer(player2.id).should.be.true; // jshint ignore:line
-            });
-            it('should serialize and deserialize spectators properly.', function () {
-                var model = new Model();
-                model.spectatorCount().should.equal(0);
-
-                var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
-                var spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
-
-                var modelConfig = model.getSnapshot();
-
-                var model2 = new Model(modelConfig);
-
-                model2.spectatorCount().should.equal(2);
-                model2.hasSpectator(spectator1.id).should.be.true; // jshint ignore:line
-                model2.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
-            });
-            it('should serialize and deserialize balls properly.', function () {
-                var model = new Model();
-                model.ballCount().should.equal(0);
-
-                model.addOrResetArena({
-                    numberPlayers: 9,
-                    arenaRadius: 400,
-                    bumperRadius: 25,
-                    marginX: 0,
-                    marginY: 0
-                });
-
-                var ball = model.addBall({radius: 10});
-                var ball2 = model.addBall({radius: 10});
-
-                var modelConfig = model.getSnapshot();
-
-                var model2 = new Model(modelConfig);
-
-                model2.ballCount().should.equal(2);
-                model.hasBall(ball.id).should.be.true; // jshint ignore:line
-                model.hasBall(ball2.id).should.be.true; // jshint ignore:line
-            });
-            //TODO add powerups
-            it('should serialize and deserialize the player queue properly.', function () {
-                var model = new Model();
-                var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
-                model.addToPlayerQueue(spectator1.id);
-
-                var spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
-                model.addToPlayerQueue(spectator2.id);
-
-                var modelConfig = model.getSnapshot();
-
-                var model2 = new Model(modelConfig);
-
-                var queuedPlayers = model2.getAllQueuedPlayers();
-
-                model2.numberOfQueuedPlayers().should.equal(2);
-                queuedPlayers.length.should.equal(2);
-                queuedPlayers.should.containEql(spectator1);
-                queuedPlayers.should.containEql(spectator2);
-            });
-            it('should serialize and deserialize the powerup election properly.', function() {
+            it('should add a powerup election.', function() {
                 var model = new Model();
 
                 var pu = [1,2,3];
@@ -546,21 +432,11 @@ describe('Model', function () {
 
                 model.setPowerupElection(pe);
 
-                var modelConfig = model.getSnapshot();
-
-                var model2 = new Model(modelConfig);
-
-                var pe2 = model2.getPowerupElection();
+                var pe2 = model.getPowerupElection();
 
                 pe2.votes.length.should.equal(1);
                 pe2.votes.should.containEql(vote);
                 pe2.powerups.should.equal(pu);
-
-
-            });
-
-            after(function(){
-                Logger.setLevel('INFO');
             });
         });
     });

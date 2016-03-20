@@ -4,46 +4,50 @@
 "use strict";
 
 var Physics = require("physicsjs");
+var Util = require('polyball/shared/Util');
 
 
 /**
  * Creates a paddle
  * @param {Object} config
- * @param {number} config.leftBound
- * @param {number} config.rightBound
- * @param {number} config.size
- * @param {number} config.x
- * @param {number} config.y
- * @param {Object} config.styles
+ * @property {number} config.id
+ * @property {number} config.leftBound
+ * @property {number} config.rightBound
+ * @property {number} config.body.radius
+ * @property {number} config.body.x
+ * @property {number} config.body.y
+ * @property {Object} config.body.styles
  * @constructor
  */
 var Paddle = function(config) {
+    this.id = config.id;
     this.leftBound = config.leftBound;
     this.rightBound = config.rightBound;
 
     this.body = Physics.body('circle',
         {
-            x: config.x,
-            y: config.y,
-            radius: config.size,
+            x: config.body.x,
+            y: config.body.y,
+            radius: config.body.radius,
             treatment: 'static',
-            styles: config.styles
+            styles: config.body.styles
         }
     );
 
     /**
-     * Converts this paddle object into it's config (serializable) form
+     * Converts this paddle object into it's serializable form.
+     * Contains physics state, but NOT as constructor expects (EX: body.state.pos.x, not body.x).
      * @return {Object}
      */
     this.toConfig = function(){
         return {
-            x: this.body.state.pos.x,
-            y: this.body.state.pos.y,
-            vx: this.body.state.vel.x,
-            vy: this.body.state.vel.y,
-            radius: this.body.radius,
-            treatment: this.body.treatment,
-            styles: this.body.styles
+            id: this.id,
+            body: {
+                state: Util.bodyToStateConfig(this.body),
+                radius: this.body.radius,
+                treatment: this.body.treatment,
+                styles: this.body.styles
+            }
         };
     };
 };

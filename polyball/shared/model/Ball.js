@@ -4,52 +4,58 @@
 "use strict";
 
 var Physics = require("physicsjs");
+var Util = require('polyball/shared/Util');
 
 /**
  * @param {object} config
- * @param {number} config.x
- * @param {number} config.y
- * @param {number} config.vx
- * @param {number} config.vy
- * @param {number} config.id
- * @param {number} config.radius
- * @param {Object} config.styles
+ * @property {number} config.id
+ * @property {number} config.lastTouchedID
+ * @property {number} config.body.x
+ * @property {number} config.body.y
+ * @property {number} config.body.vx
+ * @property {number} config.body.vy
+ * @property {number} config.body.radius
+ * @property {Object} config.body.styles
  * @constructor
  */
 var Ball = function(config) {
-    this.lastTouched = undefined;
-    this.body = Physics.body('circle',
-        {
-            x: config.x,
-            y: config.y,
-            vx: config.vx,
-            vy: config.vy,
-            radius: config.radius,
-            mass: 1,
-            restitution: 1,
-            styles: config.styles
-        }
-    );
+
+    if (config.id == null) {
+        throw new Error('Ball must be constructed with an id');
+    }
+    if (config.body == null) {
+        throw new Error('Ball must be constructed with a physics body');
+    }
+    if (config.body.radius == null) {
+        throw new Error('Ball must be constructed with a radius');
+    }
+
+    this.id = config.id;
+    this.lastTouchedID = config.lastTouchedID;
+
+    var newBodyConfig = config.body;
+    newBodyConfig.mass = 1;
+    newBodyConfig.restitution = 1;
+
+    this.body = Physics.body('circle', newBodyConfig);
 
     /**
-     * Converts this ball object into it's config (serializable) form
+     * Converts this ball object into it's serializable form.
+     * Contains physics state, but NOT as constructor expects (EX: body.state.pos.x, not body.x).
      * @return {Object}
      */
     this.toConfig = function(){
         return {
-            x: this.body.state.pos.x,
-            y: this.body.state.pos.y,
-            vx: this.body.state.vel.x,
-            vy: this.body.state.vel.y,
-            radius: this.body.radius,
-            mass: this.body.mass,
-            restitution: this.body.restitution,
-            styles: this.body.styles
+            lastTouchedID: this.lastTouchedID,
+            body: {
+                state: Util.bodyToStateConfig(this.body),
+                radius: this.body.radius,
+                mass: this.body.mass,
+                restitution: this.body.restitution,
+                styles: this.body.styles
+            }
         };
     };
-
-
-    this.id = config.id;
 };
 
 module.exports = Ball;
