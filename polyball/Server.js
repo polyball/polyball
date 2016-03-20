@@ -18,7 +18,7 @@ var comms = new Comms({httpServer: server, model: model});
 
 model.addOrResetArena({
     numberPlayers: Util.getRandomInt(3, 10),
-    arenaRadius: 600,
+    arenaRadius: 300,
     bumperRadius: 35,
     marginX: 60,
     marginY: 60
@@ -37,7 +37,7 @@ setInterval(function () {
 setInterval(function () {
     model.addOrResetArena({
         numberPlayers: Util.getRandomInt(3, 10),
-        arenaRadius: 600,
+        arenaRadius: 300,
         bumperRadius: 35,
         marginX: 60,
         marginY: 60
