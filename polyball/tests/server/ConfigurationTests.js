@@ -1,11 +1,11 @@
 /**
  * Created by thornhil on 3/15/16.
  */
-var Configuration = require('polyball/server/Configuration');
+var Configuration = require('polyball/server/configuration/Configuration');
 var should = require('should');
 var Util = require('polyball/shared/Util');
 var Logger = require('polyball/shared/Logger');
-
+var DefaultConfiguration = require('polyball/server/configuration/DefaultConfiguration');
 
 describe('Configuration', function () {
     describe('#Construct', function () {
@@ -34,21 +34,21 @@ describe('Configuration', function () {
         it('should not allow min players < 3', function(){
             var path = Util.createJSONConfigFile({minimumPlayers: 2});
             var config = new Configuration({configPath: path});
-            config.values.minimumPlayers.should.equal(3);
+            config.values.minimumPlayers.should.equal((new DefaultConfiguration()).minimumPlayers);
             Util.deleteJSONConfigFile(path);
         });
         it('should not allow round intermission < 1', function(){
             var path = Util.createJSONConfigFile({roundIntermission: 0});
             var config = new Configuration({configPath: path});
-            config.values.roundIntermission.should.equal(5000);
+            config.values.roundIntermission.should.equal((new DefaultConfiguration()).roundIntermission);
             Util.deleteJSONConfigFile(path);
         });
         it('should not allow max players < min players', function(){
             var path = Util.createJSONConfigFile({maximumPlayers: 1, minimumPlayers: 4});
             var config = new Configuration({configPath: path});
 
-            config.values.minimumPlayers.should.equal(4);
-            config.values.maximumPlayers.should.equal(config.values.minimumPlayers);
+            config.values.minimumPlayers.should.equal((new DefaultConfiguration()).minimumPlayers);
+            config.values.maximumPlayers.should.equal((new DefaultConfiguration()).maximumPlayers);
             Util.deleteJSONConfigFile(path);
         });
         after(function(){
