@@ -39,6 +39,7 @@ var Ball = function(config) {
         vx: config.body.state.vel.x,
         vy: config.body.state.vel.y
     };
+    newBodyConfig.radius = config.body.radius;
     newBodyConfig.mass = 1;
     newBodyConfig.restitution = 1;
 
@@ -50,10 +51,11 @@ var Ball = function(config) {
      */
     this.toConfig = function(){
         return {
+            id: this.id,
             lastTouchedID: this.lastTouchedID,
             body: {
                 state: Util.bodyToStateConfig(this.body),
-                radius: this.body.radius,
+                radius: this.body.geometry.radius,
                 mass: this.body.mass,
                 restitution: this.body.restitution,
                 styles: this.body.styles
