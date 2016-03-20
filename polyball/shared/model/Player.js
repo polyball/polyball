@@ -38,6 +38,14 @@ var Player = function(config) {
         };
     };
 
+    /**
+     * Adds a paddle to this player
+     * @param {Object} paddleConfig
+     */
+    this.addPaddle = function(paddle){
+        this.paddle = paddle;
+    };
+
     if (this.paddle === null){
         Logger.warn('Created player(' + config.id + '): ' + config.client.name + ' without a paddle');
     }

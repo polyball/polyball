@@ -15,9 +15,18 @@ var Logger = require('polyball/shared/Logger');
 var Configuration = function (config){
 
     var values = {
-        minimumPlayers: 3, //Minimum number of players for the game to start
-        serverTick: 30,     //What interval the server should progress the simulation (milliseconds)
-        roundIntermission: 5000 //How long the intermission between rounds lasts (milliseconds)
+        // Player Config
+        minimumPlayers: 3,          // Minimum number of players for the game to start
+        maximumPlayers: 15,         // Maximum number of players for each round
+
+        // Paddle Config
+        paddleSize: 50,             // The radius of the paddle
+        paddlePadding: 10,          // The distance between back of paddle and goal
+
+        // Server Config
+        serverTick: 30,             // What interval the server should progress the simulation (milliseconds)
+        roundIntermission: 5000,    // How long the intermission between rounds lasts (milliseconds)
+        roundLength: 120000         // How long each round will last (milliseconds)
     };
 
     /**
@@ -52,10 +61,21 @@ var Configuration = function (config){
         }
     };
 
+    /**
+     * Checks the bounds of the maximumPlayers value
+     */
+    var checkMaxPlayers = function (){
+        if (values.maximumPlayers < values.minimumPlayers){
+            values.maximumPlayers = values.minimumPlayers;
+            Logger.warn('Maximum players less than minmum players. Reset Max Players = Min Players');
+        }
+    };
+
     var customComfig = JSON.parse(fs.readFileSync(config.configPath, 'utf8'));
     _.assign(values, customComfig);
 
     checkMinimumPlayers();
+    checkMaxPlayers();
     checkserverTick();
     checkroundIntermission();
 

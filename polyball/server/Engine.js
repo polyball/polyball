@@ -7,6 +7,7 @@
 var Physics = require('physicsjs'); //jshint ignore:line
 var EngineStatus = require('polyball/server/EngineStatus.js');
 var _ = require('lodash');
+var Paddle = require('polyball/shared/model/Paddle');
 
 /**
  * Initializes the engine
@@ -23,10 +24,13 @@ var Engine = function (config) {
     var comms = config.comms;
     var configuration = config.configuration;
     var model = config.model;
+    var gameStartTime;
 
     // ============================= Private Methods ==============================
     // ============================================================================
 
+    // ========================= Game Lifecycle Functions =========================
+    // ============================================================================
     /**
      * Initializes the game:
      *  - Pulls players out of player queue
@@ -36,7 +40,7 @@ var Engine = function (config) {
     var initializeGame = function(){
         this.status = EngineStatus.gameInitializing;
 
-        //TODO un-queue players and add them to game
+        setupPlayers();
 
         if (model.playerCount() > configuration.minimumPlayers()){
             //TODO figure out radius as a function of # players
@@ -44,6 +48,8 @@ var Engine = function (config) {
                 numberPlayers: model.playerCount(),
                 arenaRadius: 1000
             });
+
+            addAllPaddles();
 
             //TODO get longest client latency
             var startTime = 10;
@@ -59,31 +65,39 @@ var Engine = function (config) {
      *  - Schedules the main loop
      */
     var startGame = function(){
+        this.status = EngineStatus.gameRunning;
+
         //Add the balls to the game
         _.times(model.playerCount(), function(x){
             setTimeout(model.addBall, x * 500);
         });
 
-        this.gameLoop = setInterval(this.update(), config.serverTick);
+        gameStartTime = Date.now();
+        model.currentRoundTime = 0;
+        this.gameLoop = setInterval(update(), config.configuration.serverTick);
     };
 
 
     /**
      * The game loop
      */
-        //TODO STOP IGNORING THIS LINE
-    var update = function(){    //jshint ignore:line
-        // TODO progress game simulation
-        model.getWorld().step();
+    var update = function(){
+        var time = Date.now;
+        model.getWorld().step(time-model.currentRoundTime);
+        model.currentRoundTime = time - gameStartTime;
+
         // TODO Broadcast new model
         broadcastModel();
+
+        if(model.currentRoundTime >= model.roundLength){
+            endGame();
+        }
     };
 
     /**
      * Handles all the logic to end the game
      */
-    //TODO STOP IGNORING THIS LINE
-    var endGame = function(){ //jshint ignore:line
+    var endGame = function(){
         this.status = EngineStatus.gameFinishing;
         clearInterval(this.gameLoop);
 
@@ -98,6 +112,41 @@ var Engine = function (config) {
      */
     var broadcastModel = function (){
         comms.broadcastSnapshot(model.getSnapshot());
+    };
+
+
+    // ============================= Game Setup Helpers ===============================
+    // ============================================================================
+    /**
+     * Handles moving spectators who are in the playerQueue into the players list
+     */
+    var setupPlayers = function (){
+        while(model.playerCount() < config.configuration.maximumPlayers && model.numberOfQueuedPlayers() > 0){
+            convertSpectatorToPlayer(model.popPlayerQueue());
+        }
+    };
+
+    /**
+     * Converts a spectator into a player
+     * @param {Spectator} spectator
+     */
+    var convertSpectatorToPlayer = function (spectator) {
+        model.addPlayer(spectator.client.toConfig());
+        model.deleteSpectator(spectator.id);
+    };
+
+    /**
+     * Handles adding paddles to each player
+     */
+    var addAllPaddles = function () {
+        var players = model.getPlayers();
+        for(var i=0; i < players.length; i++){
+            players[i].addPaddle(Paddle.fromGoal({
+                size: config.configuration.paddleSize,
+                padding: config.configuration.paddlePadding,
+                goal: model.getArena().getGoal(i)
+            }));
+        }
     };
 
     // ============================= Public Methods ===============================
