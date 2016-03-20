@@ -35,4 +35,12 @@ $(document).ready(function() {
         synchronizer.tick(time);
     });
 
+    //TODO Delete
+    $.get('hudcomponenets/addToQueueButton.html', function(data) {
+        $('#viewport').append(data);
+        $('#addToQueueButton').click(function (){
+            alert( "Hook me up to Comms Add To Player Queue Please!!!" );
+        });
+    });
+
 }); // end on DOM ready
