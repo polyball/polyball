@@ -94,6 +94,13 @@ var Model = function () {
      */
     var powerupElection;
 
+    /**
+     * IGNORED BY SERVER.
+     * The Player (or Spectator) Client id for the client machine.
+     * @type Number
+     */
+    var localClientID;
+
 
     //
     //             PRIVATE METHODS
@@ -241,12 +248,31 @@ var Model = function () {
     };
 
     /**
-     * Set the round length in milliseconds.
-     * @param newRoundLength
+     * Set the current round elapsed time.
+     * @param newCurrentTime
      */
     this.setCurrentRoundTime = function (newCurrentTime) {
         currentRoundTime = newCurrentTime;
     };
+
+    /**
+     * IGNORED BY SERVER.
+     * Get the Player or Spectator Client ID for the local client machine.
+     * @returns {Number}
+     */
+    this.getLocalClientID = function () {
+        return localClientID;
+    };
+
+    /**
+     * IGNORED BY SERVER.
+     * Set the Player or Spectator Client ID for the local client machine.
+     * @param {Number} newID
+     */
+    this.setLocalClientID = function (newID) {
+        localClientID = newID;
+    };
+
 
     //
     //             BALLS
@@ -575,7 +601,10 @@ var Model = function () {
             balls: Util.arrayToConfig(balls),
             //TODO add powerups
             playerQueue: playerQueue,
-            powerupElection: toConfig(powerupElection)
+            powerupElection: toConfig(powerupElection),
+            roundLength: roundLength
+
+            // currentRoundTime is maintained by Server and each Client independently.  Don't snapshot it!
         };
     };
 
