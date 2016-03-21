@@ -30,6 +30,10 @@ var Client = function(config) {
             name: this.name
         };
     };
+
+    if(this.socket == null){
+        throw 'Client was initialized without a socket';
+    }
 };
 
 module.exports = Client;

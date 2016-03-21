@@ -369,6 +369,29 @@ describe('Model', function () {
                 model.numberOfQueuedPlayers().should.equal(x);
                 queuedPlayers.length.should.equal(x);
             });
+            it('should not allow clients that are players to add themselves to the queue', function () {
+                Logger.setLevel('OFF');
+
+                model = new Model();
+                var x = 5;
+
+                _.times(x, function(){
+                    var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                    model.addToPlayerQueue(spectator1.id);
+
+                });
+
+                var player = model.addPlayer({name: Util.randomUsername(), socket: 'dummy'});
+
+                model.addToPlayerQueue(player.id);
+
+                var queuedPlayers = model.getAllQueuedPlayers();
+                model.numberOfQueuedPlayers().should.equal(x);
+                queuedPlayers.length.should.equal(x);
+                queuedPlayers.should.not.containEql(player.id);
+
+                Logger.setLevel('INFO');
+            });
         });
         describe("#removeFromQueue", function () {
             var model;

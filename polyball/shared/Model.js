@@ -477,12 +477,15 @@ var Model = function () {
      */
     this.addToPlayerQueue = function (id) {
         if (!findByID(spectators, id)) {
-            Logger.Error('Tried to add id to Player Queue that does not exist in spectators');
+            Logger.error('Tried to add id to Player Queue that does not exist in spectators');
         }
 
-        if (!_.includes(playerQueue, id)){
-            playerQueue.push(id);
+        if (!findByID(players, id)){
+            if (!_.includes(playerQueue, id)){
+                playerQueue.push(id);
+            }
         }
+
     };
 
     /**

@@ -43,8 +43,10 @@ var Configuration = function (config){
         }
     };
 
-    var customComfig = JSON.parse(fs.readFileSync(config.configPath, 'utf8'));
-    _.assign(values, customComfig);
+    if (config != null) {
+        var customComfig = JSON.parse(fs.readFileSync(config.configPath, 'utf8'));
+        _.assign(values, customComfig);
+    }
 
     checkLowerBound('minimumPlayers', defaults.minimumPlayers);
     checkUpperBound('minimumPlayers', values.maximumPlayers);

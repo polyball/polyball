@@ -33,7 +33,7 @@ var Player = function(config) {
             id: this.id,
             paddle: this.paddle != null? this.paddle.toConfig() : null,
             arenaPosition: this.arenaPosition,
-            client: config.client,
+            client: this.client.toConfig(),
             score: this.score
         };
     };
