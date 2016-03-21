@@ -85,6 +85,39 @@ describe('Arena', function() {
             g3.state.pos.y.should.approximately(375, fpDelta);
         });
 
+
+        it('should deserialize and serialize in a reversible way', function() {
+
+            var arena = new Arena({
+                numberPlayers: 3,
+                arenaRadius: 500,
+                bumperRadius: 25,
+                marginX: 0,
+                marginY: 0
+            });
+
+            var arenaConfig = arena.toConfig();
+
+
+            var arena2 = new Arena(arenaConfig);
+
+            // There should be 3 bumpers
+            var g1 = arena2.getGoal(0);
+            var g2 = arena2.getGoal(1);
+            var g3 = arena2.getGoal(2);
+
+            g1.state.pos.x.should.approximately(500, fpDelta);
+            g1.state.pos.y.should.approximately(750, fpDelta);
+
+            g2.state.pos.x.should.approximately(716.50625, fpDelta);
+            g2.state.pos.y.should.approximately(375, fpDelta);
+
+            g3.state.pos.x.should.approximately(283.49375, fpDelta);
+            g3.state.pos.y.should.approximately(375, fpDelta);
+
+            arena2.getRadius().should.equal(500);
+        });
+
         // Needs tests for the goals.
     });
 });

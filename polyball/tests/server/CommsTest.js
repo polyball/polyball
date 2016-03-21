@@ -2,7 +2,6 @@
  * Created by kdbanman on 2016-03-15.
  */
 var should = require('should'); //jshint ignore:line
-var mLog = require('mocha-logger');
 var Promise = require('promise');
 
 var ioClient = require('socket.io-client');
@@ -12,6 +11,7 @@ var Comms = require('polyball/server/Comms');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Model = require('polyball/shared/Model');
 var Vote = require('polyball/shared/model/Vote');
+var Logger = require('polyball/shared/Logger');
 
 
 describe('Server Comms', function() {
@@ -28,7 +28,9 @@ describe('Server Comms', function() {
     var server, serverSockets, model, comms, client1;
 
     before(function (done) {
-        mLog.log('Comms test server started on port 39522');
+        Logger.setLevel("ERROR");
+
+        Logger.info('Comms test server started on port 39522');
         server = http.createServer();
         server.listen(39522);
 
@@ -44,11 +46,11 @@ describe('Server Comms', function() {
             // Add a newly connected socket
             var socketId = nextSocketId++;
             serverSockets[socketId] = socket;
-            mLog.log('Comms test socket', socketId, 'opened');
+            Logger.info('Comms test socket' + socketId + 'opened');
 
             // Remove the socket when it closes
             socket.on('close', function () {
-                mLog.log('Comms test socket', socketId, 'closed');
+                Logger.info('Comms test socket' + socketId + 'closed');
                 delete serverSockets[socketId];
             });
         });
@@ -154,13 +156,12 @@ describe('Server Comms', function() {
     after(function (done) {
         this.timeout(15000);
         server.close(function () {
-            mLog.log('Comms test server closed');
+            Logger.info('Comms test server closed');
             done();
         });
         client1.disconnect();
-        console.log(Object.keys(serverSockets));
         Object.keys(serverSockets).forEach(function (socketId) {
-            mLog.log('Comms test socket', socketId, 'closed');
+            Logger.info('Comms test socket' + socketId + 'closed');
             serverSockets[socketId].end();
         });
     });

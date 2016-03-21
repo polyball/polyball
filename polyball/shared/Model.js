@@ -7,14 +7,14 @@ var Arena = require('polyball/shared/model/Arena');
 var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
 var Player = require('polyball/shared/model/Player');
-//var Paddle = require('polyball/shared/model/Paddle');
+var Util = require('polyball/shared/Util');
 
 
 /**
  * Holds all data for client and server game instances.  Exposes CRUD operations for data.
  *
  * @constructor
- */
+*/
 var Model = function () {
 
     //
@@ -28,12 +28,46 @@ var Model = function () {
     //
     ///////////////////////////////////////////////////////////////////////////
 
+
+    //
+    //             INITIALIZATION
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    var newPhysicsSim = function () {
+        var newWorld = Physics({maxIPF: 10000});
+        newWorld.add([
+            Physics.behavior('body-impulse-response'),
+            Physics.behavior('body-collision-detection'),
+            Physics.behavior('sweep-prune')
+        ]);
+
+        return newWorld;
+    };
+
+
     //
     //             PRIVATE STATE
     //
     ///////////////////////////////////////////////////////////////////////////
 
-    var world = Physics();
+    var world = newPhysicsSim();
+
+    /**
+     * The number of milliseconds in the current round.
+     * @type {Number}
+     */
+    var roundLength;
+
+    /**
+     * The number of milliseconds elapsed in the current round.
+     * @type {Number}
+     */
+    var currentRoundTime;
+
+    /**
+     * @type {Arena}
+     */
     var arena;
 
     /**
@@ -60,8 +94,13 @@ var Model = function () {
      */
     var powerupElection;
 
-    //var powerups = [];
-    //var election = undefined;
+    /**
+     * IGNORED BY SERVER.
+     * The Player (or Spectator) Client id for the client machine.
+     * @type Number
+     */
+    var localClientID;
+
 
     //
     //             PRIVATE METHODS
@@ -69,9 +108,14 @@ var Model = function () {
     ///////////////////////////////////////////////////////////////////////////
 
     var nextID = (function () {
-        var nextID = 0;
+        var nextID = 1;
 
         return function () {
+
+            if (typeof window !== 'undefined') {
+                throw new Error("Client Model must not create its own IDs!");
+            }
+
             return nextID++;
         };
     }());
@@ -117,23 +161,6 @@ var Model = function () {
     };
 
     /**
-     * Search for an element by id in an array, and assign all properties from newState if found.
-     * @param {Array} array The array to search.
-     * @param {Number} id The id of the desired element (in field `element.id`)
-     * @param {Object} newState The new state for the update (object structure must match source structure).
-     */
-    var updateByID = function (array, id, newState) {
-        if (newState.id != null) {
-            delete newState.id;
-        }
-
-        var element = findByID(array, id);
-        if (element != null) {
-            _.assign(element, newState);
-        }
-    };
-
-    /**
      * Remove element from array by its id.
      * @template T
      * @param {Array} array The array to search
@@ -148,6 +175,7 @@ var Model = function () {
 
         return removed[0];
     };
+
 
     //
     //    ########  ##     ## ########  ##       ####  ######
@@ -167,13 +195,20 @@ var Model = function () {
      * @return {Arena} The new arena
      */
     this.addOrResetArena = function (config) {
+
+        var newConfig = {
+            id: config.id ? config.id : nextID()
+        };
+
+        _.assign(newConfig, config);
+
         if (arena != null) {
             // clear out old arena
             world.remove(arena.getBumpers());
             world.remove(arena.getGoals());
         }
 
-        arena = new Arena(config);
+        arena = new Arena(newConfig);
 
         world.add(arena.getGoals());
         world.add(arena.getBumpers());
@@ -189,11 +224,81 @@ var Model = function () {
     };
 
     /**
+     * True if there is an Arena in the model.
+     * @param {Number} [id] - Optional. If present, hasArena() is true if the arena has the passed ID.
+     * @returns {boolean}
+     */
+    this.hasArena = function (id) {
+        if (arena == null) {
+            return false;
+        }
+
+        if (id == null) {
+            // arena known to exist, hasArena() is true
+            return true;
+        } else {
+            // arena and id exists, hasArena(id) true if IDs are equal.
+            return arena.getID() === id;
+        }
+    };
+
+    /**
      * @returns {World}
      */
     this.getWorld = function () {
         return world;
     };
+
+    /**
+     * The round length in milliseconds.
+     * @returns {Number}
+     */
+    this.getRoundLength = function () {
+        return roundLength;
+    };
+
+    /**
+     * Set the round length in milliseconds.
+     * @param newRoundLength
+     */
+    this.setRoundLength = function (newRoundLength) {
+        roundLength = newRoundLength;
+    };
+
+    /**
+     * The current time elapsed in the round.
+     * @returns {Number}
+     */
+    this.getCurrentRoundTime = function () {
+        return currentRoundTime;
+    };
+
+    /**
+     * Set the current round elapsed time.
+     * @param newCurrentTime
+     */
+    this.setCurrentRoundTime = function (newCurrentTime) {
+        currentRoundTime = newCurrentTime;
+    };
+
+    /**
+     * IGNORED BY SERVER.
+     * Get the Player or Spectator Client ID for the local client machine.
+     * @returns {Number}
+     */
+    this.getLocalClientID = function () {
+        return localClientID;
+    };
+
+    /**
+     * IGNORED BY SERVER.
+     * Set the Player or Spectator Client ID for the local client machine.
+     * @param {Number} newID
+     */
+    this.setLocalClientID = function (newID) {
+        localClientID = newID;
+    };
+
 
     //
     //             BALLS
@@ -201,29 +306,48 @@ var Model = function () {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Add a ball at the centre of the arena with a random velocity.
+     * Add a ball to the model.
      *
+     * @param {Object} config - see Ball constructor
      * @return {Ball} The new Ball.
      */
-    this.addBall  = function () {
-        var ballConfig = {
-            id: nextID(),
-            x: arena.getCenter().x,
-            y: arena.getCenter().y,
-            vx: 0.1,
-            vy: 0.1,
-            radius: 10,
-            styles: {
-                fillStyle: '0xa42222'
+    this.addBall  = function (config) {
+
+        var newConfig = {
+            id: config.id ? config.id : nextID(),
+            body: {
+                styles: {
+                    fillStyle: '0xa42222'
+                }
             }
         };
 
-        var ball = new Ball(ballConfig);
+        _.assign(newConfig, config);
+
+        var ball = new Ball(newConfig);
         balls.push(ball);
 
         world.addBody(ball.body);
 
         return ball;
+    };
+
+    /**
+     * Generate a physics state at the center of the arena with a random velocity.
+     *
+     * @returns {{pos: {x: Number, y: Number}, vel: {x: Number, y: Number}}}
+     */
+    this.generateNewBallState = function () {
+        return {
+            pos: {
+                x: arena.getCenter().x,
+                y: arena.getCenter().y
+            },
+            vel: {
+                x: Util.getRandomArbitrary(-1.0, 1.0),
+                y: Util.getRandomArbitrary(-1.0, 1.0)
+            }
+        };
     };
 
     /**
@@ -259,33 +383,28 @@ var Model = function () {
     };
 
     /**
-     * Change the state of the identified ball to match the supplied state.
-     *
-     * @param {Number} id
-     * @param newState (See Ball constructor config). **id field is ignored!**
-     */
-    this.updateBall = function (id, newState) {
-        if (newState.id != null) {
-            delete newState.id;
-        }
-
-        var ball = this.getBall(id);
-        if (ball != null) {
-            _.assign(ball, newState);
-        }
-    };
-
-    /**
      * Delete the identified ball from the model.
      *
      * @param {Number} id
      */
     this.deleteBall = function (id) {
-        var ball = _.remove(balls, function (ball) { return ball.id === id; });
+        var ball = removeByID(balls, id);
 
         if (ball != null) {
             world.removeBody(ball.body);
         }
+    };
+
+    /**
+     * Delete all balls from the model.
+     */
+    this.clearBalls = function () {
+        var ballIDs = _.map(balls, function (ball) { return ball.id; });
+
+        var me = this;
+        ballIDs.forEach(function (id) {
+            me.deleteBall(id);
+        });
     };
 
     //
@@ -343,16 +462,6 @@ var Model = function () {
     };
 
     /**
-     * Change the state of the identified spectator to match the supplied state.
-     *
-     * @param {Number} id
-     * @param newState (See Spectator constructor config). **id field is ignored!**
-     */
-    this.updateSpectator = function (id, newState) {
-        updateByID(spectators, id, newState);
-    };
-
-    /**
      * Delete the identified spectator from the model.
      *
      * @param {Number} id
@@ -368,12 +477,15 @@ var Model = function () {
      */
     this.addToPlayerQueue = function (id) {
         if (!findByID(spectators, id)) {
-            Logger.Error('Tried to add id to Player Queue that does not exist in spectators');
+            Logger.error('Tried to add id to Player Queue that does not exist in spectators');
         }
 
-        if (!_.includes(playerQueue, id)){
-            playerQueue.push(id);
+        if (!findByID(players, id)){
+            if (!_.includes(playerQueue, id)){
+                playerQueue.push(id);
+            }
         }
+
     };
 
     /**
@@ -440,7 +552,7 @@ var Model = function () {
 
     /**
      * Adds a player to the model.
-     * @param {Client} client The client information for the Player.
+     * @param {Object} client The client config for the Player.
      * @return {Player} The new Player.
      */
     this.addPlayer = function (client) {
@@ -488,16 +600,6 @@ var Model = function () {
     };
 
     /**
-     * Change the state of the identified player to match the supplied state.
-     *
-     * @param {Number} id
-     * @param newState (See Player constructor config). **id field is ignored!**
-     */
-    this.updatePlayer = function (id, newState) {
-        updateByID(players, id, newState);
-    };
-
-    /**
      * Delete the identified player from the model.
      *
      * @param {Number} id
@@ -512,11 +614,29 @@ var Model = function () {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * @return
+     * Converts this Model object into it's config (serializable) form
+     * @return {Object}
      */
     this.getSnapshot = function() {
 
+        var toConfig = function(variable) {
+            return variable != null ? variable.toConfig() : null;
+        };
+
+        return{
+            arena: toConfig(arena),
+            players: Util.arrayToConfig(players),
+            spectators: Util.arrayToConfig(spectators),
+            balls: Util.arrayToConfig(balls),
+            //TODO add powerups
+            playerQueue: playerQueue,
+            powerupElection: toConfig(powerupElection),
+            roundLength: roundLength
+
+            // currentRoundTime is maintained by Server and each Client independently.  Don't snapshot it!
+        };
     };
+
 };
 
 

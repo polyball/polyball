@@ -3,16 +3,23 @@
  */
 
 'use strict';
+var Vote = require('polyball/shared/model/Vote');
+var Util = require('polyball/shared/Util');
 
 /**
  * Elects a powerup to be spawned in the arena.
- *
- * @param {{powerups: Powerup[]}} config
+ * @param {Object} config
+ * @param {Object[]} config.powerups - The powerup configs for initializing powerups
+ * @param {Object[]} config.votes - The vote configs for initializing votes
  * @constructor
  */
 function PowerupElection(config) {
+    //TODO expand powerups from powerup configs array
+    //TODO also update toConfig()
     this.powerups = config.powerups;
     this.votes = [];
+
+    Util.expandArray(this.votes, config.votes, Vote);
 }
 
 /**
@@ -53,6 +60,23 @@ PowerupElection.prototype.getPlayerVoteIndex = function (spectatorID) {
         }
     }
     return -1;
+};
+
+/**
+ * Converts this PowerupElection object into it's config (serializable) form
+ * @return {Object}
+ */
+PowerupElection.prototype.toConfig = function (){
+    var voteConfigs = [];
+    this.votes.forEach(function(vote){
+       voteConfigs.push(vote.toConfig());
+    });
+
+    return {
+        votes: voteConfigs,
+        powerups: this.powerups
+        //TODO Add powerups
+    };
 };
 
 module.exports = PowerupElection;

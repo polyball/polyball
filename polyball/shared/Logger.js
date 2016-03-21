@@ -25,7 +25,7 @@ var mainLogger, logLevel;
  * @return {String} The new log level.
  */
 var setLevel = function (level) {
-    if (level !== 'DEBUG' && level !== 'INFO' && level !== 'WARN' && level !== 'ERROR') {
+    if (level !== 'DEBUG' && level !== 'INFO' && level !== 'WARN' && level !== 'ERROR' && level !== 'OFF') {
         warn('Cannot set log level to ' + level + ', setting to INFO');
         setLevel('INFO');
     }

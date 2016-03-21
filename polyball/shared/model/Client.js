@@ -11,13 +11,29 @@
 /**
  * A model object for holding client information.
  *
- * @param {{name: String,
- *          socket: Socket}} config
+ * @param {Object} config
+ * @param {String} config.name
+ * @param {Socket} config.socket
  * @constructor
  */
 var Client = function(config) {
     this.name = config.name;
     this.socket = config.socket;
+
+    /**
+     * Converts this client object into it's serializable form.
+     * DOES NOT CONTAIN SOCKET for obvious reasons.
+     * @return {Object}
+     */
+    this.toConfig = function (){
+        return {
+            name: this.name
+        };
+    };
+
+    if(this.socket == null){
+        throw 'Client was initialized without a socket';
+    }
 };
 
 module.exports = Client;

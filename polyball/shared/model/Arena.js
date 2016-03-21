@@ -7,8 +7,13 @@ var Physics = require("physicsjs");
 
 
 /**
- * @param {{numberPlayers: number,
- * arenaRadius: number}} config
+ * @param {Object} config
+ * @property {number} config.id
+ * @property {number} config.numberPlayers
+ * @property {number} config.arenaRadius
+ * @property {number} config.bumperRadius
+ * @property {number} config.marginX
+ * @property {number} config.marginY
  * @constructor
  */
 var Arena = function(config) {
@@ -128,11 +133,33 @@ var Arena = function(config) {
         return Array.apply(undefined, this.goals);
     };
 
+    /**
+     * Get the arena's id
+     * @returns {Number}
+     */
+    this.getID = function () {
+        return this.id;
+    };
 
+    /**
+     * Converts this arena object into it's config (serializable) form
+     * @return {Object}
+     */
+    this.toConfig = function () {
+        return {
+            id: this.id,
+            numberPlayers: this.numberPlayers,
+            arenaRadius: this.arenaRadius,
+            bumperRadius: this.bumperRadius,
+            marginX: this.marginX,
+            marginY: this.marginY
+        };
+    };
 
     // Constructor
 
 
+    this.id = config.id;
     this.numberPlayers = config.numberPlayers;
     this.arenaRadius = config.arenaRadius;
     this.bumperRadius = config.bumperRadius;

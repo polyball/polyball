@@ -26,11 +26,6 @@ var Comms = function (config) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
-    //
-    //             INITIALIZATION
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
 
     //
     //             PRIVATE STATE
@@ -42,18 +37,68 @@ var Comms = function (config) {
         events: CommsEvents.ClientToClient
     });
 
+
+    //
+    //             EVENT SUBSCRIPTION
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Set the log level according to the server.
+     */
     socket.on(CommsEvents.ServerToClient.setLogLevel, function (logLevel) {
-        var newLevel = Logger.setLevel(logLevel);
-        Logger.info('Log level set: ' + newLevel);
+        Logger.info('Comms received log level set: ' + logLevel);
+        Logger.setLevel(logLevel);
+    });
+    
+    socket.on(CommsEvents.ServerToClient.idAssigned, function (id) {
+        Logger.info('Comms received new local id: ' + id);
+        pubsub.fireEvent(CommsEvents.ClientToClient.newLocalID, id);
     });
 
+    /**
+     * Tell subscribers (Synchronizer, etc.) that a new round is starting.
+     * NOTE: Data includes a delay until new round actually begins.
+     */
+    socket.on(CommsEvents.ServerToClient.startNewRound, function (newRoundData) {
+        Logger.info('Comms received new round');
+        pubsub.fireEvent(CommsEvents.ClientToClient.newRound, newRoundData);
+    });
+
+    /**
+     * Tell subscribers that a new snapshot has been received.
+     */
     socket.on(CommsEvents.ServerToClient.newSnapshot, function (snapshot) {
         Logger.debug(snapshot);
         pubsub.fireEvent(CommsEvents.ClientToClient.snapshotReceived, snapshot);
     });
 
+
+    //
+    //    ########  ##     ## ########  ##       ####  ######
+    //    ##     ## ##     ## ##     ## ##        ##  ##    ##
+    //    ##     ## ##     ## ##     ## ##        ##  ##
+    //    ########  ##     ## ########  ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##    ##
+    //    ##         #######  ########  ######## ####  ######
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Subscribe to an event
+     * @param {String} eventName - The name of the event.  Use CommsEvents.ClientToClient.
+     * @param {Function} callback - The callback to call when the event is fired.
+     */
     this.on = function(eventName, callback) {
         pubsub.on(eventName, callback);
+    };
+
+
+    this.queueToPlay = function () {
+        Logger.info('Comms is queueing to play.');
+
+        socket.emit(CommsEvents.ClientToServer.queueToPlay);
     };
 };
 

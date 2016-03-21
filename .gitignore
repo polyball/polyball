@@ -57,3 +57,6 @@ bower_components
 !node_modules/jquery
 !node_modules/tween
 !node_modules/physicsjs
+
+# Static Files
+public/css

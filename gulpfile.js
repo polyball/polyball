@@ -15,9 +15,11 @@ var gutil = require('gulp-util');
 var mocha = require('gulp-mocha');
 var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
+var fail = require('gulp-fail');
 
 var browserify = require('browserify');
 var watchify = require('watchify');
+var sass = require('gulp-sass');
 
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
@@ -46,7 +48,8 @@ var lintConfig = {
 gulp.task('build-js', browserifyBundle);
 gulp.task('run-tests', tests);
 gulp.task('lint', lint);
-gulp.task('default', ['lint', 'build-js', 'run-tests']);
+gulp.task('compile-static', compileStatic);
+gulp.task('default', ['lint', 'build-js', 'compile-static', 'run-tests']);
 
 gulp.task('watch-js', watchifyBundle);
 
@@ -98,7 +101,19 @@ function watchifyBundle() {
         return bundle(wify, false);
     }); // on any dep update, run the bundler
     wify.on('update', lint_nokill);   // on any dep update, run the linter
+    // on any dep update, run the linter
     wify.on('log', gutil.log); // output build logs to terminal
 
     return bundle(wify, false);
+}
+
+function compileStatic(){
+    return gulp.src('./polyball/client/hudcomponents/*.scss')
+        .pipe(sass().on('error', function(error){
+            var message = new gutil.PluginError('sass', error.messageFormatted).toString();
+            process.stderr.write(message + '\n');
+            process.exit(1);
+        }))
+        .pipe(gulp.dest('./public/css'));
+
 }

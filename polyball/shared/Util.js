@@ -2,6 +2,7 @@
  * Created by kdban on 3/10/2016.
  */
 var fs = require('fs');
+var Logger = require('polyball/shared/Logger');
 
 var Util = function(){
 
@@ -245,6 +246,100 @@ Util.createConfigFile = function (string){
  */
 Util.deleteJSONConfigFile = function (path){
     fs.unlink(path);
+};
+
+/**
+ * A helper function to expand an array of configs into their fully instantiated form
+ * @param {Object[]} array
+ * @param {Object[]} config
+ * @param {function} constructor
+ */
+Util.expandArray = function (array, config, constructor){
+    if (config != null){
+        config.forEach(function(x) {
+            array.push(new constructor(x));
+        });
+    }
+};
+
+/**
+ * A helper function to turn an array of model objects into their config counterparts
+ * @param {Object[]} array
+ */
+Util.arrayToConfig = function (array){
+    var configs = [];
+    array.forEach(function(elm){
+        configs.push(elm.toConfig());
+    });
+    return configs;
+};
+
+/**
+ * Returns a random number between min (inclusive) and max (exclusive)
+ * From http://stackoverflow.com/a/1527820/3367144, Ionuț G. Stan
+ */
+Util.getRandomArbitrary = function (min, max) {
+    return Math.random() * (max - min) + min;
+};
+
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ * Using Math.round() will give you a non-uniform distribution!
+ * From http://stackoverflow.com/a/1527820/3367144, Ionuț G. Stan
+ */
+Util.getRandomInt = function (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+/**
+ * Get a copy of a physics body's state in serializable form.
+ * @param {Physics.body} physicsBody
+ Number @returns {{pos: {x: Number, y: Number}, vel: {x: Number, y: Number}, acc: {x: Number, y: Number}, angular: {pos: Number, vel: Number, acc: Number}, old: {pos: {x: Number, y: Number}, vel: {x: Number, y: Number}, acc: {x: Number, y: Number}, angular: {pos: Number, vel: Number, acc: Number}}}}
+ */
+Util.bodyToStateConfig = function (physicsBody) {
+    
+    if (physicsBody.state != null) {
+        return {
+            pos: {
+                x: physicsBody.state.pos.x,
+                y: physicsBody.state.pos.y
+            },
+            vel: {
+                x: physicsBody.state.vel.x,
+                y: physicsBody.state.vel.y
+            },
+            acc: {
+                x: physicsBody.state.acc.x,
+                y: physicsBody.state.acc.y
+            },
+            angular: {
+                pos: physicsBody.state.angular.pos,
+                vel: physicsBody.state.angular.vel,
+                acc: physicsBody.state.angular.acc
+            }, 
+            old: {
+                pos: {
+                    x: physicsBody.state.old.pos.x,
+                    y: physicsBody.state.old.pos.y
+                },
+                vel: {
+                    x: physicsBody.state.old.vel.x,
+                    y: physicsBody.state.old.vel.y
+                },
+                acc: {
+                    x: physicsBody.state.old.acc.x,
+                    y: physicsBody.state.old.acc.y
+                },
+                angular: {
+                    pos: physicsBody.state.old.angular.pos,
+                    vel: physicsBody.state.old.angular.vel,
+                    acc: physicsBody.state.old.angular.acc
+                }
+            }
+        };
+    } else {
+        Logger.warn('Unrecognized object passed to Util#bodyToPhysicsState');
+    }
 };
 
 module.exports = Util;

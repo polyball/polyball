@@ -52,7 +52,7 @@ var Comms = function (config) {
         events: CommsEvents.ServerToServer
     });
 
-    var io = new Server(config.httpServer, {serveClient: true});
+    var io = new Server(config.httpServer, {serveClient: false});
     /**
      * @type {Model}
      */
@@ -60,27 +60,30 @@ var Comms = function (config) {
 
 
     //
-    //             CLIENT EVENTS
+    //             CLIENT CONNECTION
     //
     ///////////////////////////////////////////////////////////////////////////
 
-
     io.on(CommsEvents.ClientToServer.connection, function (clientSocket) {
         Logger.info('New client connected.');
-
-        // CREATE SPECTATOR
 
         var client = new Client({
             name: Util.randomUsername(),
             socket: clientSocket
         });
 
-        // NOTE: Do NOT store spectator - model or engine could convert it to a player or remove
-        //       the spectator from under the Comms feet.  Query for IDs when necessary.
-        model.addSpectator(client);
-
-
-        // EVENT SUBSCRIPTIONS
+        // Add the client as a spectator and send the new client its ID.
+        // NOTE: Do NOT store spectator or IDs for later use - model or engine could
+        //       change it or remove it at any time.  Query for IDs when necessary.
+        var newSpectator = model.addSpectator(client);
+        clientSocket.emit(CommsEvents.ServerToClient.idAssigned, newSpectator.id);
+        clientSocket.emit(CommsEvents.ServerToClient.setLogLevel, Logger.getLevel());
+        
+        
+        //
+        //             CLIENT EVENTS
+        //
+        ///////////////////////////////////////////////////////////////////////////
 
         clientSocket.on(CommsEvents.ClientToServer.disconnect, function () {
             Logger.info('Client disconnected');
@@ -96,14 +99,18 @@ var Comms = function (config) {
 
         clientSocket.on(CommsEvents.ClientToServer.queueToPlay, function () {
             var spectatorID = getPlayerOrSpectatorID(clientSocket);
+            
+            Logger.info("Client " + spectatorID + " requests to play.");
             pubsub.fireEvent(CommsEvents.ServerToServer.newPlayerQueued, {spectatorID: spectatorID});
         });
 
         clientSocket.on(CommsEvents.ClientToServer.vote, function (voteConfig) {
+            var spectatorID = getPlayerOrSpectatorID(clientSocket);
+
+            Logger.info("Spectator " + spectatorID + " casts powerup vote.");
             pubsub.fireEvent(CommsEvents.ServerToServer.newVote, voteConfig);
         });
 
-        clientSocket.emit(CommsEvents.ServerToClient.setLogLevel, Logger.getLevel());
     });
 
 
@@ -150,9 +157,35 @@ var Comms = function (config) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
+
     this.broadcastSnapshot = function (snapshot) {
         Logger.debug("Comms broadcasting snapshot.");
         io.sockets.emit(CommsEvents.ServerToClient.newSnapshot, snapshot);
+    };
+
+
+    /**
+     * Tell all clients to start.  Each client is delayed by an estimated time necessary
+     * to synchronize them all.
+     *
+     * @param {Object} newRoundData
+     * @property {Object} snapshot - a Model snapshot
+     * @property {Number} minimumDelay - the minimum time in milliseconds that any client will wait before starting
+     *                                   a new round.
+     * @param {Function} delayedStartCallback - a callback that will be called after a delay.  Ideally called at the
+     *                                          same time all clients are instructed to start.
+     */
+    this.broadcastSynchronizedStart = function (newRoundData, delayedStartCallback) {
+        Logger .info("Comms broadcasting new round.");
+
+        //TODO compute this for each client depending on latency with snapshot packets.
+        var clientDelay = newRoundData.minimumDelay;
+        io.sockets.emit(CommsEvents.ServerToClient.startNewRound, {
+            snapshot: newRoundData.snapshot,
+            delay: clientDelay
+        });
+
+        setTimeout(delayedStartCallback, newRoundData.minimumDelay);
     };
 
 

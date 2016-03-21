@@ -7,6 +7,9 @@
 var Physics = require('physicsjs'); //jshint ignore:line
 var EngineStatus = require('polyball/server/EngineStatus.js');
 var _ = require('lodash');
+var Paddle = require('polyball/shared/model/Paddle');
+var CommsEvents = require('polyball/shared/CommsEvents');
+var Logger = require('polyball/shared/Logger');
 
 /**
  * Initializes the engine
@@ -23,10 +26,13 @@ var Engine = function (config) {
     var comms = config.comms;
     var configuration = config.configuration;
     var model = config.model;
+    var gameStartTime;
 
     // ============================= Private Methods ==============================
     // ============================================================================
 
+    // ========================= Game Lifecycle Functions =========================
+    // ============================================================================
     /**
      * Initializes the game:
      *  - Pulls players out of player queue
@@ -35,22 +41,27 @@ var Engine = function (config) {
      */
     var initializeGame = function(){
         this.status = EngineStatus.gameInitializing;
+        Logger.info('Initializing game');
 
-        //TODO un-queue players and add them to game
+        setupPlayers();
+        Logger.info("Number of Players: " + model.playerCount());
 
-        if (model.playerCount() > configuration.minimumPlayers()){
+        if (model.playerCount() >= configuration.minimumPlayers){
             //TODO figure out radius as a function of # players
             model.addOrResetArena({
                 numberPlayers: model.playerCount(),
-                arenaRadius: 1000
+                arenaRadius: 300,
+                bumperRadius: 35,
+                marginX: 60,
+                marginY: 60
             });
 
-            //TODO get longest client latency
-            var startTime = 10;
+            //addAllPaddles();
 
-            //TODO broadcast to all clients, start in startTime miliseconds
-
-            setTimeout(startGame(), startTime);
+            comms.broadcastSynchronizedStart({
+                snapshot: model.getSnapshot(),
+                minimumDelay: 0
+            }, startGame);
         }
     };
 
@@ -59,37 +70,44 @@ var Engine = function (config) {
      *  - Schedules the main loop
      */
     var startGame = function(){
+        this.status = EngineStatus.gameRunning;
+
         //Add the balls to the game
         _.times(model.playerCount(), function(x){
-            setTimeout(model.addBall, x * 500);
+            setTimeout(addBall, x * 500);
         });
 
-        this.gameLoop = setInterval(this.update(), config.serverTick);
+        gameStartTime = Date.now();
+        model.currentRoundTime = 0;
+        this.gameLoop = setInterval(update, config.configuration.serverTick);
     };
 
 
     /**
      * The game loop
      */
-        //TODO STOP IGNORING THIS LINE
-    var update = function(){    //jshint ignore:line
-        // TODO progress game simulation
-        model.getWorld().step();
-        // TODO Broadcast new model
+    var update = function(){
+        var time = Date.now;
+        model.getWorld().step(time-model.currentRoundTime);
+        model.currentRoundTime = time - gameStartTime;
+
         broadcastModel();
+
+        if(model.currentRoundTime >= model.roundLength){
+            endGame();
+        }
     };
 
     /**
      * Handles all the logic to end the game
      */
-    //TODO STOP IGNORING THIS LINE
-    var endGame = function(){ //jshint ignore:line
+    var endGame = function(){
         this.status = EngineStatus.gameFinishing;
         clearInterval(this.gameLoop);
 
         // TODO tell all clients to show top 3 players for 5 seconds
 
-        setTimeout(initializeGame(), config.roundIntermission);
+        setTimeout(initializeGame, config.roundIntermission);
     };
 
     /**
@@ -100,6 +118,53 @@ var Engine = function (config) {
         comms.broadcastSnapshot(model.getSnapshot());
     };
 
+
+    // ============================= Game Setup Helpers ===============================
+    // ============================================================================
+    /**
+     * Handles moving spectators who are in the playerQueue into the players list
+     */
+    var setupPlayers = function (){
+        while(model.playerCount() < config.configuration.maximumPlayers && model.numberOfQueuedPlayers() > 0){
+            convertSpectatorToPlayer(model.popPlayerQueue());
+        }
+
+        //TODO Client probably wants to know it is now a player
+        // broadcastModel();
+    };
+
+    /**
+     * Converts a spectator into a player
+     * @param {Spectator} spectator
+     */
+    var convertSpectatorToPlayer = function (spectator) {
+        model.addPlayer({name: spectator.client.name, socket: spectator.client.socket});
+        model.deleteSpectator(spectator.id);
+    };
+
+    /**
+     * Handles adding paddles to each player
+     */
+    var addAllPaddles = function () {       //jshint ignore:line
+        var players = model.getPlayers();
+        for(var i=0; i < players.length; i++){
+            players[i].addPaddle(Paddle.fromGoal({
+                size: config.configuration.paddleSize,
+                padding: config.configuration.paddlePadding,
+                goal: model.getArena().getGoal(i)
+            }));
+        }
+    };
+
+    var addBall = function (){
+        model.addBall({
+            body: {
+                radius: 10,
+                state: model.generateNewBallState()
+            }
+        });
+    };
+
     // ============================= Public Methods ===============================
     // ============================================================================
 
@@ -108,7 +173,6 @@ var Engine = function (config) {
      * @param {{spectatorID: Number}} data
      */
     this.handleAddPlayerToQueue = function (data){
-
         model.addToPlayerQueue(data.spectatorID);
 
         // Are we waiting for players to start?
@@ -129,18 +193,9 @@ var Engine = function (config) {
     // ============================================================================
 
     // - Need to pub sub "Add Player to queue"
-    comms.on('Add Player To Queue', this.handleAddPlayerToQueue);
+    comms.on(CommsEvents.ServerToServer.newPlayerQueued, this.handleAddPlayerToQueue);
     // - Need to pub sub "Add Vote"
-    comms.on('Add Vote', this.handleAddVote);
-
-    // Initialize some physics stuff, probably need a shared class to do this properly
-    // Since client will perform a similar setup
-    model.getWorld().add([
-        Physics.behavior('constant-acceleration'),
-        Physics.behavior('body-impulse-response'),
-        Physics.behavior('body-collision-detection'),
-        Physics.behavior('sweep-prune')
-    ]);
+    // comms.on('Add Vote', this.handleAddVote);
 
     initializeGame();
 };

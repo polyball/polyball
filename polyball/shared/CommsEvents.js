@@ -9,11 +9,15 @@ var ServerToServer = {
 };
 
 var ClientToClient = {
-    snapshotReceived: 'snapshotReceived'
+    newLocalID: 'newLocalID',
+    snapshotReceived: 'snapshotReceived',
+    newRound: 'newRoundData'
 };
 
 var ServerToClient = {
     setLogLevel: "setLogLevel",
+    idAssigned: "idAssigned",
+    startNewRound: "startNewRound",
     newSnapshot: 'newSnapshot'
 };
 
@@ -21,6 +25,7 @@ var ClientToServer = {
     connection: 'connection',  // socket.io builtin - do not change!
     disconnect: 'disconnect',  // socket.io builtin - do not change!
     queueToPlay: 'queueToPlay',
+    newCommandAggregate: 'newCommandAggregate',
     vote: 'vote'
 };
 
