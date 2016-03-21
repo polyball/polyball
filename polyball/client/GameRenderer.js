@@ -44,7 +44,7 @@ var GameRenderer = function(config) {
     this.renderer.renderer = new Pixi.autoDetectRenderer(1000, 1000, {
         view: this.renderer.renderer.view,
         transparent: true,
-        resolution: window.devicePixelRatio || 1,
+        resolution: config.pixelRatio || 1,
         antialias: true
     });
 
