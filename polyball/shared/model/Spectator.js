@@ -23,7 +23,7 @@ function Spectator(config) {
     this.toConfig = function (){
       return{
           id: this.id,
-          client: this.client.toConfig()
+          clientConfig: this.client.toConfig()
       };
     };
 }

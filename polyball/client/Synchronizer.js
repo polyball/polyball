@@ -4,7 +4,9 @@
 
 var Logger = require('polyball/shared/Logger');
 var CommsEvents = require('polyball/shared/CommsEvents');
-var _ = require('lodash');
+
+var PassthroughSynchronizer = require('polyball/client/synchronizer/PassthroughSynchronizer');
+var SimulationSynchronizer = require('polyball/client/synchronizer/SimulationSynchronizer');
 
 /**
  *
@@ -34,7 +36,12 @@ var Synchronizer = function (config) {
     var comms = config.comms;
     var model = config.model;
 
-
+    var simulationSync = new SimulationSynchronizer({
+        largeDelta: 100,
+        rapidDecayRate: 0.7,
+        slowDecayRate: 0.15
+    });
+    
     //
     //             INTERNAL METHODS
     //
@@ -55,68 +62,12 @@ var Synchronizer = function (config) {
             Logger.warn('Synchronizer#synchronizeSnapshot called with null snapshot.');
             return;
         }
+        
+        PassthroughSynchronizer.sync(snapshot, model);
 
-        if (snapshot.arena && !model.hasArena(snapshot.arena.id)) {
-            Logger.info('Synchronizer constructing new arena');
-            model.addOrResetArena(snapshot.arena);
-        }
-
-        if (snapshot.balls) {
-            Logger.debug('synchronizing balls');
-
-            // clear out old balls
-            var ballsToDelete = model.getBalls(function (ball) {
-                var foundInSnapshot = _.find(snapshot.balls, function (snapshotBall) {
-                    return snapshotBall.id === ball.id;
-                });
-
-                return foundInSnapshot == null;
-            });
-
-            ballsToDelete.forEach(function (ball) {
-                model.deleteBall(ball.id);
-            });
-
-            // add new balls
-            snapshot.balls.forEach(function (snapshotBall) {
-                if (!model.hasBall(snapshotBall.id)) {
-                    model.addBall(snapshotBall);
-                }
-            });
-
-            // synchronize existing balllllllllls
-            snapshot.balls.forEach(function (snapshotBall) {
-                var ball = model.getBall(snapshotBall.id);
-
-                ball.lastTouchedID = snapshotBall.lastTouchedID;
-
-                ball.body.state.pos.x = snapshotBall.body.state.pos.x;
-                ball.body.state.pos.y = snapshotBall.body.state.pos.y;
-
-                ball.body.state.vel.x = snapshotBall.body.state.vel.x;
-                ball.body.state.vel.y = snapshotBall.body.state.vel.y;
-
-                ball.body.state.acc.x = snapshotBall.body.state.acc.x;
-                ball.body.state.acc.y = snapshotBall.body.state.acc.y;
-
-                ball.body.state.angular.pos = snapshotBall.body.state.angular.pos;
-                ball.body.state.angular.vel = snapshotBall.body.state.angular.vel;
-                ball.body.state.angular.acc = snapshotBall.body.state.angular.acc;
-
-                ball.body.state.old.pos.x = snapshotBall.body.state.old.pos.x;
-                ball.body.state.old.pos.y = snapshotBall.body.state.old.pos.y;
-
-                ball.body.state.old.vel.x = snapshotBall.body.state.old.vel.x;
-                ball.body.state.old.vel.y = snapshotBall.body.state.old.vel.y;
-
-                ball.body.state.old.acc.x = snapshotBall.body.state.old.acc.x;
-                ball.body.state.old.acc.y = snapshotBall.body.state.old.acc.y;
-
-                ball.body.state.old.angular.pos = snapshotBall.body.state.old.angular.pos;
-                ball.body.state.old.angular.vel = snapshotBall.body.state.old.angular.vel;
-                ball.body.state.old.angular.acc = snapshotBall.body.state.old.angular.acc;
-            });
-        }
+        simulationSync.setAuthoritativeSnapshot(snapshot);
+        simulationSync.tick(model); // TODO: this should happen in sync.tick
+        
     };
 
 
