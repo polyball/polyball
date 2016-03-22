@@ -13,7 +13,7 @@
  *
  * @param {Object} config
  * @param {String} config.name
- * @param {Socket} config.socket
+ * @param {Socket} [config.socket] - Optional.  Should not be passed in on client.  Must be passed in on server.
  * @constructor
  */
 var Client = function(config) {
@@ -31,8 +31,8 @@ var Client = function(config) {
         };
     };
 
-    if(this.socket == null){
-        throw 'Client was initialized without a socket';
+    if (this.socket == null && typeof window === 'undefined') {
+        throw 'Client was initialized without a socket on the server';
     }
 };
 
