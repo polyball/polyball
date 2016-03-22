@@ -7,6 +7,9 @@ var Physics = require("physicsjs");
 var Util = require('polyball/shared/Util');
 
 /**
+ * This *can* take a config returned by #toConfig(), but acceleration, angular state, and old state are
+ * ignored.
+ *
  * @param {object} config
  * @property {number} config.id
  * @property {number} config.lastTouchedID

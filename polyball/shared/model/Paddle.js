@@ -14,8 +14,8 @@ var Util = require('polyball/shared/Util');
  * @property {number} config.leftBound
  * @property {number} config.rightBound
  * @property {number} config.body.radius
- * @property {number} config.body.x
- * @property {number} config.body.y
+ * @property {number} config.body.state.pos.x
+ * @property {number} config.body.state.pos.y
  * @property {Object} config.body.styles
  * @constructor
  */
@@ -26,8 +26,8 @@ var Paddle = function(config) {
 
     this.body = Physics.body('circle',
         {
-            x: config.body.x,
-            y: config.body.y,
+            x: config.body.state.pos.x,
+            y: config.body.state.pos.y,
             radius: config.body.radius,
             treatment: 'static',
             styles: config.body.styles
@@ -87,8 +87,14 @@ Paddle.fromGoal = function(config){
         rightBound: new Physics.vector(0,0),
         size: config.size,
         styles: config.styles,
-        x: normal.x,
-        y: normal.y
+        body: {
+            state: {
+                pos: {
+                    x: normal.x,
+                    y: normal.y
+                }
+            }
+        }
     });
 };
 
