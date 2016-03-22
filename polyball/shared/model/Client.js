@@ -22,11 +22,11 @@ var Client = function(config) {
 
     /**
      * Converts this client object into it's serializable form.
-     * DOES NOT CONTAIN SOCKET for obvious reasons.
      * @return {Object}
      */
     this.toConfig = function (){
         return {
+            socket: this.socket,
             name: this.name
         };
     };

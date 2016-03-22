@@ -4,7 +4,6 @@
 var should = require('should');
 var Util = require('polyball/shared/Util');
 var Model = require('polyball/shared/Model');
-var Client = require('polyball/shared/model/Client');
 var _ = require('lodash');
 var Logger = require('polyball/shared/Logger');
 var Vote = require('polyball/shared/model/Vote');
@@ -159,14 +158,14 @@ describe('Model', function () {
                 model = new Model();
                 model.spectatorCount().should.equal(0);
 
-                spectator = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                spectator = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
                 model.spectatorCount().should.equal(1);
                 model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
             });
 
             it('should add a second, distinct queryable spectator to the model.', function () {
-                spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                spectator2 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
                 model.spectatorCount().should.equal(2);
 
@@ -239,14 +238,22 @@ describe('Model', function () {
                 model = new Model();
                 model.playerCount().should.equal(0);
 
-                player = model.addPlayer({name: Util.randomUsername(), socket: 'dummy'});
+                player = model.addPlayer({
+                    clientConfig: {
+                        name: Util.randomUsername(),
+                        socket: 'dummy'}
+                });
 
                 model.playerCount().should.equal(1);
                 model.hasPlayer(player.id).should.be.true; // jshint ignore:line
             });
 
             it('should add a second, distinct queryable player to the model.', function () {
-                player2 = model.addPlayer({name: Util.randomUsername(), socket: 'dummy'});
+                player2 = model.addPlayer({
+                    clientConfig: {
+                        name: Util.randomUsername(),
+                        socket: 'dummy'}
+                });
 
                 model.playerCount().should.equal(2);
 
@@ -319,7 +326,7 @@ describe('Model', function () {
             var model;
             it('should add a single player to the queue.', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
                 model.addToPlayerQueue(spectator1.id);
 
                 var queuedPlayers = model.getAllQueuedPlayers();
@@ -330,7 +337,7 @@ describe('Model', function () {
             });
             it('should not add the same player twice.', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
                 model.addToPlayerQueue(spectator1.id);
                 model.addToPlayerQueue(spectator1.id);
@@ -343,8 +350,8 @@ describe('Model', function () {
             });
             it('should have playerQueue.length = 2 when 2 spectators added.', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
-                var spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator2 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
                 model.addToPlayerQueue(spectator1.id);
                 model.addToPlayerQueue(spectator2.id);
@@ -360,7 +367,7 @@ describe('Model', function () {
                 var x = 5;
 
                 _.times(x, function(){
-                    var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                    var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
                     model.addToPlayerQueue(spectator1.id);
 
                 });
@@ -376,12 +383,16 @@ describe('Model', function () {
                 var x = 5;
 
                 _.times(x, function(){
-                    var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                    var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
                     model.addToPlayerQueue(spectator1.id);
 
                 });
 
-                var player = model.addPlayer({name: Util.randomUsername(), socket: 'dummy'});
+                var player = model.addPlayer({
+                    clientConfig: {
+                        name: Util.randomUsername(),
+                        socket: 'dummy'}
+                });
 
                 model.addToPlayerQueue(player.id);
 
@@ -397,8 +408,8 @@ describe('Model', function () {
             var model;
             it('should remove a single player from the queue.', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
-                var spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator2 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
                 model.addToPlayerQueue(spectator1.id);
                 model.addToPlayerQueue(spectator2.id);
@@ -418,7 +429,7 @@ describe('Model', function () {
             });
             it('should not throw an error when a player is removed that does not exist', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
                 model.addToPlayerQueue(spectator1.id);
                 model.removeFromPlayerQueue(spectator1.id);
@@ -430,8 +441,8 @@ describe('Model', function () {
             var model;
             it('should remove the top spectator from the queue.', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
-                var spectator2 = model.addSpectator(new Client({name: Util.randomUsername(), socket: 'dummy'}));
+                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator2 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
                 model.addToPlayerQueue(spectator1.id);
                 model.addToPlayerQueue(spectator2.id);
@@ -471,6 +482,30 @@ describe('Model', function () {
                 pe2.votes.should.containEql(vote);
                 pe2.powerups.should.equal(pu);
             });
+        });
+    });
+
+    describe('#toSnapshot', function () {
+        it('should not contain client sockets', function () {
+            var model = new Model();
+
+            var spectatorConfig = {
+                id: 56,
+                clientConfig: {
+                    name: 'bob',
+                    socket: 'dummy_socket'
+                }
+            };
+
+            model.addSpectator(spectatorConfig);
+
+            var snap = model.getSnapshot();
+
+            var spectator = snap.spectators[0];
+
+            spectator.id.should.equal(56);
+            spectator.client.name.should.equal('bob');
+            should.not.exist(spectator.client.socket);
         });
     });
 });

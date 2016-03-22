@@ -23,7 +23,7 @@ $(document).ready(function() {
     gameRenderer.resize(width - 25, height - 25);
 
     var comms = new Comms({
-        serverAddress: "http://localhost:8080"
+        serverAddress: window.location.href
     });
 
     var synchronizer = new Synchronizer({

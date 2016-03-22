@@ -5,7 +5,6 @@
 var Logger = require('polyball/shared/Logger');
 var Server = require('socket.io');
 var Util = require('polyball/shared/Util');
-var Client = require('polyball/shared/model/Client');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var PubSub = require('polyball/shared/PubSub');
 
@@ -67,15 +66,15 @@ var Comms = function (config) {
     io.on(CommsEvents.ClientToServer.connection, function (clientSocket) {
         Logger.info('New client connected.');
 
-        var client = new Client({
-            name: Util.randomUsername(),
-            socket: clientSocket
-        });
-
         // Add the client as a spectator and send the new client its ID.
         // NOTE: Do NOT store spectator or IDs for later use - model or engine could
         //       change it or remove it at any time.  Query for IDs when necessary.
-        var newSpectator = model.addSpectator(client);
+        var newSpectator = model.addSpectator({
+            clientConfig: {
+                name: Util.randomUsername(),
+                socket: clientSocket
+            }
+        });
         clientSocket.emit(CommsEvents.ServerToClient.idAssigned, newSpectator.id);
         clientSocket.emit(CommsEvents.ServerToClient.setLogLevel, Logger.getLevel());
         
