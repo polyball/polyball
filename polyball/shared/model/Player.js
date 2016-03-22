@@ -18,7 +18,7 @@ var Client = require('polyball/shared/model/Client');
  */
 var Player = function(config) {
     this.id = config.id;
-    this.paddle = config.paddle != null ? new Paddle(config.paddleConfig) : null;
+    this.paddle = config.paddleConfig != null ? new Paddle(config.paddleConfig) : null;
     this.arenaPosition = config.arenaPosition;
     this.client = new Client(config.clientConfig);
     this.score = 0;
@@ -30,9 +30,9 @@ var Player = function(config) {
     this.toConfig = function (){
         return {
             id: this.id,
-            paddle: this.paddle != null ? this.paddle.toConfig() : null,
+            paddleConfig: this.paddle != null ? this.paddle.toConfig() : null,
             arenaPosition: this.arenaPosition,
-            client: this.client.toConfig(),
+            clientConfig: this.client.toConfig(),
             score: this.score
         };
     };
