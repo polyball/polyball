@@ -473,4 +473,31 @@ describe('Model', function () {
             });
         });
     });
+
+    describe('#toSnapshot', function () {
+        it('should not contain client sockets', function () {
+            var model = new Model();
+
+            var spectatorConfig = {
+                id: 56,
+                client: {
+                    name: 'bob',
+                    socket: 'dummy_socket'
+                }
+            };
+
+            var client = new Client(spectatorConfig.client);
+
+            //model.addSpectator(spectatorConfig);
+            model.addSpectator(client);  // TODO: this needs to be corrected as per #130
+
+            var snap = model.getSnapshot();
+
+            var spectator = snap.spectators[0];
+
+            //spectator.id.should.equal(56);  // TODO: this will pass after #130 fix and above todo
+            spectator.client.name.should.equal('bob');
+            should.not.exist(spectator.client.socket);
+        });
+    });
 });

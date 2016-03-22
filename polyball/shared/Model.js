@@ -623,7 +623,7 @@ var Model = function () {
             return variable != null ? variable.toConfig() : null;
         };
 
-        return{
+        var snapshot = {
             arena: toConfig(arena),
             players: Util.arrayToConfig(players),
             spectators: Util.arrayToConfig(spectators),
@@ -633,8 +633,19 @@ var Model = function () {
             powerupElection: toConfig(powerupElection),
             roundLength: roundLength
 
-            // currentRoundTime is maintained by Server and each Client independently.  Don't snapshot it!
+            // currentRoundTime is maintained by Server and each Client independently.
+            // Don't bother snapshotting it.
         };
+
+        snapshot.players.forEach(function (playerConfig) {
+            delete playerConfig.client.socket;
+        });
+
+        snapshot.spectators.forEach(function (spectatorConfig) {
+            delete spectatorConfig.client.socket;
+        });
+
+        return snapshot;
     };
 
 };
