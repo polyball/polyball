@@ -504,8 +504,8 @@ describe('Model', function () {
             var spectator = snap.spectators[0];
 
             spectator.id.should.equal(56);
-            spectator.client.name.should.equal('bob');
-            should.not.exist(spectator.client.socket);
+            spectator.clientConfig.name.should.equal('bob');
+            should.not.exist(spectator.clientConfig.socket);
         });
     });
 });
