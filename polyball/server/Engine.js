@@ -138,7 +138,9 @@ var Engine = function (config) {
      * @param {Spectator} spectator
      */
     var convertSpectatorToPlayer = function (spectator) {
-        model.addPlayer({name: spectator.client.name, socket: spectator.client.socket});
+        model.addPlayer({
+            clientConfig: spectator.client.toConfig()
+        });
         model.deleteSpectator(spectator.id);
     };
 

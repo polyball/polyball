@@ -9,8 +9,7 @@ var Util = require('polyball/shared/Util');
 
 /**
  * Creates a paddle
- * @param {Object} config
- * @property {number} config.id
+ * @param {Object} config  (NOTE: id is omitted because of one-to-one map with Player.)
  * @property {number} config.leftBound
  * @property {number} config.rightBound
  * @property {number} config.body.radius
@@ -20,7 +19,6 @@ var Util = require('polyball/shared/Util');
  * @constructor
  */
 var Paddle = function(config) {
-    this.id = config.id;
     this.leftBound = config.leftBound;
     this.rightBound = config.rightBound;
 
@@ -36,14 +34,14 @@ var Paddle = function(config) {
 
     /**
      * Converts this paddle object into it's serializable form.
-     * Contains physics state, but NOT as constructor expects (EX: body.state.pos.x, not body.x).
      * @return {Object}
      */
     this.toConfig = function(){
         return {
-            id: this.id,
             body: {
                 state: Util.bodyToStateConfig(this.body),
+                leftBound: this.leftBound,
+                rightBound: this.rightBound,
                 radius: this.body.radius,
                 treatment: this.body.treatment,
                 styles: this.body.styles
@@ -59,8 +57,10 @@ var Paddle = function(config) {
  * @param {Number} y
  */
 Paddle.prototype.setPosition = function(x, y) {
-    this.body.x = x;
-    this.body.y = y;
+    this.body.state.pos.x = x;
+    this.body.state.pos.y = y;
+
+    //NOTE:  This is also where velocity clamping should happen.
 };
 
 /**

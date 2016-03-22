@@ -192,6 +192,7 @@ var Model = function () {
      * If there is not yet an arena in the model, add one according to the config.
      * If there is an arena in the model, replace it with a new one from the config.
      * @param {Object} config (See Arena constructor.)
+     * @property {Number} [config.id] - Optional.  Should not be passed on the server, should always be passed on the client.
      * @return {Arena} The new arena
      */
     this.addOrResetArena = function (config) {
@@ -309,6 +310,7 @@ var Model = function () {
      * Add a ball to the model.
      *
      * @param {Object} config - see Ball constructor
+     * @property {Number} [config.id] - Optional.  Should not be passed on the server, should always be passed on the client.
      * @return {Ball} The new Ball.
      */
     this.addBall  = function (config) {
@@ -414,13 +416,14 @@ var Model = function () {
 
     /**
      * Adds a spectator to the model.
-     * @param {Client} client The client information for the Spectator.
+     * @param {Object} config - A Spectator config.  See constructor.
+     * @property {Number} [config.id] - Optional.  Should not be passed on the server, should always be passed on the client.
      * @return {Spectator} The new Spectator.
      */
-    this.addSpectator = function (client) {
+    this.addSpectator = function (config) {
         var spectatorConfig = {
-            id: nextID(),
-            client: client
+            id: config.id ? config.id : nextID(),
+            clientConfig: config.clientConfig
         };
 
         var spectator = new Spectator(spectatorConfig);
@@ -552,13 +555,14 @@ var Model = function () {
 
     /**
      * Adds a player to the model.
-     * @param {Object} client The client config for the Player.
+     * @param {Object} config - A Player config.  See constructor.
+     * @property {Number} [config.id] - Optional.  Should not be passed on the server, should always be passed on the client.
      * @return {Player} The new Player.
      */
-    this.addPlayer = function (client) {
+    this.addPlayer = function (config) {
         var playerConfig = {
-            id: nextID(),
-            client: client
+            id: config.id ? config.id : nextID(),
+            clientConfig: config.clientConfig
         };
 
         var player = new Player(playerConfig);
