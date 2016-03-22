@@ -7,7 +7,6 @@
 var Physics = require('physicsjs'); //jshint ignore:line
 var EngineStatus = require('polyball/server/EngineStatus.js');
 var _ = require('lodash');
-var Paddle = require('polyball/shared/model/Paddle');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
 
@@ -56,7 +55,7 @@ var Engine = function (config) {
                 marginY: 60
             });
 
-            //addAllPaddles();
+            addAllPaddles();
 
             comms.broadcastSynchronizedStart({
                 snapshot: model.getSnapshot(),
@@ -147,14 +146,37 @@ var Engine = function (config) {
     /**
      * Handles adding paddles to each player
      */
-    var addAllPaddles = function () {       //jshint ignore:line
+    var addAllPaddles = function () {
         var players = model.getPlayers();
         for(var i=0; i < players.length; i++){
-            players[i].addPaddle(Paddle.fromGoal({
-                size: config.configuration.paddleSize,
-                padding: config.configuration.paddlePadding,
-                goal: model.getArena().getGoal(i)
-            }));
+            var leftBound = model.getArena().getPaddleLeftBound(i);
+            var rightBound = model.getArena().getPaddleRightBound(i);
+            var paddlePos = model.getArena().getPaddleStartPosition(i);
+
+            players[i].arenaPosition = i;
+
+            var paddleConfig = {
+                leftBound: {
+                    x: leftBound.x,
+                    y: leftBound.y
+                },
+                rightBound: {
+                    x: rightBound.x,
+                    y: rightBound.y
+                },
+                //TODO get this from config
+                body:{
+                    state:{
+                        pos:{
+                            x: paddlePos.x,
+                            y: paddlePos.y
+                        }
+                    },
+                    radius: 50
+                }
+            };
+
+            model.addPaddleToPlayer({playerID: players[i].id, paddleConfig: paddleConfig});
         }
     };
 
@@ -162,7 +184,7 @@ var Engine = function (config) {
         model.addBall({
             body: {
                 radius: 10,
-                state: model.generateNewBallState()
+                state: model.getArena().generateNewBallState()
             }
         });
     };

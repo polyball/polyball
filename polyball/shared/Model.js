@@ -334,23 +334,7 @@ var Model = function () {
         return ball;
     };
 
-    /**
-     * Generate a physics state at the center of the arena with a random velocity.
-     *
-     * @returns {{pos: {x: Number, y: Number}, vel: {x: Number, y: Number}}}
-     */
-    this.generateNewBallState = function () {
-        return {
-            pos: {
-                x: arena.getCenter().x,
-                y: arena.getCenter().y
-            },
-            vel: {
-                x: Util.getRandomArbitrary(-1.0, 1.0),
-                y: Util.getRandomArbitrary(-1.0, 1.0)
-            }
-        };
-    };
+
 
     /**
      * @param {Number|Predicate} id - Either the ID of the Ball, or a boolean returning callback that takes a Ball.
@@ -609,8 +593,24 @@ var Model = function () {
      * @param {Number} id
      */
     this.deletePlayer = function (id) {
-        removeByID(players, id);
+        var player = removeByID(players, id);
+        if (player != null && player.paddle != null){
+            var paddle = player.paddle;
+            world.remove(paddle.body);
+        }
     };
+
+    /**
+     * This adds a paddle to the player given by id
+     * @param {Object} config
+     * @property {number} config.playerID
+     * @property {Object} config.paddleConfig
+     */
+    this.addPaddleToPlayer = function (config){
+        var paddle = this.getPlayer(config.playerID).addPaddle(config.paddleConfig);
+        world.add(paddle.body);
+    };
+
 
     //
     //             SNAPSHOT

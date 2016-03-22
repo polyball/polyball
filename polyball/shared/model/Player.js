@@ -40,9 +40,11 @@ var Player = function(config) {
     /**
      * Adds a paddle to this player
      * @param {Object} paddleConfig
+     * @return {Paddle}
      */
     this.addPaddle = function(paddleConfig){
         this.paddle = new Paddle(paddleConfig);
+        return this.paddle;
     };
 };
 

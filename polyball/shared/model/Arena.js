@@ -4,7 +4,7 @@
 "use strict";
 
 var Physics = require("physicsjs");
-
+var Util = require('polyball/shared/Util');
 
 /**
  * @param {Object} config
@@ -139,6 +139,65 @@ var Arena = function(config) {
      */
     this.getID = function () {
         return this.id;
+    };
+
+    /**
+     * Generate a physics state at the center of the arena with a random velocity.
+     *
+     * @returns {{pos: {x: Number, y: Number}, vel: {x: Number, y: Number}}}
+     */
+    this.generateNewBallState = function () {
+        return {
+            pos: {
+                x: this.getCenter().x,
+                y: this.getCenter().y
+            },
+            vel: {
+                x: Util.getRandomArbitrary(-1.0, 1.0),
+                y: Util.getRandomArbitrary(-1.0, 1.0)
+            }
+        };
+    };
+
+    /**
+     * This returns the left paddle bound for a given index
+     * @param {number} index
+     * @returns {Physics.vector}
+     */
+    this.getPaddleLeftBound = function (index){
+        var leftBumper = this.getBumper(index).state.pos;
+        return new Physics.vector(leftBumper.x, leftBumper.y);
+    };
+
+    /**
+     * This returns the right paddle bound for a given index
+     * @param {number} index
+     * @returns {Physics.vector}
+     */
+    this.getPaddleRightBound = function (index){
+        var rightBumper = this.getBumper((index+1) % this.numberPlayers).state.pos;
+        return new Physics.vector(rightBumper.x, rightBumper.y);
+    };
+
+    /**
+     * This function returns the starting paddle position for a given arena index
+     * @param {number} index
+     * @returns {{body}}
+     */
+    this.getPaddleStartPosition = function (index){
+
+        var leftBound = this.getPaddleLeftBound(index);
+        var rightBound = this.getPaddleRightBound(index);
+
+        var position = leftBound.clone();
+        position.vsub(rightBound);
+        position.mult(0.5);
+        position.vadd(rightBound);
+
+        return {
+                x: position.x,
+                y: position.y
+        };
     };
 
     /**

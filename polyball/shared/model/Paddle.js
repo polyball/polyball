@@ -10,8 +10,10 @@ var Util = require('polyball/shared/Util');
 /**
  * Creates a paddle
  * @param {Object} config  (NOTE: id is omitted because of one-to-one map with Player.)
- * @property {number} config.leftBound
- * @property {number} config.rightBound
+ * @property {number} config.leftBound.x
+ * @property {number} config.leftBound.y
+ * @property {number} config.rightBound.x
+ * @property {number} config.rightBound.y
  * @property {number} config.body.radius
  * @property {number} config.body.state.pos.x
  * @property {number} config.body.state.pos.y
@@ -19,8 +21,8 @@ var Util = require('polyball/shared/Util');
  * @constructor
  */
 var Paddle = function(config) {
-    this.leftBound = config.leftBound;
-    this.rightBound = config.rightBound;
+    this.leftBound = new Physics.vector(config.leftBound.x, config.leftBound.y);
+    this.rightBound = new Physics.vector(config.rightBound.x, config.rightBound.y);
 
     this.body = Physics.body('circle',
         {
@@ -38,12 +40,17 @@ var Paddle = function(config) {
      */
     this.toConfig = function(){
         return {
+            leftBound: {
+                x: this.leftBound.x,
+                y: this.leftBound.y
+            },
+            rightBound: {
+                x: this.rightBound.x,
+                y: this.rightBound.y
+            },
             body: {
                 state: Util.bodyToStateConfig(this.body),
-                leftBound: this.leftBound,
-                rightBound: this.rightBound,
                 radius: this.body.radius,
-                treatment: this.body.treatment,
                 styles: this.body.styles
             }
         };
@@ -66,36 +73,32 @@ Paddle.prototype.setPosition = function(x, y) {
 /**
  * Creates a paddle using the goal to position itself
  * @param {Object} config
- * @param {number} config.size
+ * @param {number} config.radius
  * @param {Object} config.styles
- * @param {number} config.padding
- * @param {Physics.body} config.goal
- * @return {Paddle}
+ * @param {Physics.vector} config.leftBound
+ * @param {Physics.vector} config.rightBound
+ * @return {Object}
  */
-Paddle.fromGoal = function(config){
-    var normal = new Physics.vector(config.goal.state.x, config.goal.state.y);
-    normal.rotate(Math.PI/2 + config.goal.state.angular.pos);
-
-    var translation = normal.clone();
-    translation.mult(config.padding);
-
-    normal.translate(translation);
+Paddle.fromBounds = function(config){
+    var position = config.leftBound.clone();
+    position.vsub(config.rightBound);
+    position.mult(0.5);
+    position.vadd(config.rightBound);
 
     return new Paddle({
-        //TODO setup bounds properly
-        leftBound: new Physics.vector(0,0),
-        rightBound: new Physics.vector(0,0),
-        size: config.size,
-        styles: config.styles,
+        leftBound: config.leftBound,
+        rightBound: config.rightBound,
         body: {
-            state: {
-                pos: {
-                    x: normal.x,
-                    y: normal.y
+            state:{
+                pos:{
+                    x: position.x,
+                    y: position.y
                 }
-            }
+            },
+            radius: config.radius,
+            styles: config.styles
         }
-    });
+    }).toConfig();
 };
 
 module.exports = Paddle;
