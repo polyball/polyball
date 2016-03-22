@@ -31,6 +31,11 @@ var GameRenderer = function(config) {
         this.renderer.resize(width, height);
     };
 
+    this.rotate = function(radians) {
+        var stage = this.renderer.stage;
+        stage.rotation = radians;
+    };
+
     // ################  CONSTRUCTOR  ############# //
     // ############################################ //
     var model = config.model;
