@@ -4,7 +4,6 @@
 
 //TODO remove lint ignore flags
 
-var Physics = require('physicsjs'); //jshint ignore:line
 var EngineStatus = require('polyball/server/EngineStatus.js');
 var _ = require('lodash');
 var CommsEvents = require('polyball/shared/CommsEvents');
@@ -14,7 +13,7 @@ var Logger = require('polyball/shared/Logger');
  * Initializes the engine
  *
  * @param {{comms: Comms,
- *          configuration: Configuration,
+ *          configuration: Object,
  *          model: Model}} config
  * @constructor
  */
@@ -106,7 +105,7 @@ var Engine = function (config) {
 
         // TODO tell all clients to show top 3 players for 5 seconds
 
-        setTimeout(initializeGame, config.roundIntermission);
+        setTimeout(initializeGame, config.configuration.roundIntermission);
     };
 
     /**
@@ -172,7 +171,7 @@ var Engine = function (config) {
                             y: paddlePos.y
                         }
                     },
-                    radius: 50
+                    radius: config.configuration.paddleRadius
                 }
             };
 
