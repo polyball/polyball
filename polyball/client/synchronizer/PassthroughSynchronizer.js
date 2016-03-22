@@ -12,38 +12,52 @@ function syncArenaExistence(arena, model) {
     }
 }
 
-function syncSpectatorExistence(spectators, model) { // jshint ignore: line
-    
+function searchAndDelete(snapshotArray, modelGet, modelDelete, model) {
+    var toDelete = modelGet.call(model, function (modelEntity) {
+        var foundInSnapshot = _.find(snapshotArray, function (snapshotEntity) {
+            return snapshotEntity.id === modelEntity.id;
+        });
+
+        return foundInSnapshot == null;
+    });
+
+    toDelete.forEach(function (modelEntity) {
+        modelDelete.call(model, modelEntity.id);
+    });
 }
 
-function syncPlayerExistence(players, model) { // jshint ignore: line
-    
+function searchAndCreate(snapshotArray, modelHas, modelAdd, model) {
+    snapshotArray.forEach(function (snapshotEntity) {
+        if (!modelHas.call(model, snapshotEntity.id)) {
+            modelAdd.call(model, snapshotEntity);
+        }
+    });
+}
+
+function syncSpectatorExistence(spectators, model) {
+    if (spectators != null) {
+        Logger.debug('synchronizing spectators');
+
+        searchAndDelete(spectators, model.getSpectators, model.deleteSpectator, model);
+        searchAndCreate(spectators, model.hasSpectator, model.addSpectator, model);
+    }
+}
+
+function syncPlayerExistence(players, model) {
+    if (players != null) {
+        Logger.debug('synchronizing players');
+
+        searchAndDelete(players, model.getPlayers, model.deletePlayer, model);
+        searchAndCreate(players, model.hasPlayer, model.addPlayer, model);
+    }
 }
 
 function syncBallExistence(balls, model) {
-    
     if (balls != null) {
         Logger.debug('synchronizing balls');
 
-        // clear out old balls
-        var ballsToDelete = model.getBalls(function (ball) {
-            var foundInSnapshot = _.find(balls, function (snapshotBall) {
-                return snapshotBall.id === ball.id;
-            });
-
-            return foundInSnapshot == null;
-        });
-
-        ballsToDelete.forEach(function (ball) {
-            model.deleteBall(ball.id);
-        });
-
-        // add new balls
-        balls.forEach(function (snapshotBall) {
-            if (!model.hasBall(snapshotBall.id)) {
-                model.addBall(snapshotBall);
-            }
-        });
+        searchAndDelete(balls, model.getBalls, model.deleteBall, model);
+        searchAndCreate(balls, model.hasBall, model.addBall, model);
     }
 }
 
