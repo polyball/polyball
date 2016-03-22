@@ -406,9 +406,10 @@ var Model = function () {
      */
     this.addSpectator = function (config) {
         var spectatorConfig = {
-            id: config.id ? config.id : nextID(),
-            clientConfig: config.clientConfig
+            id: config.id ? config.id : nextID()
         };
+
+        _.assign(spectatorConfig, config);
 
         var spectator = new Spectator(spectatorConfig);
         spectators.push(spectator);
@@ -519,26 +520,6 @@ var Model = function () {
         playerQueue = newQueue;
     };
 
-    //
-    //             Powerup Election
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns the internal instance of Powerup Election
-     * @Returns {PowerupElection}
-     */
-    this.getPowerupElection = function (){
-        return powerupElection;
-    };
-
-    /**
-     * Sets the internal instance of Powerup Election
-     * @param {PowerupElection} election
-     */
-    this.setPowerupElection = function(election){
-        powerupElection = election;
-    };
 
     //
     //             PLAYERS
@@ -553,12 +534,18 @@ var Model = function () {
      */
     this.addPlayer = function (config) {
         var playerConfig = {
-            id: config.id ? config.id : nextID(),
-            clientConfig: config.clientConfig
+            id: config.id ? config.id : nextID()
         };
+
+        _.assign(playerConfig, config);
 
         var player = new Player(playerConfig);
         players.push(player);
+
+        
+        if (player.paddle != null) {
+            world.add(player.paddle.body);
+        }
 
         return player;
     };
@@ -619,6 +606,27 @@ var Model = function () {
         world.add(paddle.body);
     };
 
+    //
+    //             Powerup Election
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns the internal instance of Powerup Election
+     * @Returns {PowerupElection}
+     */
+    this.getPowerupElection = function (){
+        return powerupElection;
+    };
+
+    /**
+     * Sets the internal instance of Powerup Election
+     * @param {PowerupElection} election
+     */
+    this.setPowerupElection = function(election){
+        powerupElection = election;
+    };
+
 
     //
     //             SNAPSHOT
@@ -648,11 +656,11 @@ var Model = function () {
         };
 
         snapshot.players.forEach(function (playerConfig) {
-            delete playerConfig.client.socket;
+            delete playerConfig.clientConfig.socket;
         });
 
         snapshot.spectators.forEach(function (spectatorConfig) {
-            delete spectatorConfig.client.socket;
+            delete spectatorConfig.clientConfig.socket;
         });
 
         return snapshot;
