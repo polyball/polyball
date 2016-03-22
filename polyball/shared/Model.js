@@ -511,6 +511,14 @@ var Model = function () {
         return findByID(spectators, id);
     };
 
+    /**
+     * Ignore the current queue and give the model a new one.  (For use with snapshots).
+     * @param {Number[]} newQueue
+     */
+    this.setPlayerQueue = function (newQueue) {
+        playerQueue = newQueue;
+    };
+
     //
     //             Powerup Election
     //
@@ -635,10 +643,8 @@ var Model = function () {
             //TODO add powerups
             playerQueue: playerQueue,
             powerupElection: toConfig(powerupElection),
-            roundLength: roundLength
-
-            // currentRoundTime is maintained by Server and each Client independently.
-            // Don't bother snapshotting it.
+            roundLength: roundLength,
+            currentRoundTime: currentRoundTime
         };
 
         snapshot.players.forEach(function (playerConfig) {
