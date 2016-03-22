@@ -24,11 +24,28 @@ var GameRenderer = function(config) {
     // ############################################ //
 
     this.render = function() {
+
+        if (model.getArena() !== undefined) {
+            var center = model.getArena().getCenter();
+            this.renderer.stage.pivot.set(center.x, center.y);
+            this.renderer.stage.position.set(center.x, center.y);
+        }
+
+        if (model.playerCount() > 0) {
+            this.renderer.stage.rotation = 0;
+            this.rotate(model.getLocalClientID() * 2*Math.PI / model.playerCount());
+        }
+
         world.render();
     };
 
     this.resize = function(width, height) {
         this.renderer.resize(width, height);
+    };
+
+    this.rotate = function(radians) {
+        var stage = this.renderer.stage;
+        stage.rotation += radians;
     };
 
     // ################  CONSTRUCTOR  ############# //
