@@ -163,7 +163,6 @@ var Engine = function (config) {
                     x: rightBound.x,
                     y: rightBound.y
                 },
-                //TODO get this from config
                 body:{
                     state:{
                         pos:{
