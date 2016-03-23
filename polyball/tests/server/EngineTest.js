@@ -1,6 +1,7 @@
 /**
  * Created by thornhil on 3/23/16.
  */
+/* jshint ignore:start */
 var should = require('should'); //jshint ignore:line
 var Comms = require('polyball/server/Comms');
 var CommsEvents = require('polyball/shared/CommsEvents');
@@ -15,10 +16,11 @@ describe('Engine', function() {
         beforeEach(function(){
             config = new Configuration();
             model = new Model();
+
             comms = {};
-            comms.on = function(evt, func){
-                // blah
-            };
+            comms.on = function(evt, func){};
+            comms.broadcastSnapshot = function (){};
+            
             engine = new Engine({
                 comms: comms,
                 configuration: config.values,
@@ -31,3 +33,4 @@ describe('Engine', function() {
         });
     });
 });
+/* jshint ignore:end */
