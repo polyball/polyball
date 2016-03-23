@@ -137,10 +137,13 @@ var Engine = function (config) {
      * @param {Spectator} spectator
      */
     var convertSpectatorToPlayer = function (spectator) {
-        model.addPlayer({
-            clientConfig: spectator.client.toConfig()
-        });
+        var config = {
+            clientConfig: spectator.client.toConfig(),
+            id: spectator.id
+        };
+
         model.deleteSpectator(spectator.id);
+        model.addPlayer(config);
     };
 
     /**

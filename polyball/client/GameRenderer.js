@@ -31,9 +31,10 @@ var GameRenderer = function(config) {
             this.renderer.stage.position.set(center.x, center.y);
         }
 
-        if (model.playerCount() > 0) {
+        var player = model.getPlayer(model.getLocalClientID());
+        if (model.playerCount() > 0 && player !== undefined) {
             this.renderer.stage.rotation = 0;
-            this.rotate(model.getLocalClientID() * 2*Math.PI / model.playerCount());
+            this.rotate(player.arenaPosition * 2*Math.PI / model.playerCount());
         }
 
         world.render();
