@@ -1,13 +1,13 @@
 /**
  * Created by thornhil on 3/23/16.
  */
-/* jshint ignore:start */
+
 var should = require('should'); //jshint ignore:line
-var Comms = require('polyball/server/Comms');
-var CommsEvents = require('polyball/shared/CommsEvents');
+var CommsMock = require('polyball/tests/testUtils/CommsMock');
 var Configuration = require('polyball/server/configuration/Configuration');
 var Model = require('polyball/shared/Model');
 var Engine = require('polyball/server/Engine');
+var Util = require('polyball/shared/Util');
 
 describe('Engine', function() {
     describe('#handleAddPlayerToQueue', function() {
@@ -17,9 +17,7 @@ describe('Engine', function() {
             config = new Configuration();
             model = new Model();
 
-            comms = {};
-            comms.on = function(evt, func){};
-            comms.broadcastSnapshot = function (){};
+            comms = new CommsMock();
             
             engine = new Engine({
                 comms: comms,
@@ -29,8 +27,16 @@ describe('Engine', function() {
         });
 
         it('should add directly to players when players < minPlayers', function () {
+            var spectator = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+            comms.fireJoinQueue(spectator.id);
 
+
+            var spectators = model.getSpectators();
+            spectators.should.be.empty();
+
+            var players = model.getPlayers();
+            players.length.should.equal(1);
         });
     });
 });
-/* jshint ignore:end */
+
