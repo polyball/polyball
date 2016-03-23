@@ -14,25 +14,40 @@ var Util = require('polyball/shared/Util');
  * @property {number} config.leftBound.y
  * @property {number} config.rightBound.x
  * @property {number} config.rightBound.y
+ * @property {number} config.maxVelocity
  * @property {number} config.body.radius
  * @property {number} config.body.state.pos.x
  * @property {number} config.body.state.pos.y
  * @property {Object} config.body.styles
  * @constructor
  */
-var Paddle = function(config) {
-    this.leftBound = new Physics.vector(config.leftBound.x, config.leftBound.y);
-    this.rightBound = new Physics.vector(config.rightBound.x, config.rightBound.y);
+var Paddle = function(config){
 
-    this.body = Physics.body('circle',
-        {
-            x: config.body.state.pos.x,
-            y: config.body.state.pos.y,
-            radius: config.body.radius,
-            treatment: 'static',
-            styles: config.body.styles
+    /**
+     * Gets us the same instance of a Physics scratchpad for performant vector calculations
+     * @returns {Physics.scratchpad}
+     */
+    var getScratchpad = function(){
+        if (scratchPad == null){
+            scratchPad = Physics.scratchpad();
         }
-    );
+        return scratchPad;
+    };
+
+    /**
+     * Clamps the velocity of the paddle
+     */
+    var setMaxVel = function(){
+        var scratch = getScratchpad();
+
+        var maxVelVect = scratch.vector().set(me.rightBound.x, me.rightBound.y);
+        maxVelVect.vsub(me.leftBound);
+
+        maxVelVect.normalize().mult(maxVelocity);
+        var minVelVect = maxVelVect.clone().negate();
+
+        me.body.state.vel.clamp(minVelVect, maxVelVect);
+    };
 
     /**
      * Converts this paddle object into it's serializable form.
@@ -56,49 +71,68 @@ var Paddle = function(config) {
         };
     };
 
-};
+    /**
+     * sets the position of the paddle
+     * @param {Number} delta - The change in X position (from the mouse)
+     */
+    this.setPosition = function(delta) {
+        //this.body.state.pos.x = x;
+        //this.body.state.pos.y = y;
+        var scratch = getScratchpad();
 
-/**
- * sets the position of the paddle
- * @param {Number} x
- * @param {Number} y
- */
-Paddle.prototype.setPosition = function(x, y) {
-    this.body.state.pos.x = x;
-    this.body.state.pos.y = y;
+        //Delta Calculation
+        var bounds = scratch.vector().set(me.rightBound.x, me.rightBound.y);
+        bounds.vsub(me.leftBound);
 
-    //NOTE:  This is also where velocity clamping should happen.
-};
+        var deltaVec = scratch.vector().set(bounds.x, bounds.y);
+        deltaVec.normalize();
+        deltaVec.mult(delta);
 
-/**
- * Creates a paddle using the goal to position itself
- * @param {Object} config
- * @param {number} config.radius
- * @param {Object} config.styles
- * @param {Physics.vector} config.leftBound
- * @param {Physics.vector} config.rightBound
- * @return {Object}
- */
-Paddle.fromBounds = function(config){
-    var position = config.leftBound.clone();
-    position.vsub(config.rightBound);
-    position.mult(0.5);
-    position.vadd(config.rightBound);
+        //Next Position Calculation
+        deltaVec.vadd(me.leftBound);
 
-    return new Paddle({
-        leftBound: config.leftBound,
-        rightBound: config.rightBound,
-        body: {
-            state:{
-                pos:{
-                    x: position.x,
-                    y: position.y
-                }
-            },
-            radius: config.radius,
-            styles: config.styles
+        var boundsAngle = me.leftBound.angle(me.rightBound);
+        var positionAngle = me.leftBound.angle(deltaVec);
+
+        var movePaddle = function(){
+            me.body.state.pos.x = deltaVec.x;
+            me.body.state.pos.y = deltaVec.y;
+        };
+
+        if (boundsAngle < Math.PI){
+            if(positionAngle < boundsAngle){
+                movePaddle();
+            }
+        } else {
+            if (positionAngle > bounds && positionAngle < Math.PI *2){
+                movePaddle();
+            }
         }
-    }).toConfig();
+
+        setMaxVel();
+    };
+
+
+    // Initialization
+    this.leftBound = new Physics.vector(config.leftBound.x, config.leftBound.y);
+    this.rightBound = new Physics.vector(config.rightBound.x, config.rightBound.y);
+    var maxVelocity = config.maxVelocity;
+    var scratchPad;
+    var me = this;
+
+    this.body = Physics.body('circle',
+        {
+            x: config.body.state.pos.x,
+            y: config.body.state.pos.y,
+            radius: config.body.radius,
+            treatment: 'static',
+            styles: config.body.styles
+        }
+    );
+
+
 };
+
+
 
 module.exports = Paddle;

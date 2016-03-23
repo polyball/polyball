@@ -166,7 +166,20 @@ var Arena = function(config) {
      */
     this.getPaddleLeftBound = function (index){
         var leftBumper = this.getBumper(index).state.pos;
-        return new Physics.vector(leftBumper.x, leftBumper.y);
+        var rightBumper = this.getBumper((index+1) % this.numberPlayers).state.pos;
+
+        var leftBound = new Physics.vector(leftBumper.x, leftBumper.y);
+        var rightBound = new Physics.vector(rightBumper.x, rightBumper.y);
+
+
+        var position = rightBound.clone();
+
+        position.vsub(leftBound);
+        position.normalize();
+        position.mult(this.bumperRadius);
+
+        return leftBound.vadd(position);
+
     };
 
     /**
@@ -175,8 +188,20 @@ var Arena = function(config) {
      * @returns {Physics.vector}
      */
     this.getPaddleRightBound = function (index){
+        var leftBumper = this.getBumper(index).state.pos;
         var rightBumper = this.getBumper((index+1) % this.numberPlayers).state.pos;
-        return new Physics.vector(rightBumper.x, rightBumper.y);
+
+        var leftBound = new Physics.vector(leftBumper.x, leftBumper.y);
+        var rightBound = new Physics.vector(rightBumper.x, rightBumper.y);
+
+
+        var position = leftBound.clone();
+
+        position.vsub(rightBound);
+        position.normalize();
+        position.mult(this.bumperRadius);
+
+        return rightBound.vadd(position);
     };
 
     /**
