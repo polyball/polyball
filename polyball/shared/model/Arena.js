@@ -146,15 +146,26 @@ var Arena = function(config) {
      *
      * @returns {{pos: {x: Number, y: Number}, vel: {x: Number, y: Number}}}
      */
-    this.generateNewBallState = function () {
+    this.generateNewBallState = function (speed) {
+
+        speed = speed == null || speed < 1 ? 1 : speed;
+
+
+        var velocity = Physics.vector(0, 1);
+
+        velocity.mult(speed);
+        velocity.rotate(Util.getRandomArbitrary(0, 2 * Math.PI));
+
+        var position = this.getCenter();
+
         return {
             pos: {
-                x: this.getCenter().x,
-                y: this.getCenter().y
+                x: position.x,
+                y: position.y
             },
             vel: {
-                x: Util.getRandomArbitrary(-1.0, 1.0),
-                y: Util.getRandomArbitrary(-1.0, 1.0)
+                x: velocity.x,
+                y: velocity.y
             }
         };
     };
