@@ -111,6 +111,18 @@ describe('Engine', function() {
     });
 
     describe('#initializeGame', function(){
+        it('Should add a paddle to each player', function () {
+            startGameWithMinPlayers();
+            model.getPlayers().forEach(function(player){
+                player.paddle.should.not.null();
+            });
+        });
+        it('Should add an arena index to each player', function () {
+            startGameWithMinPlayers();
+            model.getPlayers().forEach(function(player){
+                player.arenaPosition.should.not.null();
+            });
+        });
     });
 
     afterEach(function(){
