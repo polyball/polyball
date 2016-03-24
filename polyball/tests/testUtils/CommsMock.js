@@ -30,7 +30,10 @@ var Comms = function(){
     };
 
     this.broadcastSnapshot = function () {};
-    this.broadcastSynchronizedStart = function () {};
+
+    this.broadcastSynchronizedStart = function (config, func) {
+        func();
+    };
 };
 
 module.exports = Comms;

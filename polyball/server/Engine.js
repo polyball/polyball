@@ -26,6 +26,7 @@ var Engine = function (config) {
     var model = config.model;
     var gameStartTime;
     var gameStatus;
+    var gameLoop;
 
     // ============================= Private Methods ==============================
     // ============================================================================
@@ -78,7 +79,7 @@ var Engine = function (config) {
 
         gameStartTime = Date.now();
         model.currentRoundTime = 0;
-        this.gameLoop = setInterval(update, config.configuration.serverTick);
+        gameLoop = setInterval(update, config.configuration.serverTick);
     };
 
 
@@ -214,6 +215,21 @@ var Engine = function (config) {
      */
     this.handleAddVote = function (data){
         model.getPowerupElection().addVote(data.vote);
+    };
+
+    /**
+     * Returns the current game status
+     * @returns {number}
+     */
+    this.getGameStatus = function (){
+        return gameStatus;
+    };
+
+    /**
+     * Stop execution of engine
+     */
+    this.kill = function(){
+        clearInterval(gameLoop);
     };
 
     // ========================== Engine Construction =============================
