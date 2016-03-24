@@ -109,6 +109,19 @@ var Comms = function (config) {
             Logger.info("Spectator " + spectatorID + " casts powerup vote.");
             pubsub.fireEvent(CommsEvents.ServerToServer.newVote, voteConfig);
         });
+        
+        clientSocket.on(CommsEvents.ClientToServer.newCommandAggregate, function (newCommandAggregate) {
+            var playerID = getPlayerOrSpectatorID(clientSocket);
+
+            if (model.getPlayer(playerID) == null) {
+                Logger.warn("Command aggregate received from spectator!  Should not be possible.");
+            }
+
+            pubsub.fireEvent(CommsEvents.ServerToServer.playerCommandsReceived, {
+                playerID: playerID,
+                newCommands: newCommandAggregate
+            });
+        });
 
     });
 

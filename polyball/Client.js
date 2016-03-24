@@ -28,11 +28,13 @@ $(document).ready(function() {
 
     var synchronizer = new Synchronizer({
         comms: comms,
-        model: model
+        model: model,
+        commandAggregationInterval: 100
     });
 
     var hud = new HUD({ //jshint ignore: line
-        comms: comms
+        comms: comms,
+        synchronizer: synchronizer
     });
 
     Physics.util.ticker.on(function( time ) {

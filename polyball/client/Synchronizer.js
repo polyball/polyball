@@ -7,10 +7,12 @@ var CommsEvents = require('polyball/shared/CommsEvents');
 
 var PassthroughSynchronizer = require('polyball/client/synchronizer/PassthroughSynchronizer');
 var SimulationSynchronizer = require('polyball/client/synchronizer/SimulationSynchronizer');
+var Reconciler = require('polyball/client/synchronizer/Reconciler');
 
 /**
  *
  * @param {Object} config
+ * @property {Number} commandAggregationInterval - The *minimum* time to wait between sending command aggregates.
  * @property {Comms} comms - The client communications module to send and receive from.
  * @property {Model} model - The model to synchronize from incoming comms events.
  * @constructor
@@ -35,6 +37,12 @@ var Synchronizer = function (config) {
 
     var comms = config.comms;
     var model = config.model;
+
+    var reconciler = new Reconciler({
+        model: model
+    });
+    var aggregationInterval = config.commandAggregationInterval;
+    var lastAggregationSendTime = 0;
 
     var simulationSync = new SimulationSynchronizer({
         largeDelta: 100,
@@ -64,6 +72,8 @@ var Synchronizer = function (config) {
         }
         
         PassthroughSynchronizer.sync(snapshot, model);
+        
+        reconciler.reconcileServerPlayerState(snapshot.players);
 
         simulationSync.setAuthoritativeSnapshot(snapshot);
         simulationSync.tick(model); // TODO: this should happen in sync.tick
@@ -105,11 +115,30 @@ var Synchronizer = function (config) {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
+     * Aggregate the mouse move for send to server and mutate the model
+     * @param delta
+     */
+    this.registerMouseMove = function (delta) {
+        reconciler.registerMouseMove(delta);
+    };
+
+    /**
      * Use received snapshots and current time to mutate the model towards server authority.
      * @param {Number} tickTime - The current time in millis.
      */
     this.tick = function (tickTime) {
         model.setCurrentRoundTime(tickTime);
+
+        var isPlayer = model.getPlayer(model.getLocalClientID()) != null;
+
+        if (isPlayer && tickTime - lastAggregationSendTime > aggregationInterval) {
+            lastAggregationSendTime = Date.now();
+            
+            var unsentCommands = reconciler.getAndClearUnsentCommands();
+            if (unsentCommands.length > 0) {
+                comms.sendCommandAggregate(unsentCommands);
+            }
+        }
     };
 };
 
