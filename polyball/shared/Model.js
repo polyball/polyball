@@ -30,24 +30,13 @@ var Model = function () {
     ///////////////////////////////////////////////////////////////////////////
 
 
-    //
-    //             INITIALIZATION
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
-    var newPhysicsSim = function () {
-        var newWorld = Physics({maxIPF: 10000});
-
-        return newWorld;
-    };
-
 
     //
     //             PRIVATE STATE
     //
     ///////////////////////////////////////////////////////////////////////////
 
-    var world = newPhysicsSim();
+    var world = Physics({maxIPF: 10000});
     var collisionsPruner = new CollisionsPruner({world: world});
 
     /**
@@ -295,6 +284,14 @@ var Model = function () {
      */
     this.setLocalClientID = function (newID) {
         localClientID = newID;
+    };
+
+    /**
+     * Get the model's collision pruner to ignore (or stop ignoring) certain physics bodies.
+     * @returns {CollisionsPruner}
+     */
+    this.getCollisionsPruner = function () {
+        return collisionsPruner;
     };
 
 
