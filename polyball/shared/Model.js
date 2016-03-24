@@ -8,6 +8,7 @@ var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
 var Player = require('polyball/shared/model/Player');
 var Util = require('polyball/shared/Util');
+var CollisionsPruner = require('polyball/shared/model/CollisionsPruner');
 
 
 /**
@@ -36,11 +37,6 @@ var Model = function () {
 
     var newPhysicsSim = function () {
         var newWorld = Physics({maxIPF: 10000});
-        newWorld.add([
-            Physics.behavior('body-impulse-response'),
-            Physics.behavior('body-collision-detection'),
-            Physics.behavior('sweep-prune')
-        ]);
 
         return newWorld;
     };
@@ -52,6 +48,7 @@ var Model = function () {
     ///////////////////////////////////////////////////////////////////////////
 
     var world = newPhysicsSim();
+    var collisionsPruner = new CollisionsPruner({world: world});
 
     /**
      * The number of milliseconds in the current round.
