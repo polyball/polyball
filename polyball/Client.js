@@ -21,6 +21,16 @@ $(document).ready(function() {
     Logger.info('Width: ' + width + ' Height: ' + height);
 
     gameRenderer.resize(width - 25, height - 25);
+    
+    gameRenderer.renderParticles();
+
+    window.onresize = function() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+
+        Logger.info('Width: ' + width + ' Height: ' + height);
+        gameRenderer.resize(width - 25, height - 25);
+    };
 
     var comms = new Comms({
         serverAddress: window.location.href
