@@ -15,6 +15,38 @@ var Logger = require('polyball/shared/Logger');
 describe('Engine', function() {
     var model, engine, comms, config;
 
+    //
+    //
+    //                  Utility Functions
+    //
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Adds the minimum number of players to start a game
+     */
+    var startGameWithMinPlayers = function (){
+        _.times(config.values.minimumPlayers, function (){
+            addAndJoinQueue();
+        });
+    };
+
+    /**
+     * Adds a spectator to the game and immediately joins them to the queue
+     * @returns {Spectator}
+     */
+    var addAndJoinQueue = function (){
+        var spectator = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+        comms.fireJoinQueue(spectator.id);
+        return spectator;
+    };
+
+
+    //
+    //
+    //                  Initialization
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////
+
     before(function(){
         Logger.setLevel('OFF');
     });
@@ -32,12 +64,16 @@ describe('Engine', function() {
         });
     });
 
+    //
+    //
+    //                  Initialization
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////
+
     describe('#handleAddPlayerToQueue', function() {
 
         it('should add directly to players when players < minPlayers', function () {
-            var spectator = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
-            comms.fireJoinQueue(spectator.id);
-
+            addAndJoinQueue();
 
             var spectators = model.getSpectators();
             spectators.should.be.empty();
@@ -46,10 +82,7 @@ describe('Engine', function() {
             players.length.should.equal(1);
         });
         it('should start a game when enough players queue', function () {
-            _.times(config.values.minimumPlayers, function (){
-                var spectator = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
-                comms.fireJoinQueue(spectator.id);
-            });
+            startGameWithMinPlayers();
 
             var spectators = model.getSpectators();
             spectators.should.be.empty();
@@ -60,13 +93,9 @@ describe('Engine', function() {
             engine.getGameStatus().should.equal(EngineStatus.gameRunning);
         });
         it('should queue Spectators while a round is in progress', function () {
-            _.times(config.values.minimumPlayers, function (){
-                var spectator = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
-                comms.fireJoinQueue(spectator.id);
-            });
+           startGameWithMinPlayers();
 
-            var spectator = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
-            comms.fireJoinQueue(spectator.id);
+            var spectator = addAndJoinQueue();
 
             var spectators = model.getSpectators();
             spectators.length.should.equal(1);
@@ -81,6 +110,21 @@ describe('Engine', function() {
         });
     });
 
+    describe('#initializeGame', function(){
+        it('Should add a paddle to each player', function () {
+            startGameWithMinPlayers();
+            model.getPlayers().forEach(function(player){
+                player.paddle.should.not.null();
+            });
+        });
+        it('Should add an arena index to each player', function () {
+            startGameWithMinPlayers();
+            model.getPlayers().forEach(function(player){
+                player.arenaPosition.should.not.null();
+            });
+        });
+    });
+
     afterEach(function(){
         engine.kill();
     });
@@ -88,5 +132,8 @@ describe('Engine', function() {
     after(function(){
         Logger.setLevel('INFO');
     });
+
 });
+
+
 

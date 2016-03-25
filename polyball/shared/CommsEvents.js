@@ -5,7 +5,8 @@
 var ServerToServer = {
     clientDisconnected: 'clientDisconnected',
     newVote: 'newVote',
-    newPlayerQueued: 'newPlayerQueued'
+    newPlayerQueued: 'newPlayerQueued',
+    playerCommandsReceived: 'playerCommandsReceived'
 };
 
 var ClientToClient = {

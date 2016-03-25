@@ -8,7 +8,8 @@ var EngineStatus = require('polyball/server/EngineStatus.js');
 var _ = require('lodash');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
-
+var Physics = require('physicsjs');
+var PaddleBehavior = require('polyball/server/behaviors/PaddleBehavior');
 /**
  * Initializes the engine
  *
@@ -57,6 +58,12 @@ var Engine = function (config) {
             });
 
             addAllPaddles();
+
+            new PaddleBehavior({comms: comms, model: model});
+            var beh = Physics.behavior('paddleBehavior');
+            beh.applyTo(model.getPlayers());
+
+            model.getWorld().add(beh);
 
             comms.broadcastSynchronizedStart({
                 snapshot: model.getSnapshot(),
@@ -218,6 +225,20 @@ var Engine = function (config) {
     };
 
     /**
+     * This function handles play command aggregate events
+     * @param {Object} data
+     * @property {number} data.playerID
+     * @property {Object[]} data.newCommands
+     */
+    this.handlePlayerCommandReceived = function(data){
+        var player = model.getPlayer(data.playerID);
+        data.newCommands.forEach(function(command){
+            player.paddle.setPosition(command.moveDelta);
+            player.lastSequenceNumberAccepted = command.sequenceNumber;
+        });
+    };
+
+    /**
      * Returns the current game status
      * @returns {number}
      */
@@ -238,7 +259,7 @@ var Engine = function (config) {
     // - Need to pub sub "Add Player to queue"
     comms.on(CommsEvents.ServerToServer.newPlayerQueued, this.handleAddPlayerToQueue);
     // - Need to pub sub "Add Vote"
-    // comms.on('Add Vote', this.handleAddVote);
+    //comms.on(CommsEvents.ServerToServer.playerCommandsReceived, this.handlePlayerCommandReceived);
 
     initializeGame();
 };

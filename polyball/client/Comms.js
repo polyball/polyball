@@ -100,6 +100,12 @@ var Comms = function (config) {
 
         socket.emit(CommsEvents.ClientToServer.queueToPlay);
     };
+    
+    this.sendCommandAggregate = function (commandAggregate) {
+        Logger.debug('Comms sending command aggregate');
+        
+        socket.emit(CommsEvents.ClientToServer.newCommandAggregate, commandAggregate);
+    };
 };
 
 
