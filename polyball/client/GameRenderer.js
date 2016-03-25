@@ -72,14 +72,17 @@ var GameRenderer = function(config) {
             var center = model.getArena().getCenter();
             this.renderer.stage.pivot.set(center.x, center.y);
             this.renderer.stage.position.set(center.x, center.y);
-        }
 
-        var player = model.getPlayer(model.getLocalClientID());
-        if (model.playerCount() > 0 && player !== undefined) {
-            this.renderer.stage.rotation = 0;
-            this.rotate(player.arenaPosition * 2*Math.PI / model.playerCount());
-        }
+            var player = model.getPlayer(model.getLocalClientID());
+            if (model.playerCount() > 0 && player !== undefined) {
+                var desiredX = window.innerWidth/2;
+                var desiredY = window.innerHeight/2;
 
+                this.renderer.stage.rotation = 0;
+                this.rotate(player.arenaPosition * 2*Math.PI / model.playerCount());
+                this.renderer.stage.position.set(desiredX, desiredY);
+            }
+        }
         world.render();
     };
 
@@ -154,6 +157,10 @@ var GameRenderer = function(config) {
     this.rotate = function(radians) {
         var stage = this.renderer.stage;
         stage.rotation += radians;
+    };
+
+    this.center = function() {
+
     };
 };
 

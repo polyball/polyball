@@ -302,7 +302,7 @@ var Arena = function(config) {
             height: 30,
             treatment: 'static',
             styles: {
-                fillStyle: colors.red + j * 50
+                fillStyle: colors.red
             }
         }));
 

@@ -51,10 +51,10 @@ var Engine = function (config) {
             //TODO figure out radius as a function of # players
             model.addOrResetArena({
                 numberPlayers: model.playerCount(),
-                arenaRadius: 300,
-                bumperRadius: 35,
-                marginX: 60,
-                marginY: 60
+                arenaRadius: 400,
+                bumperRadius: 60,
+                marginX: 0,
+                marginY: 0
             });
 
             addAllPaddles();
