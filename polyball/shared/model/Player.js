@@ -22,6 +22,7 @@ var Player = function(config) {
     this.arenaPosition = config.arenaPosition;
     this.client = new Client(config.clientConfig);
     this.score = 0;
+    this.lastSequenceNumberAccepted=0;
 
     /**
      * Converts this player object into it's config (serializable) form

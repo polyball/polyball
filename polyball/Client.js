@@ -29,7 +29,7 @@ $(document).ready(function() {
     var synchronizer = new Synchronizer({
         comms: comms,
         model: model,
-        commandAggregationInterval: 100
+        commandAggregationInterval: 10
     });
 
     var hud = new HUD({ //jshint ignore: line

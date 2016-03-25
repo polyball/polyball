@@ -123,6 +123,10 @@ var Comms = function (config) {
             });
         });
 
+        clientSocket.on('error', function(err){
+            Logger.error(err);
+        });
+
     });
 
 

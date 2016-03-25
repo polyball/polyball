@@ -23,31 +23,10 @@ var Util = require('polyball/shared/Util');
  */
 var Paddle = function(config){
 
-    /**
-     * Gets us the same instance of a Physics scratchpad for performant vector calculations
-     * @returns {Physics.scratchpad}
-     */
-    var getScratchpad = function(){
-        if (scratchPad == null){
-            scratchPad = Physics.scratchpad();
-        }
-        return scratchPad;
-    };
-
-    /**
-     * Clamps the velocity of the paddle
-     */
-    var setMaxVel = function(){
-        var scratch = getScratchpad();
-
-        var maxVelVect = scratch.vector().set(me.rightBound.x, me.rightBound.y);
-        maxVelVect.vsub(me.leftBound);
-
-        maxVelVect.normalize().mult(maxVelocity);
-        var minVelVect = maxVelVect.clone().negate();
-
-        me.body.state.vel.clamp(minVelVect, maxVelVect);
-    };
+    // Vectors for position calculation
+    var bounds = new Physics.vector(0,0);
+    var deltaVec = new Physics.vector(0,0);
+    var previousPos = new Physics.vector(0,0);
 
     /**
      * Converts this paddle object into it's serializable form.
@@ -74,42 +53,58 @@ var Paddle = function(config){
     /**
      * sets the position of the paddle
      * @param {Number} delta - The change in X position (from the mouse)
+     * @param {Object} previous - the previous position
+     * @returns {Object} the new position for the paddle
      */
-    this.setPosition = function(delta) {
-        //this.body.state.pos.x = x;
-        //this.body.state.pos.y = y;
-        var scratch = getScratchpad();
+    this.getNewPosition = function(delta) {
 
-        //Delta Calculation
-        var bounds = scratch.vector().set(me.rightBound.x, me.rightBound.y);
+        ////Delta Calculation
+        bounds.set(me.rightBound.x, me.rightBound.y);
         bounds.vsub(me.leftBound);
 
-        var deltaVec = scratch.vector().set(bounds.x, bounds.y);
+        deltaVec.set(bounds.x, bounds.y);
         deltaVec.normalize();
-        deltaVec.mult(delta);
+        deltaVec.mult(getClampedVelocity(delta));
 
         //Next Position Calculation
-        deltaVec.vadd(me.leftBound);
+        deltaVec.vadd(previousPos);
 
-        var boundsAngle = me.leftBound.angle(me.rightBound);
-        var positionAngle = me.leftBound.angle(deltaVec);
+        var boundsAngle = me.rightBound.angle(me.leftBound);
+        var positionAngle = deltaVec.angle(me.leftBound);
 
-        var movePaddle = function(){
-            me.body.state.pos.x = deltaVec.x;
-            me.body.state.pos.y = deltaVec.y;
-        };
+        var newPos = {x: deltaVec.x, y:deltaVec.y};
+        previousPos.clone(newPos);
 
-        if (boundsAngle < Math.PI){
-            if(positionAngle < boundsAngle){
-                movePaddle();
+
+        if (boundsAngle > 0){
+            if(positionAngle < boundsAngle && positionAngle > 0){
+                return newPos;
             }
         } else {
-            if (positionAngle > bounds && positionAngle < Math.PI *2){
-                movePaddle();
+            if (positionAngle < 0 && positionAngle > boundsAngle){
+                return newPos;
             }
         }
 
-        setMaxVel();
+
+        previousPos.clone(me.body.state.pos);
+        return me.body.state.pos;
+    };
+
+    /**
+     * This function returns a velocity clamped by the max velocity
+     * @param {number} delta
+     */
+    var getClampedVelocity = function(delta){
+        if(Math.abs(delta) > maxVelocity){
+            if(delta < 0){
+                return -1 * maxVelocity;
+            }else {
+                return maxVelocity;
+            }
+
+        }
+        return delta;
     };
 
 
@@ -117,7 +112,6 @@ var Paddle = function(config){
     this.leftBound = new Physics.vector(config.leftBound.x, config.leftBound.y);
     this.rightBound = new Physics.vector(config.rightBound.x, config.rightBound.y);
     var maxVelocity = config.maxVelocity;
-    var scratchPad;
     var me = this;
 
     this.body = Physics.body('circle',
@@ -125,12 +119,11 @@ var Paddle = function(config){
             x: config.body.state.pos.x,
             y: config.body.state.pos.y,
             radius: config.body.radius,
-            treatment: 'static',
+            treatment: 'kinematic',
             styles: config.body.styles
         }
     );
-
-
+    previousPos.clone(this.body.state.pos);
 };
 
 

@@ -33,7 +33,9 @@ var HUD = function (config) {
             var deltaX = evt.pageX - previousMousePos.x;
             
             // Do not set the paddle position in here!  Pass the movement command (amount) through the synchronizer.
-            synchronizer.registerMouseMove(deltaX);
+            if (deltaX !== 0){
+                synchronizer.registerMouseMove(deltaX);
+            }
         }
 
         previousMousePos.x = evt.pageX;
