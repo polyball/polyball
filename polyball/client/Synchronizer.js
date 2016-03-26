@@ -8,6 +8,7 @@ var CommsEvents = require('polyball/shared/CommsEvents');
 var PassthroughSynchronizer = require('polyball/client/synchronizer/PassthroughSynchronizer');
 var SimulationSynchronizer = require('polyball/client/synchronizer/SimulationSynchronizer');
 var Reconciler = require('polyball/client/synchronizer/Reconciler');
+var Interpolator = require('polyball/client/synchronizer/Interpolator');
 
 /**
  *
@@ -44,6 +45,10 @@ var Synchronizer = function (config) {
     var aggregationInterval = config.commandAggregationInterval;
     var lastAggregationSendTime = 0;
 
+    var interpolator = new Interpolator({
+        model: model
+    });
+    
     var simulationSync = new SimulationSynchronizer({
         largeDelta: 100,
         rapidDecayRate: 0.7,
@@ -74,6 +79,10 @@ var Synchronizer = function (config) {
         PassthroughSynchronizer.sync(snapshot, model);
         
         reconciler.reconcileServerPlayerState(snapshot.players);
+
+        // NOTE: because only time *deltas* are used within, it should not matter whether or not this is round time or Date.now()
+        interpolator.addPastServerState(Date.now(), snapshot.players);
+        interpolator.interpolateState(model);  //TODO: this should happen in sync.tick
 
         simulationSync.setAuthoritativeSnapshot(snapshot);
         simulationSync.tick(model); // TODO: this should happen in sync.tick
