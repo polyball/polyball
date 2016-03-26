@@ -39,12 +39,13 @@ $(document).ready(function() {
     var synchronizer = new Synchronizer({
         comms: comms,
         model: model,
-        commandAggregationInterval: 10
+        commandAggregationInterval: 60
     });
 
     var hud = new HUD({ //jshint ignore: line
         comms: comms,
-        synchronizer: synchronizer
+        synchronizer: synchronizer,
+        accumulationInterval: 30
     });
 
     Physics.util.ticker.on(function( time ) {
