@@ -109,7 +109,7 @@ var GameRenderer = function(config) {
                 var desiredY = window.innerHeight/2;
 
                 renderer.stage.rotation = 0;
-                this.rotate(player.arenaPosition * 2*Math.PI / model.playerCount());
+                this.rotate(player.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length);
                 renderer.stage.position.set(desiredX, desiredY);
             }
         }
