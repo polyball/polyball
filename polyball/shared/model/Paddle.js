@@ -73,16 +73,30 @@ var Paddle = function(config){
         var positionAngle = deltaVec.angle(me.leftBound);
 
         var newPos = {x: deltaVec.x, y:deltaVec.y};
-        previousPos.clone(newPos);
+
 
 
         if (boundsAngle > 0){
             if(positionAngle < boundsAngle && positionAngle > 0){
+                previousPos.clone(newPos);
                 return newPos;
+            } else if (positionAngle > boundsAngle){
+                previousPos.clone(me.rightBound);
+                return me.rightBound;
+            } else {
+                previousPos.clone(me.leftBound);
+                return me.leftBound;
             }
         } else {
             if (positionAngle < 0 && positionAngle > boundsAngle){
+                previousPos.clone(newPos);
                 return newPos;
+            } else if (positionAngle <= boundsAngle){
+                previousPos.clone(me.rightBound);
+                return (me.rightBound);
+            } else {
+                previousPos.clone(me.leftBound);
+                return me.leftBound;
             }
         }
 
