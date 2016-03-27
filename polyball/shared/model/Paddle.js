@@ -99,10 +99,6 @@ var Paddle = function(config){
                 return me.leftBound;
             }
         }
-
-
-        previousPos.clone(me.body.state.pos);
-        return me.body.state.pos;
     };
 
     /**
