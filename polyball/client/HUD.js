@@ -36,7 +36,6 @@ var HUD = function (config) {
     var registerMouseMove = function() {
         // Do not set the paddle position in here!  Pass the movement command (amount) through the synchronizer.
         if (accumulatedMouseDeltaX !== 0) {
-            console.log(accumulatedMouseDeltaX + ' : ' + Date.now().toString());
             synchronizer.registerMouseMove(accumulatedMouseDeltaX);
             accumulatedMouseDeltaX = 0;
         }
@@ -48,8 +47,7 @@ var HUD = function (config) {
         if (previousMouseX != null) {
             accumulatedMouseDeltaX += evt.pageX - previousMouseX;
 
-            //registerMouseMove();                //  <-- RYAN: swap which one of these lines is commented,
-            throttledRegisterMouseMove();     //            rebuild and restart everything, and notice difference
+            throttledRegisterMouseMove();
         }
 
         previousMouseX = evt.pageX;
