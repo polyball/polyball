@@ -315,7 +315,8 @@ var Arena = function(config) {
                 treatment: 'static',
                 styles: {
                     fillStyle: colors.blue,
-                    layer: 6
+                    layer: 6,
+                    icon: '\uf0d6'
                 }
             })
         );

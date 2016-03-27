@@ -35,7 +35,7 @@ var GameRenderer = function(config) {
         parent = parent || renderer.stage;
         styles = styles || renderer.options.styles[ name ] || renderer.options.styles.circle || {};
 
-        // do whatever we want with the view
+        // Handle view layers.
         if (styles.layer) {
             view.layer = styles.layer;
         }
@@ -47,8 +47,30 @@ var GameRenderer = function(config) {
             return a.layer - b.layer;
         });
 
+        // Add child icons if specified.
+        // \uf0d6: dollar bill
+        // \uf155: dollar sign
+        // \uf111: circle
+        // \uf254: hourglass
+        // \uf069: asterisk
+        // \uf219: diamond
+        if (styles.icon) {
+            var text = new Pixi.Text(styles.icon, {fill: '#ffffff', font: '40px fontawesome'});
+            text.anchor.set(0.5, 0.5);
+            view.addChild(text);
+        }
+
         return view;
     };
+
+    this.forceFontLoad = function() {
+        var text = new Pixi.Text('\uf254', {fill: '#ffffff', font: '40px fontawesome'});
+        text.anchor.set(0.5, 0.5);
+        text.position.set(50, 50);
+        renderer.stage.addChild(text);
+        text.renderable = false;
+    };
+
 
     var world = model.getWorld();
     world.add(renderer);
@@ -58,14 +80,6 @@ var GameRenderer = function(config) {
     renderer.stage.addChild(emitterContainer);
 
     var emitters = [];
-
-    // \uf0d6: dollar bill
-    // \uf155: dollar sign
-    // \uf111: circle
-    // \uf254: hourglass
-    // \uf069: asterisk
-    // \uf219: diamond
-    // var test = new Pixi.Text('\uf0d6', {fill: '#ffffff', font: '40px fontawesome'});
 
     // ################  PRIVATE METHODS ########### //
     // ############################################ //
@@ -82,10 +96,6 @@ var GameRenderer = function(config) {
         // number of seconds since the last update
         for (var i = 0; i < emitters.length; i++) {
             emitters[i].update((now - elapsed) * 0.001);
-
-            //if (emitters[i].emit == false) {
-            //    emitters.splice(i, 1);
-            //}
         }
 
         elapsed = now;

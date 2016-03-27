@@ -21,7 +21,7 @@ $(document).ready(function() {
     Logger.info('Width: ' + width + ' Height: ' + height);
 
     gameRenderer.resize(width - 25, height - 25);
-    
+    gameRenderer.forceFontLoad();
     gameRenderer.renderParticles();
 
     window.onresize = function() {
