@@ -23,22 +23,26 @@ var GameRenderer = function(config) {
 
     window.PIXI = Pixi;
 
-    this.renderer = Physics.renderer('pixi', {
+    var renderer = Physics.renderer('pixi', {
         el: 'viewport'
     });
 
-    this.renderer.renderer = new Pixi.autoDetectRenderer(1000, 1000, {
-        view: this.renderer.renderer.view,
-        transparent: true,
-        resolution: 1,
-        antialias: true
-    });
+    var oldCreateView = renderer.createView;
+    renderer.createView = function (geometry, styles, parent) {
+
+        //modelAdd.call(model, snapshotEntity);
+        var view = oldCreateView.call(renderer, geometry, styles, parent);
+
+        // do whatever we want with the view
+
+        return view;
+    };
 
     var world = model.getWorld();
-    world.add(this.renderer);
+    world.add(renderer);
 
     var emitterContainer = new Pixi.Container();
-    this.renderer.stage.addChild(emitterContainer);
+    renderer.stage.addChild(emitterContainer);
 
     var emitters = [];
 
@@ -83,17 +87,17 @@ var GameRenderer = function(config) {
 
         if (model.getArena() !== undefined) {
             var center = model.getArena().getCenter();
-            this.renderer.stage.pivot.set(center.x, center.y);
-            this.renderer.stage.position.set(center.x, center.y);
+            renderer.stage.pivot.set(center.x, center.y);
+            renderer.stage.position.set(center.x, center.y);
 
             var player = model.getPlayer(model.getLocalClientID());
             if (model.playerCount() > 0 && player !== undefined) {
                 var desiredX = window.innerWidth/2;
                 var desiredY = window.innerHeight/2;
 
-                this.renderer.stage.rotation = 0;
+                renderer.stage.rotation = 0;
                 this.rotate(player.arenaPosition * 2*Math.PI / model.playerCount());
-                this.renderer.stage.position.set(desiredX, desiredY);
+                renderer.stage.position.set(desiredX, desiredY);
             }
         }
         world.render();
@@ -179,7 +183,7 @@ var GameRenderer = function(config) {
      * @param height: number
      */
     this.resize = function(width, height) {
-        this.renderer.resize(width, height);
+        renderer.resize(width, height);
     };
 
     /**
@@ -188,7 +192,7 @@ var GameRenderer = function(config) {
      * @param radians: number
      */
     this.rotate = function(radians) {
-        var stage = this.renderer.stage;
+        var stage = renderer.stage;
         stage.rotation += radians;
     };
 };
