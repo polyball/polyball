@@ -42,6 +42,14 @@ var GameRenderer = function(config) {
 
     var emitters = [];
 
+    // \uf0d6: dollar bill
+    // \uf155: dollar sign
+    // \uf111: circle
+    // \uf254: hourglass
+    // \uf069: asterisk
+    // \uf219: diamond
+    // var test = new Pixi.Text('\uf0d6', {fill: '#ffffff', font: '40px fontawesome'});
+
     // ################  PRIVATE METHODS ########### //
     // ############################################ //
     var elapsed = Date.now();
