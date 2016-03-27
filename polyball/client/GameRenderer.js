@@ -30,10 +30,22 @@ var GameRenderer = function(config) {
     var oldCreateView = renderer.createView;
     renderer.createView = function (geometry, styles, parent) {
 
-        //modelAdd.call(model, snapshotEntity);
         var view = oldCreateView.call(renderer, geometry, styles, parent);
 
+        parent = parent || renderer.stage;
+        styles = styles || renderer.options.styles[ name ] || renderer.options.styles.circle || {};
+
         // do whatever we want with the view
+        if (styles.layer) {
+            view.layer = styles.layer;
+        }
+        else {
+            view.layer = 0;
+        }
+
+        parent.children.sort(function(a, b) {
+            return a.layer - b.layer;
+        });
 
         return view;
     };
@@ -42,6 +54,7 @@ var GameRenderer = function(config) {
     world.add(renderer);
 
     var emitterContainer = new Pixi.Container();
+    emitterContainer.layer = 100;
     renderer.stage.addChild(emitterContainer);
 
     var emitters = [];
