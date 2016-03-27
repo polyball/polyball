@@ -42,9 +42,20 @@ var GameRenderer = function(config) {
 
     var emitters = [];
 
+    // \uf0d6: dollar bill
+    // \uf155: dollar sign
+    // \uf111: circle
+    // \uf254: hourglass
+    // \uf069: asterisk
+    // \uf219: diamond
+    // var test = new Pixi.Text('\uf0d6', {fill: '#ffffff', font: '40px fontawesome'});
+
     // ################  PRIVATE METHODS ########### //
     // ############################################ //
     var elapsed = Date.now();
+    /**
+     * Updates the particle rendering.
+     */
     var update = function() {
         requestAnimationFrame(update);
 
@@ -65,7 +76,9 @@ var GameRenderer = function(config) {
 
     // ################  PUBLIC METHODS ########### //
     // ############################################ //
-
+    /**
+     * Renders graphics. Handles draw rotations and shifting.
+     */
     this.render = function() {
 
         if (model.getArena() !== undefined) {
@@ -86,11 +99,16 @@ var GameRenderer = function(config) {
         world.render();
     };
 
-
+    /**
+     * This function initiates the particle rendering loop.
+     */
     this.renderParticles = function() {
         update();
     };
 
+    /**
+     * A test function to show emitter creation.
+     */
     this.addTestEmitter = function() {
         this.addEmitter([Pixi.Texture.fromImage('res/Sparks.png')],
             {
@@ -141,6 +159,11 @@ var GameRenderer = function(config) {
         );
     };
 
+    /**
+     * Adds an emitter.
+     * @param imageArray An array of different Pixi images to use as particles.
+     * @param config The PixiParticles config object to use.
+     */
     this.addEmitter = function(imageArray, config) {
         var emitter = new window.cloudkid.Emitter(
             emitterContainer,
@@ -150,17 +173,23 @@ var GameRenderer = function(config) {
         emitters.push(emitter);
     };
 
+    /**
+     * Resizes the rendering area. Good to do on window resizes.
+     * @param width: number
+     * @param height: number
+     */
     this.resize = function(width, height) {
         this.renderer.resize(width, height);
     };
 
+    /**
+     * Rotates the renderer. If the pivot/location hasn't been set,
+     * it can result in rendered objects in strange places.
+     * @param radians: number
+     */
     this.rotate = function(radians) {
         var stage = this.renderer.stage;
         stage.rotation += radians;
-    };
-
-    this.center = function() {
-
     };
 };
 
