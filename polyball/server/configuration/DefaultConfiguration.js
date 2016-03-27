@@ -11,7 +11,7 @@ var DefaultConfiguration=function () {
         // Paddle Config
         paddleRadius: 50,           // The radius of the paddle
         paddlePadding: 10,          // The distance between back of paddle and goal
-        paddleMaximumVelocity: 3,       // The maximum speed the paddle can have when contacting balls (does not effect movement speed)
+        paddleMaximumVelocity: 100,       // The maximum speed the paddle can have when contacting balls (does not effect movement speed)
 
         // Server Config
         serverTick: 30,             // What interval the server should progress the simulation (milliseconds)
