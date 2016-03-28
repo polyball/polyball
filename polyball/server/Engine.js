@@ -9,7 +9,7 @@ var _ = require('lodash');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
 var Physics = require('physicsjs');
-var PaddleBehavior = require('polyball/server/behaviors/PaddleBehavior');
+var PaddleBehavior = require('polyball/shared/model/behaviors/PaddleBehavior');
 /**
  * Initializes the engine
  *
