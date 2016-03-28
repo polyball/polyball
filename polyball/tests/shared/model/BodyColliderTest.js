@@ -2,18 +2,18 @@
  * Created by kdbanman on 3/24/16.
  */
 
-var CollisionsPruner = require('polyball/shared/model/CollisionsPruner');
+var BodyCollider = require('polyball/shared/model/BodyCollider');
 var Physics = require('physicsjs');
 
 
-describe('CollisionsPruner', function () {
+describe('BodyCollider', function () {
     "use strict";
 
     var world, collisionsPruner, event, ball1, ball2, ball3;
 
     beforeEach(function () {
         world = Physics();
-        collisionsPruner = new CollisionsPruner({world: world});
+        collisionsPruner = new BodyCollider({world: world});
 
         ball1 = Physics.body('circle');
         ball2 = Physics.body('circle');

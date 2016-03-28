@@ -8,7 +8,7 @@ var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
 var Player = require('polyball/shared/model/Player');
 var Util = require('polyball/shared/Util');
-var CollisionsPruner = require('polyball/shared/model/CollisionsPruner');
+var BodyCollider = require('polyball/shared/model/BodyCollider');
 
 
 /**
@@ -37,7 +37,7 @@ var Model = function () {
     ///////////////////////////////////////////////////////////////////////////
 
     var world = Physics({maxIPF: 10000});
-    var collisionsPruner = new CollisionsPruner({world: world});
+    var collisionsPruner = new BodyCollider({world: world});
 
     /**
      * The number of milliseconds in the current round.
@@ -288,7 +288,7 @@ var Model = function () {
 
     /**
      * Get the model's collision pruner to ignore (or stop ignoring) certain physics bodies.
-     * @returns {CollisionsPruner}
+     * @returns {BodyCollider}
      */
     this.getCollisionsPruner = function () {
         return collisionsPruner;

@@ -19,7 +19,7 @@ var lodash = require('lodash');
  * @property {Physics.world} config.world - the world whose collision events will be retransmitted.
  * @constructor
  */
-var CollisionsPruner = function (config) {
+var BodyCollider = function (config) {
     var world = config.world;
     var ignoredBodies = [];
 
@@ -75,4 +75,4 @@ var CollisionsPruner = function (config) {
 
 };
 
-module.exports = CollisionsPruner;
+module.exports = BodyCollider;
