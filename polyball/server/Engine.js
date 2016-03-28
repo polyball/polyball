@@ -8,7 +8,7 @@ var Logger = require('polyball/shared/Logger');
 var Physics = require('physicsjs');
 var PaddleBehavior = require('polyball/shared/model/behaviors/PaddleBehavior');
 var BallBehavior = require('polyball/shared/model/behaviors/BallBehavior');
-var PowerupFactory = require('polyball/shared/PowerupFactory');
+var Blackhole = require('polyball/shared/model/powerups/Blackhole');
 
 /**
  * Initializes the engine
@@ -69,9 +69,14 @@ var Engine = function (config) {
             model.getWorld().add(ballBehavior);
 
             //TEST BLACKHOLE
-            var bh = PowerupFactory.buildPowerup("Blackhole", {id: 1, active: false});
-            bh.activate(model);
+            var blackhole = model.addPowerup({
+                name: Blackhole.Name,
+                body: model.generatePowerupBody()
+            });
 
+            setTimeout(function(){
+                blackhole.activate(model);
+            }, 10000);
 
             model.setRoundLength(config.configuration.roundLength);
 

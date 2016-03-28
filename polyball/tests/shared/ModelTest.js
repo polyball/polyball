@@ -8,6 +8,7 @@ var _ = require('lodash');
 var Logger = require('polyball/shared/Logger');
 var Vote = require('polyball/shared/model/Vote');
 var PowerupElection = require('polyball/shared/model/PowerupElection.js');
+var Blackhole = require('polyball/shared/model/powerups/Blackhole');
 
 describe('Model', function () {
    'use strict';
@@ -506,6 +507,111 @@ describe('Model', function () {
             spectator.id.should.equal(56);
             spectator.clientConfig.name.should.equal('bob');
             should.not.exist(spectator.clientConfig.socket);
+        });
+    });
+
+    describe('Powerup CRUD', function(){
+        var addPowerup = function(){
+            var model = new Model();
+
+            var arena = model.addOrResetArena({
+                numberPlayers: 9,
+                arenaRadius: 400,
+                bumperRadius: 25,
+                marginX: 0,
+                marginY: 0
+            });
+
+            var powerup = model.addPowerup({
+                name: Blackhole.Name,
+                body: model.generatePowerupBody()
+            });
+
+          return {
+            model: model,
+            arena: arena,
+            powerup: powerup
+          };
+        };
+       describe('#addPowerup', function(){
+           it('should add a queryable powerup', function(){
+               var init = addPowerup();
+               init.model.powerupCount().should.equal(1);
+           });
+           it('should add a distinct powerup', function(){
+               var init = addPowerup();
+
+               var bh2 = init.model.addPowerup({
+                   name: Blackhole.Name,
+                   body: init.model.generatePowerupBody()
+               });
+
+               init.model.powerupCount().should.equal(2);
+               var ids = init.model.getPowerups().map(function(val, index, array){
+                   return array[index].id;
+               });
+
+               ids.should.containEql(init.powerup.id);
+               ids.should.containEql(bh2.id);
+               init.powerup.id.should.not.equal(bh2.id);
+           });
+       });
+       describe('#getPowerup', function(){
+           it('should get a powerup by its id', function(){
+                var init = addPowerup();
+                init.model.getPowerup(init.powerup.id).should.equal(init.powerup);
+           });
+       });
+        describe('#getPowerups', function(){
+           it('should get all balls when passed nothing',function(){
+                var init = addPowerup();
+                init.model.getPowerups().length.should.equal(1);
+
+                init.model.addPowerup({
+                   name: Blackhole.Name,
+                   body: init.model.generatePowerupBody()
+                });
+
+               init.model.getPowerups().length.should.equal(2);
+           });
+        });
+        describe('#deletePowerup', function(){
+            it('should delete a powerup from the list and remove from world', function(){
+                var init = addPowerup();
+                init.model.getWorld().getBodies().should.containEql(init.powerup.body);
+                init.model.getPowerups().should.containEql(init.powerup);
+
+                init.model.deletePowerup(init.powerup.id);
+                init.model.getWorld().getBodies().should.not.containEql(init.powerup.body);
+                init.model.getPowerups().length.should.equal(0);
+            });
+        });
+        describe('#deletePowerup', function(){
+            it('should delete a powerup from the list and remove from world', function(){
+                var init = addPowerup();
+                init.model.getWorld().getBodies().should.containEql(init.powerup.body);
+                init.model.getPowerups().should.containEql(init.powerup);
+
+                init.model.deletePowerup(init.powerup.id);
+                init.model.getWorld().getBodies().should.not.containEql(init.powerup.body);
+                init.model.getPowerups().length.should.equal(0);
+            });
+        });
+        describe('#clearPowerups', function(){
+            it('should delete all powerups from the list and remove from world', function(){
+                var init = addPowerup();
+                var powerup = init.model.addPowerup({
+                    name: Blackhole.Name,
+                    body: init.model.generatePowerupBody()
+                });
+
+                init.model.getPowerups().length.should.equal(2);
+
+                init.model.clearPowerups();
+                init.model.getWorld().getBodies().should.not.containEql(init.powerup.body);
+                init.model.getWorld().getBodies().should.not.containEql(powerup.body);
+                init.model.getPowerups().length.should.equal(0);
+            });
         });
     });
 });

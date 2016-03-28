@@ -3,55 +3,57 @@
  */
 
 var Physics = require('physicsjs');
+var inherits = require('inherits');
+var Powerup = require('polyball/shared/model/powerups/Powerup');
+var _ = require('lodash');
 
 /**
  * This powerup create a gravitational pull in the center of the arena
- * @param config
- * @property {number} config.id
- * @property {Boolean} config.active
+ * @param config - See powerup config
  * @constructor
  */
 var Blackhole = function(config){
-    this.id = config.id;
-    this.active = config.active;
-    this.name = "Blackhole";
-    var attractor;
-
-    /**
-     * This holds all the logic to activate a blackhole
-     * @param {Model} model
-     */
-    this.activate = function(model){
-        var arenaCenter = model.getArena().getCenter();
-        attractor = Physics.behavior('attractor',{
-            order: 0,
-            strength: 0.003,
-            pos: arenaCenter
-        });
-
-        model.getWorld().add(attractor);
-
-        this.active = true;
-    };
-
-    /**
-     * This holds all the logic to deactivate a blackhole
-     * @param {Model} model
-     */
-    this.deactivate = function (model){
-        model.getWorld().remove(attractor);
-        this.active = false;
-    };
-
-    this.toConfig = function (){
-        return{
-            id: this.id,
-            active: this.active,
-            name: this.name
-        };
-    };
-
+    Powerup.call(this, config);
+    this.name = Blackhole.Name;
 };
+
+inherits(Blackhole, Powerup);
+
+/**
+ * This holds all the logic to activate a blackhole
+ * @param {Model} model
+ */
+Blackhole.prototype.activate = function(model){
+    Blackhole.super_.prototype.activate.call(this, model);
+    var arenaCenter = model.getArena().getCenter();
+    this.attractor = Physics.behavior('attractor',{
+        order: 0,
+        strength: 0.003,
+        pos: arenaCenter
+    });
+
+    model.getWorld().add(this.attractor);
+
+    this.active = true;
+};
+
+/**
+ * This holds all the logic to deactivate a blackhole
+ * @param {Model} model
+ */
+Blackhole.prototype.deactivate = function (model){
+    if (this.active){
+        model.getWorld().remove(this.attractor);
+        this.active = false;
+    }
+};
+
+Blackhole.prototype.toConfig = function (){
+    var config = { name: this.name};
+    _.assign(config, Blackhole.super_.prototype.toConfig.call(this));
+};
+
+Blackhole.Name = 'Blackhole';
 
 
 module.exports = Blackhole;
