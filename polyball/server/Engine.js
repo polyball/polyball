@@ -68,6 +68,8 @@ var Engine = function (config) {
 
             model.getWorld().add(beh);
 
+            model.setRoundLength(config.configuration.roundLength);
+
             comms.broadcastSynchronizedStart({
                 snapshot: model.getSnapshot(),
                 minimumDelay: 0
@@ -97,13 +99,13 @@ var Engine = function (config) {
      * The game loop
      */
     var update = function(){
-        var time = Date.now;
+        var time = Date.now();
         model.getWorld().step(time-model.currentRoundTime);
         model.currentRoundTime = time - gameStartTime;
 
         broadcastModel();
 
-        if(model.currentRoundTime >= model.roundLength){
+        if(model.currentRoundTime >= model.getRoundLength()){
             endGame();
         }
     };
@@ -113,7 +115,7 @@ var Engine = function (config) {
      */
     var endGame = function(){
         gameStatus = EngineStatus.gameFinishing;
-        clearInterval(this.gameLoop);
+        clearInterval(gameLoop);
 
         // TODO tell all clients to show top 3 players for 5 seconds
 
