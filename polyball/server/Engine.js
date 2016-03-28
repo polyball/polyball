@@ -100,7 +100,7 @@ var Engine = function (config) {
      */
     var update = function(){
         var time = Date.now();
-        model.getWorld().step(time-model.currentRoundTime);
+        model.getWorld().step();
         model.currentRoundTime = time - gameStartTime;
 
         broadcastModel();
