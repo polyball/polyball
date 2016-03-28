@@ -18,7 +18,7 @@ var Blackhole = function(config){
     this.activate = function(){
         console.log('=============================================');
         console.log('=============================================');
-        console.log('BlackHole Activated!!!!!!!')
+        console.log('BlackHole Activated!!!!!!!');
         console.log('=============================================');
         console.log('=============================================');
     };
