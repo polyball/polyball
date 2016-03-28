@@ -117,10 +117,21 @@ var Paddle = function(config){
         return delta;
     };
 
+    /**
+     * This function takes the passed left bounds and claculates the bound taking into account
+     * the paddle radius. (Hint, the from bound is the bound you are calculating)
+     * @param {Physics.vector} from
+     * @param {Physics.vector} to
+     */
+    var computeBound = function(from, to){
+        var bound = new Physics.vector(0,0).clone(to);
+        bound.vsub(from).normalize().mult(config.body.radius);
+        return bound.vadd(from);
+    };
 
     // Initialization
-    this.leftBound = new Physics.vector(config.leftBound.x, config.leftBound.y);
-    this.rightBound = new Physics.vector(config.rightBound.x, config.rightBound.y);
+    this.leftBound = computeBound(config.leftBound, config.rightBound);
+    this.rightBound = computeBound(config.rightBound, config.leftBound);
     var maxVelocity = config.maxVelocity;
     var me = this;
 
