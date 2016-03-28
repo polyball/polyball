@@ -661,6 +661,34 @@ var Model = function () {
         return snapshot;
     };
 
+    //
+    //
+    //  Reset / Cleanup
+    //
+    /////////////////////////////////////////////////////////////////////////////////
+
+    this.reset = function(){
+        world.pause();
+
+        world.remove(world.getBodies());
+        world.remove(world.getBehaviors());
+
+        resetBalls();
+        resetPaddles();
+        collisionsPruner = new BodyCollider({world: world});
+
+        world.unpause();
+    };
+
+    var resetBalls = function(){
+        balls = [];
+    };
+
+    var resetPaddles = function(){
+        players.forEach(function(player){
+            player.paddle = null;
+        });
+    };
 };
 
 

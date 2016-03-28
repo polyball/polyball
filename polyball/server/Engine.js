@@ -118,7 +118,7 @@ var Engine = function (config) {
         clearInterval(gameLoop);
 
         // TODO tell all clients to show top 3 players for 5 seconds
-
+        model.reset();
         setTimeout(initializeGame, config.configuration.roundIntermission);
     };
 
