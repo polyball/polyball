@@ -130,8 +130,11 @@ var Paddle = function(config){
     };
 
     // Initialization
-    this.leftBound = computeBound(config.leftBound, config.rightBound);
-    this.rightBound = computeBound(config.rightBound, config.leftBound);
+    var leftBoundVect = new Physics.vector(config.leftBound.x, config.leftBound.y);
+    var rightBoundVect = new Physics.vector(config.rightBound.x, config.rightBound.y);
+
+    this.leftBound = computeBound(leftBoundVect, rightBoundVect);
+    this.rightBound = computeBound(rightBoundVect, leftBoundVect);
     var maxVelocity = config.maxVelocity;
     var me = this;
 
