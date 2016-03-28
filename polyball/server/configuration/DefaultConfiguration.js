@@ -13,10 +13,13 @@ var DefaultConfiguration=function () {
         paddlePadding: 10,          // The distance between back of paddle and goal
         paddleMaximumVelocity: 100,       // The maximum speed the paddle can have when contacting balls (does not effect movement speed)
 
+        // Ball Config
+        ballMaxVelocity: 3,         // The maximum velocity for balls
+
         // Server Config
         serverTick: 30,             // What interval the server should progress the simulation (milliseconds)
         roundIntermission: 3000,    // How long the intermission between rounds lasts (milliseconds)
-        roundLength: 10000,         // How long each round will last (milliseconds)
+        roundLength: 120000,         // How long each round will last (milliseconds)
         powerupsDir: 'polyball/shared/model/powerups' //Where the server can find powerup source files
     };
 };
