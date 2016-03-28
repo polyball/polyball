@@ -26,7 +26,6 @@ var Engine = function (config) {
     var configuration = config.configuration;
     var model = config.model;
     var gameStartTime;
-    var gameStatus;
     var gameLoop;
 
     // ============================= Private Methods ==============================
@@ -41,7 +40,7 @@ var Engine = function (config) {
      *  - Broadcasts the start time to clients
      */
     var initializeGame = function(){
-        gameStatus = EngineStatus.gameInitializing;
+        model.gameStatus = EngineStatus.gameInitializing;
         Logger.info('Initializing game');
 
         setupPlayers();
@@ -88,7 +87,7 @@ var Engine = function (config) {
      *  - Schedules the main loop
      */
     var startGame = function(){
-        gameStatus = EngineStatus.gameRunning;
+        model.gameStatus = EngineStatus.gameRunning;
 
         //Add the balls to the game
         _.times(model.playerCount(), function(x){
@@ -120,7 +119,7 @@ var Engine = function (config) {
      * Handles all the logic to end the game
      */
     var endGame = function(){
-        gameStatus = EngineStatus.gameFinishing;
+        model.gameStatus = EngineStatus.gameFinishing;
         clearInterval(gameLoop);
 
         // TODO tell all clients to show top 3 players for 5 seconds
@@ -222,7 +221,7 @@ var Engine = function (config) {
         model.addToPlayerQueue(data.spectatorID);
 
         // Are we waiting for players to start?
-        if (gameStatus === EngineStatus.gameInitializing){
+        if (model.gameStatus === EngineStatus.gameInitializing){
             initializeGame();
         }
     };
@@ -254,7 +253,7 @@ var Engine = function (config) {
      * @returns {number}
      */
     this.getGameStatus = function (){
-        return gameStatus;
+        return model.gameStatus;
     };
 
     /**

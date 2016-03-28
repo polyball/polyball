@@ -10,6 +10,7 @@ var Player = require('polyball/shared/model/Player');
 var Util = require('polyball/shared/Util');
 var BodyCollider = require('polyball/shared/model/BodyCollider');
 var PowerupFactory = require('polyball/shared/PowerupFactory'); // jshint ignore:line
+var EngineStatus = require('polyball/server/EngineStatus.js');
 
 
 /**
@@ -174,6 +175,9 @@ var Model = function () {
     //    ##         #######  ########  ######## ####  ######
     //
     ///////////////////////////////////////////////////////////////////////////
+    this.gameStatus = EngineStatus.gameInitializing;
+
+
 
     /**
      * If there is not yet an arena in the model, add one according to the config.
@@ -647,7 +651,8 @@ var Model = function () {
             playerQueue: playerQueue,
             powerupElection: toConfig(powerupElection),
             roundLength: roundLength,
-            currentRoundTime: currentRoundTime
+            currentRoundTime: currentRoundTime,
+            gameStatus: this.gameStatus
         };
 
         snapshot.players.forEach(function (playerConfig) {
