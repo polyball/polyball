@@ -16,7 +16,8 @@ var DefaultConfiguration=function () {
         // Server Config
         serverTick: 30,             // What interval the server should progress the simulation (milliseconds)
         roundIntermission: 5000,    // How long the intermission between rounds lasts (milliseconds)
-        roundLength: 120000         // How long each round will last (milliseconds)
+        roundLength: 120000,         // How long each round will last (milliseconds)
+        powerupsDir: 'polyball/shared/model/powerups' //Where the server can find powerup source files
     };
 };
 

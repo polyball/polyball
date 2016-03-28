@@ -53,6 +53,7 @@ var Configuration = function (config){
     checkLowerBound('maximumPlayers', values.minimumPlayers);
     checkLowerBound('serverTick', 1);
     checkLowerBound('roundIntermission', 1);
+    //TODO add a test to make sure powerups dir is reachable
 
     this.values = values;
 

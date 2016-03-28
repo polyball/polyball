@@ -8,19 +8,16 @@
 'use strict';
 
 // REQUIREMENTS
-var fs = require('fs');
-
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var mocha = require('gulp-mocha');
 var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
-var fail = require('gulp-fail');
 
 var browserify = require('browserify');
 var watchify = require('watchify');
 var sass = require('gulp-sass');
-
+var globify = require('require-globify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 
@@ -30,6 +27,7 @@ var assign = require('lodash.assign');
 // CONFIGURATION
 var browserifyConfig = {
     entries: ['./polyball/Client.js'],
+    transform: ['require-globify'],
     debug: true
 };
 
@@ -74,7 +72,6 @@ function bundle(bundler, killOnError) {
 
 function browserifyBundle() {
     var bify = browserify(browserifyConfig);
-
     return bundle(bify, true);
 }
 
