@@ -302,7 +302,8 @@ var Arena = function(config) {
             height: 30,
             treatment: 'static',
             styles: {
-                fillStyle: colors.red
+                fillStyle: colors.red,
+                layer: 5
             }
         }));
 
@@ -313,7 +314,9 @@ var Arena = function(config) {
                 radius: this.bumperRadius,
                 treatment: 'static',
                 styles: {
-                    fillStyle: colors.blue
+                    fillStyle: colors.blue,
+                    layer: 6,
+                    icon: '\uf0d6'
                 }
             })
         );
