@@ -17,7 +17,6 @@ var sourcemaps = require('gulp-sourcemaps');
 var browserify = require('browserify');
 var watchify = require('watchify');
 var sass = require('gulp-sass');
-var globify = require('require-globify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 
@@ -27,7 +26,6 @@ var assign = require('lodash.assign');
 // CONFIGURATION
 var browserifyConfig = {
     entries: ['./polyball/Client.js'],
-    transform: ['require-globify'],
     debug: true
 };
 
