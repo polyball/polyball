@@ -1,15 +1,14 @@
 /**
  * Created by ryan on 13/03/16.
  */
-
-//TODO remove lint ignore flags
-
 var EngineStatus = require('polyball/server/EngineStatus.js');
 var _ = require('lodash');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
 var Physics = require('physicsjs');
 var PaddleBehavior = require('polyball/shared/model/behaviors/PaddleBehavior');
+var PowerupFactory = require('polyball/shared/PowerupFactory');
+
 /**
  * Initializes the engine
  *
@@ -62,6 +61,10 @@ var Engine = function (config) {
             new PaddleBehavior({comms: comms, model: model});
             var beh = Physics.behavior('paddleBehavior');
             beh.applyTo(model.getPlayers());
+
+            //TEST BLACKHOLE
+            var bh = PowerupFactory.buildPowerup("Blackhole", {id: 1, active: false});
+            bh.activate(model);
 
             model.getWorld().add(beh);
 
