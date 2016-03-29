@@ -62,14 +62,14 @@ var Engine = function (config) {
             addBehavior(BallOwnershipBehavior, {model: model});
 
             //TEST BLACKHOLE
-            //var blackhole = model.addPowerup({
-            //    name: Blackhole.Name,
-            //    body: generatePowerupBody()
-            //});
-            //
-            //setTimeout(function(){
-            //    blackhole.activate(model);
-            //}, 10000);
+            var blackhole = model.addPowerup({
+                name: Blackhole.Name,
+                body: generatePowerupBody()
+            });
+
+            setTimeout(function(){
+                blackhole.activate(model);
+            }, 10000);
 
             model.setRoundLength(config.configuration.roundLength);
 

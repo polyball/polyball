@@ -61,6 +61,15 @@ function syncBallExistence(balls, model) {
     }
 }
 
+function syncPowerupExistence(powerups, model) {
+    if (powerups != null) {
+        Logger.debug('synchronizing powerup');
+
+        searchAndDelete(powerups, model.getPowerups, model.deletePowerup, model);
+        searchAndCreate(powerups, model.hasPowerup, model.addPowerup, model);
+    }
+}
+
 function syncDiscreteBallState(balls, model) {
     if (balls != null) {
         balls.forEach(function (snapshotBall) {
@@ -88,6 +97,7 @@ PassthroughSynchronizer.sync = function (snapshot, model) {
     syncSpectatorExistence(snapshot.spectators, model);
     syncPlayerExistence(snapshot.players, model);
     syncBallExistence(snapshot.balls, model);
+    syncPowerupExistence(snapshot.powerups, model);
     
     syncDiscreteBallState(snapshot.balls, model);
     
