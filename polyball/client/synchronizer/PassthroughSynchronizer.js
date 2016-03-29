@@ -74,12 +74,32 @@ function syncDiscreteBallState(balls, model) {
     if (balls != null) {
         balls.forEach(function (snapshotBall) {
             var ball = model.getBall(snapshotBall.id);
-            
+
             if (ball == null) {
                 throw 'syncDiscreteBallState could not find ball that MUST exist by now.';
             }
-            
+
             ball.lastTouchedID = snapshotBall.lastTouchedID;
+        });
+    }
+}
+
+function syncDiscretePowerupState(powerups, model) {
+    if (powerups != null) {
+        powerups.forEach(function (snapshotPowerup) {
+            var powerup = model.getPowerup(snapshotPowerup.id);
+
+            if (powerup == null) {
+                throw 'syncDiscretePowerupState could not find powerup that MUST exist by now.';
+            }
+
+            if (snapshotPowerup.active) {
+                powerup.activate(model);
+                // NOTE: activate() automatically sets below state
+                // powerup.active = snapshotPowerup.active;
+            }
+
+            powerup.owner = snapshotPowerup.owner;
         });
     }
 }
@@ -98,11 +118,11 @@ PassthroughSynchronizer.sync = function (snapshot, model) {
     syncPlayerExistence(snapshot.players, model);
     syncBallExistence(snapshot.balls, model);
     syncPowerupExistence(snapshot.powerups, model);
-    
+
     syncDiscreteBallState(snapshot.balls, model);
+    syncDiscretePowerupState(snapshot.powerups, model);
     
     //   TODO powerups and powerup elections need to be config/construct isomorphic before usable here.  see #136
-    // syncPowerupExistence(snapshot, model);
     // model.setPowerupElection()
 
     model.setPlayerQueue(snapshot.playerQueue);

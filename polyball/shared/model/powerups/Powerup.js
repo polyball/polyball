@@ -14,7 +14,7 @@ var Util = require('polyball/shared/Util');
  */
 var Powerup = function(config){
     this.id = config.id;
-    this.active = config.active;
+    this.active = false;
     this.owner = config.owner;
 
 
@@ -32,6 +32,10 @@ var Powerup = function(config){
 
 };
 
+/**
+ * Intended for override.  Child implementation should be idempotent.  Call parent activate() in child implementation.
+ * @param {Model} model - The model to mutate with powerup goodies.
+ */
 Powerup.prototype.activate = function(model){
     model.getWorld().removeBody(this.body);
 };

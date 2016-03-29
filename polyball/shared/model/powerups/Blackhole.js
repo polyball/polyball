@@ -24,17 +24,19 @@ inherits(Blackhole, Powerup);
  * @param {Model} model
  */
 Blackhole.prototype.activate = function(model){
-    Blackhole.super_.prototype.activate.call(this, model);
-    var arenaCenter = model.getArena().getCenter();
-    this.attractor = Physics.behavior('attractor',{
-        order: 0,
-        strength: 0.003,
-        pos: arenaCenter
-    });
+    if (!this.active) {
+        Blackhole.super_.prototype.activate.call(this, model);
+        var arenaCenter = model.getArena().getCenter();
+        this.attractor = Physics.behavior('attractor', {
+            order: 0,
+            strength: 0.003,
+            pos: arenaCenter
+        });
 
-    model.getWorld().add(this.attractor);
+        model.getWorld().add(this.attractor);
 
-    this.active = true;
+        this.active = true;
+    }
 };
 
 /**
