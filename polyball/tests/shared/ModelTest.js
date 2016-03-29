@@ -524,7 +524,7 @@ describe('Model', function () {
 
             var powerup = model.addPowerup({
                 name: Blackhole.Name,
-                body: model.generatePowerupBody()
+                body: getPowerupBody()
             });
 
           return {
@@ -532,6 +532,22 @@ describe('Model', function () {
             arena: arena,
             powerup: powerup
           };
+        };
+
+        var getPowerupBody = function(){
+            return {
+                state:{
+                    pos: {
+                        x: 100,
+                        y: 100
+                    },
+                    vel: {
+                        x: 0,
+                        y: 0
+                    }
+                },
+                radius: 50
+            };
         };
        describe('#addPowerup', function(){
            it('should add a queryable powerup', function(){
@@ -543,7 +559,7 @@ describe('Model', function () {
 
                var bh2 = init.model.addPowerup({
                    name: Blackhole.Name,
-                   body: init.model.generatePowerupBody()
+                   body: getPowerupBody()
                });
 
                init.model.powerupCount().should.equal(2);
@@ -569,7 +585,7 @@ describe('Model', function () {
 
                 init.model.addPowerup({
                    name: Blackhole.Name,
-                   body: init.model.generatePowerupBody()
+                   body: getPowerupBody()
                 });
 
                init.model.getPowerups().length.should.equal(2);
@@ -602,7 +618,7 @@ describe('Model', function () {
                 var init = addPowerup();
                 var powerup = init.model.addPowerup({
                     name: Blackhole.Name,
-                    body: init.model.generatePowerupBody()
+                    body: getPowerupBody()
                 });
 
                 init.model.getPowerups().length.should.equal(2);

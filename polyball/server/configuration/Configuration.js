@@ -64,7 +64,7 @@ var Configuration = function (config){
     checkLowerBound('serverTick', 1);
     checkLowerBound('roundIntermission', 1);
     checkDirectoryAccessible('powerupsDir');
-
+    checkLowerBound('powerupRadius', 1);
     this.values = values;
 
     Object.freeze(this.values);

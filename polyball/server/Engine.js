@@ -71,7 +71,7 @@ var Engine = function (config) {
             //TEST BLACKHOLE
             var blackhole = model.addPowerup({
                 name: Blackhole.Name,
-                body: model.generatePowerupBody()
+                body: generatePowerupBody()
             });
 
             setTimeout(function(){
@@ -213,6 +213,28 @@ var Engine = function (config) {
                 state: model.getArena().generateNewBallState()
             }
         });
+    };
+
+    /**
+     * Generates a body for a new powerup
+     * @returns {Object}
+     */
+    var generatePowerupBody = function(){
+        var position = model.getArena().getCenter();
+
+        return {
+            state:{
+                pos: {
+                    x: position.x,
+                    y: position.y
+                },
+                vel: {
+                    x: 0,
+                    y: 0
+                }
+            },
+            radius: config.configuration.powerupRadius
+        };
     };
 
     // ============================= Public Methods ===============================

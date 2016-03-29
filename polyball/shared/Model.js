@@ -15,7 +15,6 @@ var EngineStatus = require('polyball/server/EngineStatus.js');
 
 /**
  * Holds all data for client and server game instances.  Exposes CRUD operations for data.
- *
  * @constructor
 */
 var Model = function () {
@@ -636,28 +635,6 @@ var Model = function () {
         world.addBody(powerup.body);
 
         return powerup;
-    };
-
-    /**
-     * Generates a body for a new powerup
-     * @returns {Object}
-     */
-    this.generatePowerupBody = function(){
-        var position = arena.getCenter();
-
-        return {
-            state:{
-                pos: {
-                    x: position.x,
-                    y: position.y
-                },
-                vel: {
-                    x: 0,
-                    y: 0
-                }
-            },
-            radius: 50
-        };
     };
 
     /**
