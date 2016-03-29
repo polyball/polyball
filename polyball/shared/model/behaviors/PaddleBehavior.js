@@ -100,9 +100,19 @@ var PaddleBehavior = function (config) {
              *
              * @param {Player[]} arr
              */
-            unApplyTo: function () {
-                //TODO might need to do someting to remove elements out of targets
-                //We might just destroy the world.
+            unApplyTo: function (arr) {
+                var self = this;
+
+                var body, paddle;
+                arr.forEach(function (player) {
+                    paddle = player.paddle;
+                    body = paddle.body;
+
+                    body.isGrabbed = false;
+
+                    delete self.bodyData[player.id];
+                    delete self.bodyDataByUID[body.uid];
+                });
             },
 
             // extended
