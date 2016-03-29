@@ -19,6 +19,7 @@ var BallBehavior = function(config){
                 this.options(options);
 
                 this.balls = {};
+                this.ballsLength = 0;
                 this.markedBalls = {};
                 this.paddles = {};
 
@@ -42,6 +43,7 @@ var BallBehavior = function(config){
                 config.model.getBalls().forEach(function(ball){
                     self.balls[ball.body.uid] = ball.body;
                 });
+                this.ballsLength = Object.keys(this.balls).length;
             },
 
             clampVelocities: function(){
@@ -60,7 +62,7 @@ var BallBehavior = function(config){
 
             handleCollision: function(event){
                 var self = this;
-                if (self.balls.length !== config.model.getBalls().length){
+                if (self.ballsLength !== config.model.getBalls().length){
                     self.setupBalls();
                 }
 
