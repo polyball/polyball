@@ -10,11 +10,11 @@ var Player = require('polyball/shared/model/Player');
 var Util = require('polyball/shared/Util');
 var BodyCollider = require('polyball/shared/model/BodyCollider');
 var PowerupFactory = require('polyball/shared/PowerupFactory'); // jshint ignore:line
+var EngineStatus = require('polyball/server/EngineStatus.js');
 
 
 /**
  * Holds all data for client and server game instances.  Exposes CRUD operations for data.
- *
  * @constructor
 */
 var Model = function () {
@@ -75,6 +75,11 @@ var Model = function () {
      * @type {Number[]}
      */
     var playerQueue = [];
+
+    /**
+     * @type {Object[]}
+     */
+    var powerups = [];
 
     /**
      * @type PowerupElection
@@ -174,6 +179,9 @@ var Model = function () {
     //    ##         #######  ########  ######## ####  ######
     //
     ///////////////////////////////////////////////////////////////////////////
+    this.gameStatus = EngineStatus.gameInitializing;
+
+
 
     /**
      * If there is not yet an arena in the model, add one according to the config.
@@ -602,6 +610,89 @@ var Model = function () {
     };
 
     //
+    //             Powerups
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Add a powerup to the model.
+     *
+     * @param {Object} config - see powerup Constructor
+     * @property {string} config.name - Name of the powerup to be instantiated
+     * @property {Number} [config.id] - Optional.  Should not be passed on the server, should always be passed on the client.
+     * @return {Ball} The new Ball.
+     */
+    this.addPowerup  = function (config) {
+
+        var newConfig = {
+            id: config.id ? config.id : nextID()
+        };
+
+        _.assign(newConfig, config);
+
+        var powerup = PowerupFactory.buildPowerup(config.name, newConfig);
+        powerups.push(powerup);
+        world.addBody(powerup.body);
+
+        return powerup;
+    };
+
+    /**
+     * @param {Number|Predicate} id - Either the ID of the Powerup, or a boolean returning callback that takes a Powerup.
+     * @return {Object} Powerup identified by id.
+     */
+    this.getPowerup = function (id) {
+        return findSingle(powerups, id);
+    };
+
+    /**
+     * Get all powerups satisfying the predicate callback.
+     * @param {Predicate} [predicate]  Callback to evaluate for each powerup. (matches all if null.)
+     * @returns {Object[]} All powerups matching the predicate. (may be empty.)
+     */
+    this.getPowerups = function (predicate) {
+        return findAll(powerups, predicate);
+    };
+
+    /**
+     * @param {Number|Predicate} id - Either the ID of the Powerup, or a boolean returning callback that takes a Powerup.
+     * @returns {boolean} True iff the model has the powerup identified by id.
+     */
+    this.hasPowerup = function (id) {
+        return this.getPowerup(id) != null;
+    };
+
+    /**
+     * @returns {Number} The number of powerups in the model.
+     */
+    this.powerupCount = function () {
+        return powerups.length;
+    };
+
+    /**
+     * Delete the identified powerup from the model.
+     *
+     * @param {Number} id
+     */
+    this.deletePowerup = function (id) {
+        var pu = removeByID(powerups, id);
+        pu.deactivate();
+        world.removeBody(pu.body);
+    };
+
+    /**
+     * Delete all powerups from the model.
+     */
+    this.clearPowerups = function () {
+        var powerupIDs = _.map(powerups, function (powerup) { return powerup.id; });
+
+        var me = this;
+        powerupIDs.forEach(function (id) {
+            me.deletePowerup(id);
+        });
+    };
+
+    //
     //             Powerup Election
     //
     ///////////////////////////////////////////////////////////////////////////
@@ -643,11 +734,12 @@ var Model = function () {
             players: Util.arrayToConfig(players),
             spectators: Util.arrayToConfig(spectators),
             balls: Util.arrayToConfig(balls),
-            //TODO add powerups
             playerQueue: playerQueue,
+            powerups: Util.arrayToConfig(powerups),
             powerupElection: toConfig(powerupElection),
             roundLength: roundLength,
-            currentRoundTime: currentRoundTime
+            currentRoundTime: currentRoundTime,
+            gameStatus: this.gameStatus
         };
 
         snapshot.players.forEach(function (playerConfig) {

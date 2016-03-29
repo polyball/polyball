@@ -51,6 +51,13 @@ describe('Configuration', function () {
             config.values.maximumPlayers.should.equal((new DefaultConfiguration()).maximumPlayers);
             Util.deleteJSONConfigFile(path);
         });
+        it('should not allow powerups dir to be inaccessible', function(){
+            var path = Util.createJSONConfigFile({powerupsDir: '/gsdg/sdgsdg/olo'});
+            var config = new Configuration({configPath: path});
+
+            config.values.powerupsDir.should.equal((new DefaultConfiguration()).powerupsDir);
+            Util.deleteJSONConfigFile(path);
+        });
         after(function(){
             Logger.setLevel('INFO');
         });

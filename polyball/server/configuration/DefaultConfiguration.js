@@ -16,6 +16,9 @@ var DefaultConfiguration=function () {
         // Ball Config
         ballMaxVelocity: 3,         // The maximum velocity for balls
 
+        //Powerup Config
+        powerupRadius: 50,          // The radius for "Powerup Balls"
+
         // Server Config
         serverTick: 30,             // What interval the server should progress the simulation (milliseconds)
         roundIntermission: 3000,    // How long the intermission between rounds lasts (milliseconds)

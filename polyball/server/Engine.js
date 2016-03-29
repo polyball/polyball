@@ -8,8 +8,8 @@ var Logger = require('polyball/shared/Logger');
 var Physics = require('physicsjs');
 var PaddleBehavior = require('polyball/shared/model/behaviors/PaddleBehavior');
 var BallBehavior = require('polyball/shared/model/behaviors/BallBehavior');
-var PowerupFactory = require('polyball/shared/PowerupFactory');
-
+var Blackhole = require('polyball/shared/model/powerups/Blackhole'); //jshint ignore:line
+var BallOwnershipBehavior = require('polyball/shared/model/behaviors/BallOwnershipBehavior');
 /**
  * Initializes the engine
  *
@@ -26,7 +26,6 @@ var Engine = function (config) {
     var configuration = config.configuration;
     var model = config.model;
     var gameStartTime;
-    var gameStatus;
     var gameLoop;
 
     // ============================= Private Methods ==============================
@@ -41,7 +40,7 @@ var Engine = function (config) {
      *  - Broadcasts the start time to clients
      */
     var initializeGame = function(){
-        gameStatus = EngineStatus.gameInitializing;
+        model.gameStatus = EngineStatus.gameInitializing;
         Logger.info('Initializing game');
 
         setupPlayers();
@@ -58,21 +57,19 @@ var Engine = function (config) {
             });
 
             addAllPaddles();
-
-            // Behaviors
-            new PaddleBehavior({comms: comms, model: model});
-            var beh = Physics.behavior('paddleBehavior');
-            beh.applyTo(model.getPlayers());
-            model.getWorld().add(beh);
-
-            new BallBehavior({ballMaxVelocity: config.configuration.ballMaxVelocity, model: model});
-            var ballBehavior = Physics.behavior(BallBehavior.Name);
-            model.getWorld().add(ballBehavior);
+            addBehavior(PaddleBehavior, {comms: comms, model: model}).applyTo(model.getPlayers());
+            addBehavior(BallBehavior, {ballMaxVelocity: config.configuration.ballMaxVelocity, model: model});
+            addBehavior(BallOwnershipBehavior, {model: model});
 
             //TEST BLACKHOLE
-            var bh = PowerupFactory.buildPowerup("Blackhole", {id: 1, active: false});
-            bh.activate(model);
-
+            //var blackhole = model.addPowerup({
+            //    name: Blackhole.Name,
+            //    body: generatePowerupBody()
+            //});
+            //
+            //setTimeout(function(){
+            //    blackhole.activate(model);
+            //}, 10000);
 
             model.setRoundLength(config.configuration.roundLength);
 
@@ -88,7 +85,7 @@ var Engine = function (config) {
      *  - Schedules the main loop
      */
     var startGame = function(){
-        gameStatus = EngineStatus.gameRunning;
+        model.gameStatus = EngineStatus.gameRunning;
 
         //Add the balls to the game
         _.times(model.playerCount(), function(x){
@@ -120,7 +117,7 @@ var Engine = function (config) {
      * Handles all the logic to end the game
      */
     var endGame = function(){
-        gameStatus = EngineStatus.gameFinishing;
+        model.gameStatus = EngineStatus.gameFinishing;
         clearInterval(gameLoop);
 
         // TODO tell all clients to show top 3 players for 5 seconds
@@ -146,9 +143,6 @@ var Engine = function (config) {
         while(model.playerCount() < config.configuration.maximumPlayers && model.numberOfQueuedPlayers() > 0){
             convertSpectatorToPlayer(model.popPlayerQueue());
         }
-
-        //TODO Client probably wants to know it is now a player
-        // broadcastModel();
     };
 
     /**
@@ -211,6 +205,42 @@ var Engine = function (config) {
         });
     };
 
+    /**
+     * Generates a body for a new powerup
+     * @returns {Object}
+     */
+    var generatePowerupBody = function(){           //jshint ignore:line
+        var position = model.getArena().getCenter();
+
+        return {
+            state:{
+                pos: {
+                    x: position.x,
+                    y: position.y
+                },
+                vel: {
+                    x: 0,
+                    y: 0
+                }
+            },
+            radius: config.configuration.powerupRadius
+        };
+    };
+
+    /**
+     * Helper to add behvaiors to the world
+     * @param {function} constructor
+     * @param {Object} args
+     * @returns {Physics.behavior}
+     */
+    var addBehavior = function(constructor, args){
+        new constructor(args);
+        var behavior = Physics.behavior(constructor.Name);
+        model.getWorld().add(behavior);
+        return behavior;
+
+    };
+
     // ============================= Public Methods ===============================
     // ============================================================================
 
@@ -222,7 +252,7 @@ var Engine = function (config) {
         model.addToPlayerQueue(data.spectatorID);
 
         // Are we waiting for players to start?
-        if (gameStatus === EngineStatus.gameInitializing){
+        if (model.gameStatus === EngineStatus.gameInitializing){
             initializeGame();
         }
     };
@@ -254,7 +284,7 @@ var Engine = function (config) {
      * @returns {number}
      */
     this.getGameStatus = function (){
-        return gameStatus;
+        return model.gameStatus;
     };
 
     /**

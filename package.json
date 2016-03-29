@@ -38,6 +38,7 @@
     "gulp-sass": "^2.2.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-util": "^3.0.7",
+    "inherits": "^2.0.1",
     "jshint": "^2.9.1",
     "jshint-stylish": "^2.1.0",
     "lodash.assign": "^4.0.4",

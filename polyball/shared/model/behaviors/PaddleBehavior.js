@@ -10,7 +10,7 @@ var CommsEvents = require('polyball/shared/CommsEvents');
 var PaddleBehavior = function (config) {
 
 
-    Physics.behavior('paddleBehavior', function (parent) {
+    Physics.behavior(PaddleBehavior.Name, function (parent) {
 
         var defaults = {
             // the element to monitor
@@ -152,5 +152,7 @@ var PaddleBehavior = function (config) {
         };
     });
 };
+
+PaddleBehavior.Name = 'PaddleBehavior';
 
 module.exports = PaddleBehavior;

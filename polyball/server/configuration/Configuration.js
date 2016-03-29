@@ -43,6 +43,16 @@ var Configuration = function (config){
         }
     };
 
+    var checkDirectoryAccessible = function(property) {
+        try {
+            fs.accessSync(values[property], fs.R_OK);
+        } catch (e) {
+            Logger.warn(property + ' was set to: ' + values[property] +
+                '. This path was not accessible, and was resset to: ' + defaults[property]);
+            values[property] = defaults[property];
+        }
+    };
+
     if (config != null) {
         var customComfig = JSON.parse(fs.readFileSync(config.configPath, 'utf8'));
         _.assign(values, customComfig);
@@ -53,8 +63,8 @@ var Configuration = function (config){
     checkLowerBound('maximumPlayers', values.minimumPlayers);
     checkLowerBound('serverTick', 1);
     checkLowerBound('roundIntermission', 1);
-    //TODO add a test to make sure powerups dir is reachable
-
+    checkDirectoryAccessible('powerupsDir');
+    checkLowerBound('powerupRadius', 1);
     this.values = values;
 
     Object.freeze(this.values);

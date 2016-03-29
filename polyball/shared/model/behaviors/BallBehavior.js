@@ -3,6 +3,7 @@
  */
 var Physics = require('physicsjs');
 var _ = require('lodash');
+var Events = require('polyball/shared/model/behaviors/Events');
 
 /**
  *
@@ -19,6 +20,7 @@ var BallBehavior = function(config){
                 this.options(options);
 
                 this.balls = {};
+                this.ballsLength = 0;
                 this.markedBalls = {};
                 this.paddles = {};
 
@@ -42,6 +44,7 @@ var BallBehavior = function(config){
                 config.model.getBalls().forEach(function(ball){
                     self.balls[ball.body.uid] = ball.body;
                 });
+                this.ballsLength = Object.keys(this.balls).length;
             },
 
             clampVelocities: function(){
@@ -60,18 +63,30 @@ var BallBehavior = function(config){
 
             handleCollision: function(event){
                 var self = this;
-                if (self.balls.length !== config.model.getBalls().length){
+                if (self.ballsLength !== config.model.getBalls().length){
                     self.setupBalls();
                 }
 
                 event.collisions.forEach(function(collision){
                     if (self.paddles[collision.bodyA.uid] || self.paddles[collision.bodyB.uid]){
                         if (self.balls[collision.bodyA.uid] || self.balls[collision.bodyB.uid]){
+
+                            var ball;
+                            var paddle;
                             if (self.balls[collision.bodyA.uid]){
                                 self.markedBalls[collision.bodyA.uid] = collision.bodyA;
+                                ball = collision.bodyA;
+                                paddle = collision.bodyB;
                             } else {
                                 self.markedBalls[collision.bodyB.uid] = collision.bodyB;
+                                ball = collision.bodyB;
+                                paddle = collision.bodyA;
                             }
+
+                            config.model.getWorld().emit( Events.paddleBallCollision,
+                            {   ball: ball,
+                                paddle: paddle
+                            });
                         }
                     }
                 });
