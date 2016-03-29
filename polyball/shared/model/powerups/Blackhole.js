@@ -51,6 +51,7 @@ Blackhole.prototype.deactivate = function (model){
 Blackhole.prototype.toConfig = function (){
     var config = { name: this.name};
     _.assign(config, Blackhole.super_.prototype.toConfig.call(this));
+    return config;
 };
 
 Blackhole.Name = 'Blackhole';
