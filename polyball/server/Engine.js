@@ -8,8 +8,8 @@ var Logger = require('polyball/shared/Logger');
 var Physics = require('physicsjs');
 var PaddleBehavior = require('polyball/shared/model/behaviors/PaddleBehavior');
 var BallBehavior = require('polyball/shared/model/behaviors/BallBehavior');
-var Blackhole = require('polyball/shared/model/powerups/Blackhole');
-
+var Blackhole = require('polyball/shared/model/powerups/Blackhole'); //jshint ignore:line
+var BallOwnershipBehavior = require('polyball/shared/model/behaviors/BallOwnershipBehavior');
 /**
  * Initializes the engine
  *
@@ -68,15 +68,19 @@ var Engine = function (config) {
             var ballBehavior = Physics.behavior(BallBehavior.Name);
             model.getWorld().add(ballBehavior);
 
-            //TEST BLACKHOLE
-            var blackhole = model.addPowerup({
-                name: Blackhole.Name,
-                body: generatePowerupBody()
-            });
+            new BallOwnershipBehavior({model: model});
+            var ballOwnershipBehavior = Physics.behavior(BallOwnershipBehavior.Name);
+            model.getWorld().add(ballOwnershipBehavior);
 
-            setTimeout(function(){
-                blackhole.activate(model);
-            }, 10000);
+            //TEST BLACKHOLE
+            //var blackhole = model.addPowerup({
+            //    name: Blackhole.Name,
+            //    body: generatePowerupBody()
+            //});
+            //
+            //setTimeout(function(){
+            //    blackhole.activate(model);
+            //}, 10000);
 
             model.setRoundLength(config.configuration.roundLength);
 
@@ -150,9 +154,6 @@ var Engine = function (config) {
         while(model.playerCount() < config.configuration.maximumPlayers && model.numberOfQueuedPlayers() > 0){
             convertSpectatorToPlayer(model.popPlayerQueue());
         }
-
-        //TODO Client probably wants to know it is now a player
-        // broadcastModel();
     };
 
     /**
@@ -219,7 +220,7 @@ var Engine = function (config) {
      * Generates a body for a new powerup
      * @returns {Object}
      */
-    var generatePowerupBody = function(){
+    var generatePowerupBody = function(){           //jshint ignore:line
         var position = model.getArena().getCenter();
 
         return {
