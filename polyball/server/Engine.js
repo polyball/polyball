@@ -60,7 +60,7 @@ var Engine = function (config) {
 
             // Behaviors
             new PaddleBehavior({comms: comms, model: model});
-            var beh = Physics.behavior('paddleBehavior');
+            var beh = Physics.behavior(PaddleBehavior.Name);
             beh.applyTo(model.getPlayers());
             model.getWorld().add(beh);
 
