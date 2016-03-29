@@ -93,6 +93,9 @@ function watchifyBundle() {
     var opts = assign({}, watchify.args, browserifyConfig);
     var wify = watchify(browserify(opts));
     wify.on('update', function () {
+        gutil.log('Change detected - building...');
+    });
+    wify.on('update', function () {
         return bundle(wify, false);
     }); // on any dep update, run the bundler
     wify.on('update', lint_nokill);   // on any dep update, run the linter
