@@ -57,20 +57,9 @@ var Engine = function (config) {
             });
 
             addAllPaddles();
-
-            // Behaviors
-            new PaddleBehavior({comms: comms, model: model});
-            var beh = Physics.behavior(PaddleBehavior.Name);
-            beh.applyTo(model.getPlayers());
-            model.getWorld().add(beh);
-
-            new BallBehavior({ballMaxVelocity: config.configuration.ballMaxVelocity, model: model});
-            var ballBehavior = Physics.behavior(BallBehavior.Name);
-            model.getWorld().add(ballBehavior);
-
-            new BallOwnershipBehavior({model: model});
-            var ballOwnershipBehavior = Physics.behavior(BallOwnershipBehavior.Name);
-            model.getWorld().add(ballOwnershipBehavior);
+            addBehavior(PaddleBehavior, {comms: comms, model: model}).applyTo(model.getPlayers());
+            addBehavior(BallBehavior, {ballMaxVelocity: config.configuration.ballMaxVelocity, model: model});
+            addBehavior(BallOwnershipBehavior, {model: model});
 
             //TEST BLACKHOLE
             //var blackhole = model.addPowerup({
@@ -236,6 +225,20 @@ var Engine = function (config) {
             },
             radius: config.configuration.powerupRadius
         };
+    };
+
+    /**
+     * Helper to add behvaiors to the world
+     * @param {function} constructor
+     * @param {Object} args
+     * @returns {Physics.behavior}
+     */
+    var addBehavior = function(constructor, args){
+        new constructor(args);
+        var behavior = Physics.behavior(constructor.Name);
+        model.getWorld().add(behavior);
+        return behavior;
+
     };
 
     // ============================= Public Methods ===============================
