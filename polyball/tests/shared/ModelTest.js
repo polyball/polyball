@@ -316,6 +316,75 @@ describe('Model', function () {
             });
         });
 
+        describe("#addPaddleToPlayer", function () {
+
+            it('should add a paddle to a player', function () {
+                var player = model.addPlayer({
+                    clientConfig: {
+                        name: Util.randomUsername(),
+                        socket: 'dummy'}
+                });
+
+                should.not.exists(player.paddle);
+
+                model.addPaddleToPlayer({
+                    playerID: player.id,
+                    paddleConfig: {
+                        leftBound: {x: 1, y: 1},
+                        rightBound: {x: 2, y: 2},
+                        maxVelocity: 22,
+                        body: {
+                            radius: 3,
+                            state: {
+                                pos: {x: 1, y: 1}
+                            },
+                            styles: {}
+                        }
+                    }
+                });
+
+                should.exists(player.paddle);
+                player.paddle.body.state.pos.x.should.be.type('number');
+            });
+
+        });
+
+        describe("#getPaddle", function () {
+            it('should get a paddle for a player', function () {
+                var ID = 3544;
+
+                should.not.exists(model.getPaddle(ID));
+
+                model.addPlayer({
+                    id: ID,
+                    clientConfig: {
+                        name: Util.randomUsername(),
+                        socket: 'dummy'}
+                });
+
+                should.not.exists(model.getPaddle(ID));
+
+                model.addPaddleToPlayer({
+                    playerID: ID,
+                    paddleConfig: {
+                        leftBound: {x: 1, y: 1},
+                        rightBound: {x: 2, y: 2},
+                        maxVelocity: 22,
+                        body: {
+                            radius: 3,
+                            state: {
+                                pos: {x: 1, y: 1}
+                            },
+                            styles: {}
+                        }
+                    }
+                });
+
+                should.exists(model.getPaddle(ID));
+                model.getPaddle(ID).body.state.pos.x.should.be.type('number');
+            });
+        });
+
         after(function(){
             Logger.setLevel('INFO');
         });
