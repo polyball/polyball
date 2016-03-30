@@ -111,7 +111,8 @@ var BodyCollider = function (config) {
     var setupGoals = function(){
         var arena = model.getArena();
         config.model.getPlayers().forEach(function (player){
-            goals[arena.getGoal(player.arenaPosition)] = player;
+            var goal = arena.getGoal(player.arenaPosition);
+            goals[goal.uid] = player;
         });
     };
 

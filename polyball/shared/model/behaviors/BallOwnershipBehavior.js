@@ -13,7 +13,6 @@ var BallOwnershipBehavior = function(config){
 
     var handleCollision = function(event){
         event.ball.lastTouchedID = event.entity.id;
-        console.log(event.ball.id + ' owned by: ' + event.entity.client.name);
     };
 
     // extended
