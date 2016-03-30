@@ -23,6 +23,7 @@ var ServerToClient = {
 };
 
 var ClientToServer = {
+    configRequest: 'configRequest',
     connection: 'connection',  // socket.io builtin - do not change!
     disconnect: 'disconnect',  // socket.io builtin - do not change!
     queueToPlay: 'queueToPlay',

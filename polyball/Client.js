@@ -9,50 +9,56 @@ var Synchronizer = require('polyball/client/Synchronizer');
 
 $(document).ready(function() {
 
-    var model = new Model();
-
-    var gameRenderer = new GameRenderer({
-        model: model
-    });
-
-    var width = window.innerWidth,
-        height = window.innerHeight;
-
-    Logger.info('Width: ' + width + ' Height: ' + height);
-
-    gameRenderer.resize(width - 25, height - 25);
-    gameRenderer.forceFontLoad();
-    gameRenderer.renderParticles();
-
-    window.onresize = function() {
-        width = window.innerWidth;
-        height = window.innerHeight;
-
-        Logger.info('Width: ' + width + ' Height: ' + height);
-        gameRenderer.resize(width - 25, height - 25);
-    };
-
     var comms = new Comms({
         serverAddress: window.location.href
     });
 
-    var synchronizer = new Synchronizer({
-        comms: comms,
-        model: model,
-        commandAggregationInterval: 60
+    Logger.info('Requesting configuration from ' + window.location.href);
+
+    comms.requestInitialConfig(function (config) {
+        Logger.info('Config received:');
+        Logger.info(config);
+
+        var model = new Model();
+
+        var gameRenderer = new GameRenderer({
+            model: model
+        });
+
+        var width = window.innerWidth,
+            height = window.innerHeight;
+
+        Logger.info('Width: ' + width + ' Height: ' + height);
+
+        gameRenderer.resize(width - 25, height - 25);
+        gameRenderer.forceFontLoad();
+        gameRenderer.renderParticles();
+
+        window.onresize = function () {
+            width = window.innerWidth;
+            height = window.innerHeight;
+
+            Logger.info('Width: ' + width + ' Height: ' + height);
+            gameRenderer.resize(width - 25, height - 25);
+        };
+
+        var synchronizer = new Synchronizer({
+            comms: comms,
+            model: model,
+            commandAggregationInterval: 60
+        });
+
+        var hud = new HUD({ //jshint ignore: line
+            comms: comms,
+            synchronizer: synchronizer,
+            accumulationInterval: 30
+        });
+
+        Physics.util.ticker.on(function (time) {
+            gameRenderer.render();
+            synchronizer.tick(time);
+        });
+
     });
-
-    var hud = new HUD({ //jshint ignore: line
-        comms: comms,
-        synchronizer: synchronizer,
-        accumulationInterval: 30
-    });
-
-    Physics.util.ticker.on(function( time ) {
-        gameRenderer.render();
-        synchronizer.tick(time);
-    });
-
-
 
 }); // end on DOM ready

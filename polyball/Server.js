@@ -15,7 +15,11 @@ var config = new Configuration();
 
 var model = new Model();
 
-var comms = new Comms({httpServer: server, model: model});
+var comms = new Comms({
+    httpServer: server,
+    model: model,
+    globalConfig: config.values
+});
 
 new Engine({
     comms: comms,

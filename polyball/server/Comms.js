@@ -13,7 +13,8 @@ var PubSub = require('polyball/shared/PubSub');
  *
  * @param {{
  *   httpServer: node.http.Server,
- *   model: Model
+ *   model: Model,
+ *   globalConfig: Object
  * }} config
  * @constructor
  */
@@ -57,6 +58,8 @@ var Comms = function (config) {
      */
     var model = config.model;
 
+    var globalConfig = config.globalConfig;
+
 
     //
     //             CLIENT CONNECTION
@@ -83,6 +86,12 @@ var Comms = function (config) {
         //             CLIENT EVENTS
         //
         ///////////////////////////////////////////////////////////////////////////
+
+        clientSocket.on(CommsEvents.ClientToServer.configRequest, function (callback) {
+            Logger.info('Configuration request from client ' + getPlayerOrSpectatorID(clientSocket) + '.');
+
+            callback(globalConfig);
+        });
 
         clientSocket.on(CommsEvents.ClientToServer.disconnect, function () {
             Logger.info('Client disconnected');

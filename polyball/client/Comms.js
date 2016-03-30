@@ -85,6 +85,11 @@ var Comms = function (config) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
+    this.requestInitialConfig = function (callback) {
+
+        socket.emit(CommsEvents.ClientToServer.configRequest, callback);
+    };
+
     /**
      * Subscribe to an event
      * @param {String} eventName - The name of the event.  Use CommsEvents.ClientToClient.
