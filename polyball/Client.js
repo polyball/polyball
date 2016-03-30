@@ -46,13 +46,16 @@ $(document).ready(function() {
         var synchronizer = new Synchronizer({
             comms: comms,
             model: model,
-            commandAggregationInterval: config.commandAggregationInterval || 60
+            commandAggregationInterval: config.commandAggregationInterval,
+            simulationSyncLargeDelta: config.simulationSyncLargeDelta,
+            simulationSyncRapidDecayRate: config.simulationSyncRapidDecayRate,
+            simulationSyncSlowDecayRate: config.simulationSyncSlowDecayRate
         });
 
         var hud = new HUD({ //jshint ignore: line
             comms: comms,
             synchronizer: synchronizer,
-            accumulationInterval: config.inputAccumulationInterval ||  30
+            accumulationInterval: config.inputAccumulationInterval
         });
 
         Physics.util.ticker.on(function (time) {
