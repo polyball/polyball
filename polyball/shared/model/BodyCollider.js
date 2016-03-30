@@ -31,6 +31,8 @@ var BodyCollider = function (config) {
     var balls = {};
     var ballsLength;
     var paddles = {};
+    var powerups = {};
+    var powerupsLength = 0;
 
     // Goals are unique in that they map goal bodies to players
     var goals = {};
@@ -52,9 +54,11 @@ var BodyCollider = function (config) {
         nonImpulseEvent.collisions = lodash.remove(event.collisions, function (collision) {
             if (model != null) {
                 setupBalls();
+                setupPowerups();
 
                 handleEntityBallCollision(collision, paddles, Events.paddleBallCollision);
                 handleEntityBallCollision(collision, goals, Events.ballGoalCollision);
+                handleEntityBallCollision(collision, powerups, Events.ballPowerupCollision);
             }
 
             // iterate through ignored bodies, returning one that is in the collision (if any)
@@ -93,7 +97,7 @@ var BodyCollider = function (config) {
     //================================== Setup Helpers =================================
     var setupBalls = function(){
         if (ballsLength !== model.getBalls().length) {
-            this.balls = {};
+            balls = {};
             config.model.getBalls().forEach(function (ball) {
                 balls[ball.body.uid] = ball;
             });
@@ -114,6 +118,17 @@ var BodyCollider = function (config) {
             var goal = arena.getGoal(player.arenaPosition);
             goals[goal.uid] = player;
         });
+    };
+
+    var setupPowerups = function(){
+        if (powerupsLength !== model.getPowerups().length) {
+            powerups = {};
+            config.model.getPowerups().forEach(function (powerup) {
+               powerups[powerup.body.uid] = powerup;
+            });
+            powerupsLength = Object.keys(balls).length;
+
+        }
     };
 
     //

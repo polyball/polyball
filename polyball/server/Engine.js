@@ -9,6 +9,7 @@ var Blackhole = require('polyball/shared/model/powerups/Blackhole'); //jshint ig
 var RoundEngine = require('polyball/shared/RoundEngine');
 var RoundEvents = require('polyball/shared/RoundEvents');
 var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
+var PowerupBehavior = require('polyball/shared/model/behaviors/PowerupBehavior');
 
 /**
  * Initializes the engine
@@ -58,7 +59,7 @@ var Engine = function (config) {
 
             addAllPaddles();
             addCustomBehavior(GoalBehavior, {model: model});
-
+            addCustomBehavior(PowerupBehavior, {model: model});
 
             model.setRoundLength(config.configuration.roundLength);
 
@@ -93,14 +94,12 @@ var Engine = function (config) {
         });
 
         //TEST BLACKHOLE
-        var blackhole = model.addPowerup({
-            name: Blackhole.Name,
-            body: generatePowerupBody()
-        });
-
         setTimeout(function(){
-            blackhole.activate(model);
-        }, 10000);
+            model.addPowerup({
+                name: Blackhole.Name,
+                body: generatePowerupBody()
+            });
+        }, 5000);
 
         roundEngine.start();
 

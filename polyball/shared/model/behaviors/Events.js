@@ -3,5 +3,6 @@
  */
 module.exports={
     paddleBallCollision: 'paddle-ball-collision',
-    ballGoalCollision: 'ball-goal-collision'
+    ballGoalCollision: 'ball-goal-collision',
+    ballPowerupCollision: 'ball-powerup-collision'
 };
