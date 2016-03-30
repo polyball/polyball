@@ -301,6 +301,7 @@ var Arena = function(config) {
             width: goalWidth,
             height: 30,
             treatment: 'static',
+            cof: 0,
             styles: {
                 fillStyle: colors.red,
                 layer: 5
@@ -313,6 +314,7 @@ var Arena = function(config) {
                 y: this.points[j].y,
                 radius: this.bumperRadius,
                 treatment: 'static',
+                cof: 0,
                 styles: {
                     fillStyle: colors.blue,
                     layer: 6,

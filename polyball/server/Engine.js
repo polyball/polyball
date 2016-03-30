@@ -173,6 +173,7 @@ var Engine = function (config) {
                     y: rightBound.y
                 },
                 body:{
+                    cof: 0,
                     state:{
                         pos:{
                             x: paddlePos.x,
@@ -191,6 +192,7 @@ var Engine = function (config) {
         model.addBall({
             body: {
                 radius: 10,
+                cof: 0,
                 state: model.getArena().generateNewBallState()
             }
         });
