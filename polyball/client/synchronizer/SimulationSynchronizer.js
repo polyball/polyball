@@ -2,6 +2,7 @@
  * Created by kdban on 3/22/2016.
  */
 
+var Util = require('polyball/shared/Util');
 var Logger = require('polyball/shared/Logger');
 
 /**
@@ -20,39 +21,6 @@ var SimulationSynchronizer = function (config) {
     this.slowDecayRate = config.slowDecayRate;
 
     var authoritativeSnapshot;
-
-    /**
-     * Copy all physics single body simulation state from a source state container to a target one.
-     * @param srcState
-     * @param targetState
-     */
-    var assignPhysicsState = function (srcState, targetState) {
-        targetState.pos.x = srcState.pos.x;
-        targetState.pos.y = srcState.pos.y;
-
-        targetState.vel.x = srcState.vel.x;
-        targetState.vel.y = srcState.vel.y;
-
-        targetState.acc.x = srcState.acc.x;
-        targetState.acc.y = srcState.acc.y;
-
-        targetState.angular.pos = srcState.angular.pos;
-        targetState.angular.vel = srcState.angular.vel;
-        targetState.angular.acc = srcState.angular.acc;
-
-        targetState.old.pos.x = srcState.old.pos.x;
-        targetState.old.pos.y = srcState.old.pos.y;
-
-        targetState.old.vel.x = srcState.old.vel.x;
-        targetState.old.vel.y = srcState.old.vel.y;
-
-        targetState.old.acc.x = srcState.old.acc.x;
-        targetState.old.acc.y = srcState.old.acc.y;
-
-        targetState.old.angular.pos = srcState.old.angular.pos;
-        targetState.old.angular.vel = srcState.old.angular.vel;
-        targetState.old.angular.acc = srcState.old.angular.acc;
-    };
 
     /**
      * Give the simulation a source of truth to simulate.
@@ -84,7 +52,7 @@ var SimulationSynchronizer = function (config) {
                     return;
                 }
 
-                assignPhysicsState(snapshotBall.body.state, ball.body.state);
+                Util.assignPhysicsState(snapshotBall.body.state, ball.body.state);
             });
         }
 
@@ -97,7 +65,7 @@ var SimulationSynchronizer = function (config) {
                     return;
                 }
 
-                assignPhysicsState(snapshotPowerup.body.state, powerup.body.state);
+                Util.assignPhysicsState(snapshotPowerup.body.state, powerup.body.state);
             });
         }
         

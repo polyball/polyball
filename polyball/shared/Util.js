@@ -342,4 +342,39 @@ Util.bodyToStateConfig = function (physicsBody) {
     }
 };
 
+/**
+ * Copy all physics single body simulation state from a source state container to a target one.
+ * Both source and target can be a physics body state or an object isomorphic with one.
+ *
+ * @param {Physics.body.state} srcState - The state to copy from.
+ * @param {Physics.body.state} targetState - The state to copy to.
+ */
+Util.assignPhysicsState = function (srcState, targetState) {
+    targetState.pos.x = srcState.pos.x;
+    targetState.pos.y = srcState.pos.y;
+
+    targetState.vel.x = srcState.vel.x;
+    targetState.vel.y = srcState.vel.y;
+
+    targetState.acc.x = srcState.acc.x;
+    targetState.acc.y = srcState.acc.y;
+
+    targetState.angular.pos = srcState.angular.pos;
+    targetState.angular.vel = srcState.angular.vel;
+    targetState.angular.acc = srcState.angular.acc;
+
+    targetState.old.pos.x = srcState.old.pos.x;
+    targetState.old.pos.y = srcState.old.pos.y;
+
+    targetState.old.vel.x = srcState.old.vel.x;
+    targetState.old.vel.y = srcState.old.vel.y;
+
+    targetState.old.acc.x = srcState.old.acc.x;
+    targetState.old.acc.y = srcState.old.acc.y;
+
+    targetState.old.angular.pos = srcState.old.angular.pos;
+    targetState.old.angular.vel = srcState.old.angular.vel;
+    targetState.old.angular.acc = srcState.old.angular.acc;
+};
+
 module.exports = Util;
