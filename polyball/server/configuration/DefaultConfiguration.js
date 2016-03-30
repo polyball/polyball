@@ -23,7 +23,11 @@ var DefaultConfiguration=function () {
         serverTick: 30,             // What interval the server should progress the simulation (milliseconds)
         roundIntermission: 3000,    // How long the intermission between rounds lasts (milliseconds)
         roundLength: 120000,         // How long each round will last (milliseconds)
-        powerupsDir: 'polyball/shared/model/powerups' //Where the server can find powerup source files
+        powerupsDir: 'polyball/shared/model/powerups', //Where the server can find powerup source files
+
+        // Client Config
+        commandAggregationInterval: 40,     // The minimum time between input command aggregates sent to the server
+        inputAccumulationInterval: 20       // The minimum time between movement input and registration as an input command
     };
 };
 

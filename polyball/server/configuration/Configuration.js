@@ -23,7 +23,7 @@ var Configuration = function (config){
      * @param {Number} bound
      */
     var checkUpperBound = function(property, bound){
-      if (values[property] > bound){
+      if (!_.isFinite(bound) || values[property] > bound){
           Logger.warn(property + ' was set to: ' + values[property] +
               '. The maximum  allowed value is ' + bound);
           values[property] = defaults[property];
@@ -36,7 +36,7 @@ var Configuration = function (config){
      * @param {Number} bound
      */
     var checkLowerBound = function(property, bound){
-        if (values[property] < bound){
+        if (!_.isFinite(bound) || values[property] < bound){
             Logger.warn(property + ' was set to: ' + values[property] +
                 '. The minimum  allowed value is ' + bound);
             values[property] = defaults[property];
@@ -65,6 +65,8 @@ var Configuration = function (config){
     checkLowerBound('roundIntermission', 1);
     checkDirectoryAccessible('powerupsDir');
     checkLowerBound('powerupRadius', 1);
+    checkLowerBound('commandAggregationInterval', 20);
+    checkLowerBound('inputAccumulationInterval', 10);
     this.values = values;
 
     Object.freeze(this.values);
