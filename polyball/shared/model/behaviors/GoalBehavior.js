@@ -15,7 +15,6 @@ var GoalBehavior = function(config){
         var player = config.model.getPlayer(event.ball.lastTouchedID);
         if (player != null){
             player.score += 1;
-            console.log(player.client.name + ' : ' + player.score);
         }
     };
 
