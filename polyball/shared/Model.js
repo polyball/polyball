@@ -592,10 +592,40 @@ var Model = function () {
      * @param {Object} config
      * @property {number} config.playerID
      * @property {Object} config.paddleConfig
+     * @returns {Paddle} The paddle added to the player.
      */
     this.addPaddleToPlayer = function (config){
-        var paddle = this.getPlayer(config.playerID).addPaddle(config.paddleConfig);
+        var player = this.getPlayer(config.playerID);
+
+        if (player == null) {
+            Logger.warn('Cannot find player id in model - cannot add paddle to player.');
+            return null;
+        }
+
+        if (player.paddle != null) {
+            Logger.warn('Cannot add paddle to player that already has a paddle.');
+            return null;
+        }
+
+        var paddle = player.addPaddle(config.paddleConfig);
         world.add(paddle.body);
+
+        return paddle;
+    };
+
+    /**
+     * Returns a paddle that belongs to the player given by id
+     * @param {Number} playerID
+     * @returns {Paddle} - The player's paddle.  Undefined if the player doesn't exist or if the player doesn't have a paddle yet.
+     */
+    this.getPaddle = function (playerID) {
+        var player = this.getPlayer(playerID);
+
+        if (player == null) {
+            return undefined;
+        }
+
+        return player.paddle;
     };
 
     //
