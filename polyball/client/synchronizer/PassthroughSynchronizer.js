@@ -70,6 +70,36 @@ function syncPowerupExistence(powerups, model) {
     }
 }
 
+function syncDiscreteSpectatorState(spectators, model) {
+    if (spectators != null) {
+        spectators.forEach(function (snapshotSpectator) {
+            var spectator = model.getSpectator(snapshotSpectator.id);
+
+            if (spectator == null) {
+                throw 'syncDiscreteSpectatorState could not find spectator that MUST exist by now.';
+            }
+
+            spectator.client.name = snapshotSpectator.clientConfig.name;
+        });
+    }
+}
+
+function syncDiscretePlayerState(players, model) {
+    if (players != null) {
+        players.forEach(function (snapshotPlayer) {
+            var player = model.getPlayer(snapshotPlayer.id);
+
+            if (player == null) {
+                throw 'syncDiscretePlayerState could not find player that MUST exist by now.';
+            }
+
+            player.arenaPosition = snapshotPlayer.arenaPosition;
+            player.score = snapshotPlayer.score;
+            player.client.name = snapshotPlayer.clientConfig.name;
+        });
+    }
+}
+
 function syncDiscreteBallState(balls, model) {
     if (balls != null) {
         balls.forEach(function (snapshotBall) {
@@ -119,6 +149,8 @@ PassthroughSynchronizer.sync = function (snapshot, model) {
     syncBallExistence(snapshot.balls, model);
     syncPowerupExistence(snapshot.powerups, model);
 
+    syncDiscreteSpectatorState(snapshot.spectators, model);
+    syncDiscretePlayerState(snapshot.players, model);
     syncDiscreteBallState(snapshot.balls, model);
     syncDiscretePowerupState(snapshot.powerups, model);
     

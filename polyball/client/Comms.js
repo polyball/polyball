@@ -11,6 +11,7 @@ var PubSub = require('polyball/shared/PubSub');
  *
  * @param {Object} config
  * @property {String} serverAddress - The address (including port number) of the server to connect to.
+ * @property {Function} newIDCallback - A callback that is called with the client's permanent ID.  (Part of initial handshake data.)
  * @constructor
  */
 var Comms = function (config) {
@@ -53,7 +54,9 @@ var Comms = function (config) {
     
     socket.on(CommsEvents.ServerToClient.idAssigned, function (id) {
         Logger.info('Comms received new local id: ' + id);
-        pubsub.fireEvent(CommsEvents.ClientToClient.newLocalID, id);
+        if (typeof config.newIDCallback === 'function') {
+            config.newIDCallback(id);
+        }
     });
 
     /**

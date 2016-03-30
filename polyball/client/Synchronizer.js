@@ -105,8 +105,6 @@ var Synchronizer = function (config) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
-    comms.on(CommsEvents.ClientToClient.newLocalID, function (id) { model.setLocalClientID(id); });
-
     comms.on(CommsEvents.ClientToClient.snapshotReceived, synchronizeSnapshot);
 
     comms.on(CommsEvents.ClientToClient.newRound, startNewRound);

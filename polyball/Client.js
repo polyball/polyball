@@ -9,17 +9,18 @@ var Synchronizer = require('polyball/client/Synchronizer');
 
 $(document).ready(function() {
 
+    var model = new Model();
+
     var comms = new Comms({
-        serverAddress: window.location.href
+        serverAddress: window.location.href,
+        newIDCallback: function (id) { model.setLocalClientID(id); }
     });
 
     Logger.info('Requesting configuration from ' + window.location.href);
 
     comms.requestInitialConfig(function (config) {
         Logger.info('Config received:');
-        Logger.info(config);
-
-        var model = new Model();
+        Logger.debug(config);
 
         var gameRenderer = new GameRenderer({
             model: model
