@@ -1,9 +1,9 @@
 var Physics = require('physicsjs');
-var CommsEvents = require('polyball/shared/CommsEvents');
 
 /**
  * @param {Object} config
- * @property {Comms} config.comms
+ * @property {Object} config.paddleEventsPublisher
+ * @property {String} config.paddleMoveEvent
  * @property {Model} config.model
  * @constructor
  */
@@ -122,7 +122,7 @@ var PaddleBehavior = function (config) {
                 world.on('integrate:positions', this.behave, this);
 
                 // Subscribe to the comms commands events to get mouse moves
-                config.comms.on(CommsEvents.ServerToServer.playerCommandsReceived, this.move);
+                config.paddleEventsPublisher.on(config.paddleMoveEvent, this.move);
             },
 
             // extended

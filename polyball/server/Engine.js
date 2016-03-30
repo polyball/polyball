@@ -5,11 +5,10 @@ var EngineStatus = require('polyball/server/EngineStatus.js');
 var _ = require('lodash');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
-var Physics = require('physicsjs');
-var PaddleBehavior = require('polyball/shared/model/behaviors/PaddleBehavior');
-var BallBehavior = require('polyball/shared/model/behaviors/BallBehavior');
 var Blackhole = require('polyball/shared/model/powerups/Blackhole'); //jshint ignore:line
-var BallOwnershipBehavior = require('polyball/shared/model/behaviors/BallOwnershipBehavior');
+var RoundEngine = require('polyball/shared/RoundEngine');
+var RoundEvents = require('polyball/shared/RoundEvents');
+
 /**
  * Initializes the engine
  *
@@ -25,8 +24,7 @@ var Engine = function (config) {
     var comms = config.comms;
     var configuration = config.configuration;
     var model = config.model;
-    var gameStartTime;
-    var gameLoop;
+    var roundEngine;
 
     // ============================= Private Methods ==============================
     // ============================================================================
@@ -57,21 +55,19 @@ var Engine = function (config) {
             });
 
             addAllPaddles();
-            addBehavior(PaddleBehavior, {comms: comms, model: model}).applyTo(model.getPlayers());
-            addBehavior(BallBehavior, {ballMaxVelocity: config.configuration.ballMaxVelocity, model: model});
-            addBehavior(BallOwnershipBehavior, {model: model});
-
-            //TEST BLACKHOLE
-            var blackhole = model.addPowerup({
-                name: Blackhole.Name,
-                body: generatePowerupBody()
-            });
-
-            setTimeout(function(){
-                blackhole.activate(model);
-            }, 10000);
 
             model.setRoundLength(config.configuration.roundLength);
+
+            roundEngine = new RoundEngine({
+                model: model,
+                paddleEventsPublisher: comms,
+                paddleMoveEvent: CommsEvents.ServerToServer.playerCommandsReceived,
+                tickRate: config.configuration.serverTick,
+                maxBallVelocity: config.configuration.ballMaxVelocity
+            });
+
+            roundEngine.on(RoundEvents.simulationStepped, broadcastModel);
+            roundEngine.on(RoundEvents.gameEnded, endGame);
 
             comms.broadcastSynchronizedStart({
                 snapshot: model.getSnapshot(),
@@ -92,25 +88,18 @@ var Engine = function (config) {
             setTimeout(addBall, x * 500);
         });
 
-        gameStartTime = Date.now();
-        model.currentRoundTime = 0;
-        gameLoop = setInterval(update, config.configuration.serverTick);
-    };
+        //TEST BLACKHOLE
+        var blackhole = model.addPowerup({
+            name: Blackhole.Name,
+            body: generatePowerupBody()
+        });
 
+        setTimeout(function(){
+            blackhole.activate(model);
+        }, 10000);
 
-    /**
-     * The game loop
-     */
-    var update = function(){
-        var time = Date.now();
-        model.getWorld().step();
-        model.currentRoundTime = time - gameStartTime;
+        roundEngine.start();
 
-        broadcastModel();
-
-        if(model.currentRoundTime >= model.getRoundLength()){
-            endGame();
-        }
     };
 
     /**
@@ -118,8 +107,6 @@ var Engine = function (config) {
      */
     var endGame = function(){
         model.gameStatus = EngineStatus.gameFinishing;
-        clearInterval(gameLoop);
-
         // TODO tell all clients to show top 3 players for 5 seconds
         model.reset();
         setTimeout(initializeGame, config.configuration.roundIntermission);
@@ -227,19 +214,7 @@ var Engine = function (config) {
         };
     };
 
-    /**
-     * Helper to add behvaiors to the world
-     * @param {function} constructor
-     * @param {Object} args
-     * @returns {Physics.behavior}
-     */
-    var addBehavior = function(constructor, args){
-        new constructor(args);
-        var behavior = Physics.behavior(constructor.Name);
-        model.getWorld().add(behavior);
-        return behavior;
 
-    };
 
     // ============================= Public Methods ===============================
     // ============================================================================
@@ -266,20 +241,6 @@ var Engine = function (config) {
     };
 
     /**
-     * This function handles play command aggregate events
-     * @param {Object} data
-     * @property {number} data.playerID
-     * @property {Object[]} data.newCommands
-     */
-    this.handlePlayerCommandReceived = function(data){
-        var player = model.getPlayer(data.playerID);
-        data.newCommands.forEach(function(command){
-            player.paddle.setPosition(command.moveDelta);
-            player.lastSequenceNumberAccepted = command.sequenceNumber;
-        });
-    };
-
-    /**
      * Returns the current game status
      * @returns {number}
      */
@@ -291,7 +252,9 @@ var Engine = function (config) {
      * Stop execution of engine
      */
     this.kill = function(){
-        clearInterval(gameLoop);
+        if (roundEngine) {
+            roundEngine.kill();
+        }
     };
 
     // ========================== Engine Construction =============================
