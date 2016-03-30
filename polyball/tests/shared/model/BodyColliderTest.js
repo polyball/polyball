@@ -5,7 +5,6 @@
 var BodyCollider = require('polyball/shared/model/BodyCollider');
 var Physics = require('physicsjs');
 
-
 describe('BodyCollider', function () {
     "use strict";
 

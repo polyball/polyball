@@ -8,6 +8,7 @@ var Physics = require('physicsjs');
 var PaddleBehavior = require('polyball/shared/model/behaviors/PaddleBehavior');
 var BallBehavior = require('polyball/shared/model/behaviors/BallBehavior');
 var BallOwnershipBehavior = require('polyball/shared/model/behaviors/BallOwnershipBehavior');
+var BodyCollider = require('polyball/shared/model/BodyCollider');
 
 /**
  * This class essentially "Runs" the rounds:
@@ -27,6 +28,8 @@ var RoundEngine = function(config){
     var model = config.model;
     var gameStartTime;
     var gameLoop;
+    var behaviors = [];
+    var collisionsPruner;
 
     /**
      * For event subscribers.
@@ -65,12 +68,13 @@ var RoundEngine = function(config){
     //
     /////////////////////////////////////////////////////////////////
     var initializeGame = function(){
+        collisionsPruner = new BodyCollider({world: model.getWorld(), model: model});
 
-        addBehavior(PaddleBehavior, {paddleEventsPublisher: config.paddleEventsPublisher,
+        addPhysicsBehavior(PaddleBehavior, {paddleEventsPublisher: config.paddleEventsPublisher,
             paddleMoveEvent: config.paddleMoveEvent,
             model: model}).applyTo(model.getPlayers());
-        addBehavior(BallBehavior, {ballMaxVelocity: config.maxBallVelocity, model: model});
-        addBehavior(BallOwnershipBehavior, {model: model});
+        addCustomBehavior(BallBehavior, {ballMaxVelocity: config.maxBallVelocity, model: model});
+        addCustomBehavior(BallOwnershipBehavior, {model: model});
         pubsub.fireEvent(RoundEvents.initializationFinished);
 
         startGame();
@@ -97,6 +101,8 @@ var RoundEngine = function(config){
 
     var endGame = function(){
         clearInterval(gameLoop);
+        removeBehaviors();
+        collisionsPruner.disconnect();
         pubsub.fireEvent(RoundEvents.gameEnded);
     };
 
@@ -112,12 +118,25 @@ var RoundEngine = function(config){
      * @param {Object} args
      * @returns {Physics.behavior}
      */
-    var addBehavior = function(constructor, args){
+    var addPhysicsBehavior = function(constructor, args){
         new constructor(args);
         var behavior = Physics.behavior(constructor.Name);
         model.getWorld().add(behavior);
         return behavior;
 
+    };
+
+    var addCustomBehavior = function(constructor, args){
+        var behavior = new constructor(args);
+        behavior.connect();
+        behaviors.push(behavior);
+    };
+
+    var removeBehaviors = function(){
+        behaviors.forEach(function(behavior){
+           behavior.disconnect();
+        });
+        behaviors = [];
     };
 };
 

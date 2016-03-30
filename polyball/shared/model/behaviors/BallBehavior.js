@@ -1,7 +1,6 @@
 /**
  * Created by ryan on 27/03/16.
  */
-var Physics = require('physicsjs');
 var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
 
@@ -13,101 +12,48 @@ var Events = require('polyball/shared/model/behaviors/Events');
  * @constructor
  */
 var BallBehavior = function(config){
-    Physics.behavior(BallBehavior.Name, function(parent){
-        return {
-            init: function(options){
-                parent.init.call(this);
-                this.options(options);
 
-                this.balls = {};
-                this.ballsLength = 0;
-                this.markedBalls = {};
-                this.paddles = {};
+    /**
+     * The balls marked for velocity clamping
+     * @type {{Ball}}
+     */
+    var markedBalls = {};
 
-                if (config.model.getPlayers().filter(function(player){
-                        return player.paddle;
-                    }).length > 0){
-                        this.setupPaddles();
-                }
-            },
-
-            setupPaddles: function(){
-                var self = this;
-                config.model.getPlayers().forEach(function(player){
-                    self.paddles[player.paddle.body.uid] = player.paddle.body;
-                });
-            },
-
-            setupBalls: function(){
-                var self = this;
-                this.balls = {};
-                config.model.getBalls().forEach(function(ball){
-                    self.balls[ball.body.uid] = ball.body;
-                });
-                this.ballsLength = Object.keys(this.balls).length;
-            },
-
-            clampVelocities: function(){
-                if (!_.isEmpty(this.markedBalls)){
-                    for (var index in this.markedBalls){
-                        if (this.markedBalls.hasOwnProperty(index)){
-                            var ball = this.markedBalls[index];
-                            if (ball.state.vel.norm() > config.ballMaxVelocity){
-                                ball.state.vel.normalize().mult(config.ballMaxVelocity);
-                            }
+        var clampVelocities = function(){
+            if (!_.isEmpty(markedBalls)){
+                for (var index in markedBalls){
+                    if (markedBalls.hasOwnProperty(index)){
+                        var ball = markedBalls[index];
+                        if (ball.body.state.vel.norm() > config.ballMaxVelocity){
+                            ball.body.state.vel.normalize().mult(config.ballMaxVelocity);
                         }
                     }
-                    this.markedBalls = {};
                 }
-            },
-
-            handleCollision: function(event){
-                var self = this;
-                if (self.ballsLength !== config.model.getBalls().length){
-                    self.setupBalls();
-                }
-
-                event.collisions.forEach(function(collision){
-                    if (self.paddles[collision.bodyA.uid] || self.paddles[collision.bodyB.uid]){
-                        if (self.balls[collision.bodyA.uid] || self.balls[collision.bodyB.uid]){
-
-                            var ball;
-                            var paddle;
-                            if (self.balls[collision.bodyA.uid]){
-                                self.markedBalls[collision.bodyA.uid] = collision.bodyA;
-                                ball = collision.bodyA;
-                                paddle = collision.bodyB;
-                            } else {
-                                self.markedBalls[collision.bodyB.uid] = collision.bodyB;
-                                ball = collision.bodyB;
-                                paddle = collision.bodyA;
-                            }
-
-                            config.model.getWorld().emit( Events.paddleBallCollision,
-                            {   ball: ball,
-                                paddle: paddle
-                            });
-                        }
-                    }
-                });
-            },
-
-            // extended
-            connect: function (world) {
-                world.on('integrate:velocities', this.clampVelocities, this);
-                world.on('collisions:detected', this.handleCollision, this);
-            },
-
-            // extended
-            disconnect: function (world) {
-
-                // unsubscribe when disconnected
-                world.off('integrate:velocities', this.clampVelocities, this);
-                world.off('collisions:detected', this.handleCollision, this);
-
+                markedBalls = {};
             }
         };
-    });
+
+    /**
+     * Handles collision events
+     * @param event
+     * @property {Ball} event.ball
+     * @property {Paddle} event.entity
+     */
+    var handleCollision = function(event){
+            markedBalls[event.ball.id] = event.ball;
+    };
+
+    this.connect = function () {
+        config.model.getWorld().on('integrate:velocities', clampVelocities, this);
+        config.model.getWorld().on(Events.paddleBallCollision, handleCollision, this);
+    };
+
+    this.disconnect = function () {
+        // unsubscribe when disconnected
+        config.model.getWorld().off('integrate:velocities', clampVelocities, this);
+        config.model.getWorld().off(Events.paddleBallCollision, handleCollision, this);
+    };
+
 };
 
 BallBehavior.Name = 'BallBehavior';
