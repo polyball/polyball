@@ -8,6 +8,7 @@ var Logger = require('polyball/shared/Logger');
 var Blackhole = require('polyball/shared/model/powerups/Blackhole'); //jshint ignore:line
 var RoundEngine = require('polyball/shared/RoundEngine');
 var RoundEvents = require('polyball/shared/RoundEvents');
+var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
 
 /**
  * Initializes the engine
@@ -25,6 +26,7 @@ var Engine = function (config) {
     var configuration = config.configuration;
     var model = config.model;
     var roundEngine;
+    var behaviors = [];
 
     // ============================= Private Methods ==============================
     // ============================================================================
@@ -55,6 +57,8 @@ var Engine = function (config) {
             });
 
             addAllPaddles();
+            addCustomBehavior(GoalBehavior, {model: model});
+
 
             model.setRoundLength(config.configuration.roundLength);
 
@@ -109,6 +113,7 @@ var Engine = function (config) {
         model.gameStatus = EngineStatus.gameFinishing;
         // TODO tell all clients to show top 3 players for 5 seconds
         model.reset();
+        removeBehaviors();
         setTimeout(initializeGame, config.configuration.roundIntermission);
     };
 
@@ -212,6 +217,27 @@ var Engine = function (config) {
             },
             radius: config.configuration.powerupRadius
         };
+    };
+
+    /**
+     * Adds Custom behaviors to the world
+     * @param constructor
+     * @param args
+     */
+    var addCustomBehavior = function(constructor, args){
+        var behavior = new constructor(args);
+        behavior.connect();
+        behaviors.push(behavior);
+    };
+
+    /**
+     * Removes all custom behaviors from the world
+     */
+    var removeBehaviors = function(){
+        behaviors.forEach(function(behavior){
+            behavior.disconnect();
+        });
+        behaviors = [];
     };
 
 

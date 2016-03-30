@@ -8,7 +8,6 @@ var Physics = require('physicsjs');
 var PaddleBehavior = require('polyball/shared/model/behaviors/PaddleBehavior');
 var BallBehavior = require('polyball/shared/model/behaviors/BallBehavior');
 var BallOwnershipBehavior = require('polyball/shared/model/behaviors/BallOwnershipBehavior');
-var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
 var BodyCollider = require('polyball/shared/model/BodyCollider');
 
 /**
@@ -76,7 +75,6 @@ var RoundEngine = function(config){
             model: model}).applyTo(model.getPlayers());
         addCustomBehavior(BallBehavior, {ballMaxVelocity: config.maxBallVelocity, model: model});
         addCustomBehavior(BallOwnershipBehavior, {model: model});
-        addCustomBehavior(GoalBehavior, {model: model});
         pubsub.fireEvent(RoundEvents.initializationFinished);
 
         startGame();
