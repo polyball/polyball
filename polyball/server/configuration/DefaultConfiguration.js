@@ -25,9 +25,14 @@ var DefaultConfiguration=function () {
         roundLength: 120000,         // How long each round will last (milliseconds)
         powerupsDir: 'polyball/shared/model/powerups', //Where the server can find powerup source files
 
-        // Client Config
+        // Client Input Config
         commandAggregationInterval: 40,     // The minimum time between input command aggregates sent to the server
-        inputAccumulationInterval: 20       // The minimum time between movement input and registration as an input command
+        inputAccumulationInterval: 20,      // The minimum time between movement input and registration as an input command
+
+        // Client Simulation Sync Config
+        simulationSyncLargeDelta: 100,      // The minimum distance between two objects to be rapidly decayed
+        simulationSyncRapidDecayRate: 0.7,  // The fraction that large deltas are decayed.
+        simulationSyncSlowDecayRate: 0.15   // The fraction that small deltas are decayed.
     };
 };
 
