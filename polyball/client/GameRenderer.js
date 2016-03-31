@@ -33,7 +33,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
     var bhRendered;
     var textContainer;
     var self;
-    var textRenderer;
 
 
     /**
@@ -41,7 +40,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
      */
     var activateBlackhole = function() {
         var twistFilter = new Pixi.filters.TwistFilter();
-        twistFilter.radius = 50;
+        twistFilter.radius = 500;
         twistFilter.offset = self.worldToClient(model.getArena().getCenter());
         twistFilter.angle = 2.5;
         self.stage.filters = [twistFilter];
@@ -107,11 +106,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             this.stage.addChild(emitterContainer);
 
             emitters = [];
-
-            textRenderer = Pixi.autoDetectRenderer(800, 600, {
-                view: this.renderer.view,
-                transparent: true
-            });
 
             elapsed = Date.now();
         },
@@ -227,47 +221,12 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             }
         },
 
-        //render: function(bodies, meta) {
-        //    var body,
-        //        view;
-        //
-        //    if (this.beforeRender){
-        //        this.beforeRender();
-        //    }
-        //
-        //    this._world.emit('beforeRender', {
-        //        renderer: this,
-        //        bodies: bodies,
-        //        meta: meta
-        //    });
-        //
-        //    if (this.options.meta){
-        //        this.drawMeta( meta );
-        //    }
-        //
-        //    this._interpolateTime = meta.interpolateTime;
-        //
-        //    for ( var i = 0, l = bodies.length; i < l; ++i ){
-        //
-        //        body = bodies[ i ];
-        //        view = body.view || ( body.view = this.createView(body.geometry, body.styles) );
-        //
-        //        if ( !body.hidden ){
-        //            this.drawBody( body, view );
-        //        }
-        //    }
-        //
-        //    this.renderer.render(this.stage);
-        //},
-
-
         /**
          * This disobeys the Physics js pure renderer interface, because our renderer already has a model, and thus a world.
          * This method just renders the world!
          */
         renderGame: function () {
             // Assumes that world.add(this) has been done.  See createNew() function at the bottom of this file.
-            //textRenderer.render(textContainer);
             model.getWorld().render();
         },
 
@@ -357,13 +316,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         resize: function(width, height) {
             parent.resize.call(this, width, height);
             this.renderer.resize(this.width, this.height);
-
-            if (textRenderer) {
-                textRenderer.resize(this.width, this.height);
-            }
         },
 
-        // TODO Test me. Make sure I work with text and a new renderer.
         worldToClient: function(point) {
             var rotation = this.stage.rotation;
             var offset = this.stage.position;

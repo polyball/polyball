@@ -95,9 +95,21 @@ var Engine = function (config) {
 
         //TEST BLACKHOLE
         setTimeout(function(){
+            var bodyConfig = generatePowerupBody();
+            bodyConfig.styles = {
+                fillStyle: '#000000',
+                lineWidth: 1,
+                strokeStyle: '#000000',
+                layer: 6,
+                icon: '\uf069',
+                fontstyle: {
+                    fill: '#ffffff',
+                    font: '30px fontawesome'
+                }
+            };
             model.addPowerup({
                 name: Blackhole.Name,
-                body: generatePowerupBody()
+                body: bodyConfig
             });
         }, 5000);
 
