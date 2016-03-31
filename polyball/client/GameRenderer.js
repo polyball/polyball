@@ -6,84 +6,30 @@
 var Pixi = require('pixi.js');
 var PixiParticles = require('pixi-particles'); // jshint ignore:line
 var Physics = require('physicsjs');
+var Util = require('polyball/shared/Util');
 
-/***
- *
- * @param {{
- *  model: Model
- * }}
- * config
- * @constructor
- */
-var GameRenderer = function(config) {
+// Shim in the PIXI global that Physics.js is looking for to do its primitive rendering.
+window.PIXI = Pixi;
 
-    // ################  CONSTRUCTOR  ############# //
-    // ############################################ //
-    var model = config.model;
+// Declare the polyball renderer as a large extension of the existing pixi renderer.
+Physics.renderer('polyball', 'pixi', function (parent) {
 
-    window.PIXI = Pixi;
+    //
+    //    ########  ########  #### ##     ##    ###    ######## ########
+    //    ##     ## ##     ##  ##  ##     ##   ## ##      ##    ##
+    //    ##     ## ##     ##  ##  ##     ##  ##   ##     ##    ##
+    //    ########  ########   ##  ##     ## ##     ##    ##    ######
+    //    ##        ##   ##    ##   ##   ##  #########    ##    ##
+    //    ##        ##    ##   ##    ## ##   ##     ##    ##    ##
+    //    ##        ##     ## ####    ###    ##     ##    ##    ########
+    //
+    ///////////////////////////////////////////////////////////////////////////
 
-    var renderer = Physics.renderer('pixi', {
-        el: 'viewport'
-    });
+    var model;
+    var emitterContainer;
+    var emitters;
+    var elapsed;
 
-    var oldCreateView = renderer.createView;
-    renderer.createView = function (geometry, styles, parent) {
-
-        var view = oldCreateView.call(renderer, geometry, styles, parent);
-
-        parent = parent || renderer.stage;
-        styles = styles || renderer.options.styles[ name ] || renderer.options.styles.circle || {};
-
-        // Handle view layers.
-        if (styles.layer) {
-            view.layer = styles.layer;
-        }
-        else {
-            view.layer = 0;
-        }
-
-        parent.children.sort(function(a, b) {
-            return a.layer - b.layer;
-        });
-
-        // Add child icons if specified.
-        // \uf0d6: dollar bill
-        // \uf155: dollar sign
-        // \uf111: circle
-        // \uf254: hourglass
-        // \uf069: asterisk
-        // \uf219: diamond
-        if (styles.icon) {
-            var text = new Pixi.Text(styles.icon, {fill: '#ffffff', font: '40px fontawesome'});
-            text.anchor.set(0.5, 0.5);
-            view.addChild(text);
-        }
-
-        return view;
-    };
-
-    this.forceFontLoad = function() {
-        var text = new Pixi.Text('\uf254', {fill: '#ffffff', font: '40px fontawesome'});
-        text.anchor.set(0.5, 0.5);
-        text.position.set(50, 50);
-        renderer.stage.addChild(text);
-        text.renderable = false;
-    };
-
-
-    var world = model.getWorld();
-    world.add(renderer);
-
-    var emitterContainer = new Pixi.Container();
-    emitterContainer.layer = 100;
-    renderer.stage.addChild(emitterContainer);
-
-    var emitters = [];
-
-    // ################  PRIVATE METHODS ########### //
-    // ############################################ //
-    var elapsed = Date.now();
     /**
      * Updates the particle rendering.
      */
@@ -101,123 +47,221 @@ var GameRenderer = function(config) {
         elapsed = now;
     };
 
-    // ################  PUBLIC METHODS ########### //
-    // ############################################ //
-    /**
-     * Renders graphics. Handles draw rotations and shifting.
-     */
-    this.render = function() {
 
-        if (model.getArena() !== undefined) {
-            var center = model.getArena().getCenter();
-            renderer.stage.pivot.set(center.x, center.y);
-            renderer.stage.position.set(center.x, center.y);
+    //
+    //    ########  ##     ## ########  ##       ####  ######
+    //    ##     ## ##     ## ##     ## ##        ##  ##    ##
+    //    ##     ## ##     ## ##     ## ##        ##  ##
+    //    ########  ##     ## ########  ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##
+    //    ##        ##     ## ##     ## ##        ##  ##    ##
+    //    ##         #######  ########  ######## ####  ######
+    //
+    ///////////////////////////////////////////////////////////////////////////
 
-            var player = model.getPlayer(model.getLocalClientID());
-            if (model.playerCount() > 0 && player !== undefined) {
-                var desiredX = window.innerWidth/2;
-                var desiredY = window.innerHeight/2;
+    return {
 
-                renderer.stage.rotation = 0;
-                this.rotate(player.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length);
-                renderer.stage.position.set(desiredX, desiredY);
+        /**
+         * This is the initializer that's called from `var renderer = Physics.renderer('polyball', options);`
+         * @param {Object} config
+         * @property {Model} config.model
+         */
+        init: function (config) {
+            // initialize the parent pixi renderer
+            parent.init.call(this, config);
+
+            model = config.model;
+
+            emitterContainer = new Pixi.Container();
+            emitterContainer.layer = 100;
+            this.stage.addChild(emitterContainer);
+
+            emitters = [];
+
+            elapsed = Date.now();
+        },
+
+        /**
+         * This creates the initial view of a physics body for polyball to augment.
+         * @param geometry - The physics geometry to render.
+         * @param styles - The styles object associated with the specific physics body, or the geometry in general.
+         * @returns {*}
+         */
+        createView: function (geometry, styles) {
+
+            var view = parent.createView.call(this, geometry, styles);
+
+
+            // JARED:
+            // I removed the `parent = parent ...` because the third parameter to this function (was named parent)
+            // isn't actually passed in here according to the docs!  Besides, you can just do `this.stage` now.
+
+
+            // JARED:
+            // I removed the
+            //     `renderer.options.styles[ name ]`
+            // from the below conditional - the variable name isn't instantiated anywhere so it looked like a null
+            // reference waiting to happen.
+            styles = styles || this.options.styles.circle || {};
+
+            // Handle view layers.
+            if (styles.layer) {
+                view.layer = styles.layer;
             }
-        }
-        world.render();
-    };
+            else {
+                view.layer = 0;
+            }
 
-    /**
-     * This function initiates the particle rendering loop.
-     */
-    this.renderParticles = function() {
-        update();
-    };
+            this.stage.children.sort(function(a, b) {
+                return a.layer - b.layer;
+            });
 
-    /**
-     * A test function to show emitter creation.
-     */
-    this.addTestEmitter = function() {
-        this.addEmitter([Pixi.Texture.fromImage('res/Sparks.png')],
-            {
-                "alpha": {
-                    "start": 1,
-                    "end": 0.31
-                },
-                "scale": {
-                    "start": 0.5,
-                    "end": 1
-                },
-                "color": {
-                    "start": "ffffff",
-                    "end": "9ff3ff"
-                },
-                "speed": {
-                    "start": 100,
-                    "end": 200
-                },
-                "startRotation": {
-                    "min": 225,
-                    "max": 320
-                },
-                "rotationSpeed": {
-                    "min": 0,
-                    "max": 20
-                },
-                "lifetime": {
-                    "min": 0.25,
-                    "max": 0.5
-                },
-                "blendMode": "normal",
-                "frequency": 0.001,
-                "emitterLifetime": 100,
-                "maxParticles": 1000,
-                "pos": {
-                    "x": 250,
-                    "y": 250
-                },
-                "addAtBack": false,
-                "spawnType": "circle",
-                "spawnCircle": {
-                    "x": 0,
-                    "y": 0,
-                    "r": 0
+            // Add child icons if specified.
+            // \uf0d6: dollar bill
+            // \uf155: dollar sign
+            // \uf111: circle
+            // \uf254: hourglass
+            // \uf069: asterisk
+            // \uf219: diamond
+            if (styles.icon) {
+                var text = new Pixi.Text(styles.icon, {fill: '#ffffff', font: '40px fontawesome'});
+                text.anchor.set(0.5, 0.5);
+                view.addChild(text);
+            }
+
+            return view;
+        },
+
+        forceFontLoad: function() {
+            var text = new Pixi.Text('\uf254', {fill: '#ffffff', font: '40px fontawesome'});
+            text.anchor.set(0.5, 0.5);
+            text.position.set(50, 50);
+            this.stage.addChild(text);
+            text.renderable = false;
+        },
+
+        // NOTE: Used to be called render(), but overriding that is a last resort for physics renderers.
+        //       See https://github.com/wellcaffeinated/PhysicsJS/wiki/Renderers#further-customization
+        beforeRender: function() {
+
+            if (model.getArena() !== undefined) {
+                var center = model.getArena().getCenter();
+                this.stage.pivot.set(center.x, center.y);
+                this.stage.position.set(center.x, center.y);
+
+                var player = model.getPlayer(model.getLocalClientID());
+                if (model.playerCount() > 0 && player !== undefined) {
+                    var desiredX = window.innerWidth/2;
+                    var desiredY = window.innerHeight/2;
+
+                    this.stage.rotation = 0;
+                    this.rotate(player.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length);
+                    this.stage.position.set(desiredX, desiredY);
                 }
             }
-        );
-    };
+        },
 
-    /**
-     * Adds an emitter.
-     * @param imageArray An array of different Pixi images to use as particles.
-     * @param config The PixiParticles config object to use.
-     */
-    this.addEmitter = function(imageArray, config) {
-        var emitter = new window.cloudkid.Emitter(
-            emitterContainer,
-            imageArray,
-            config
-        );
-        emitters.push(emitter);
-    };
+        /**
+         * This disobeys the Physics js pure renderer interface, because our renderer already has a model, and thus a world.
+         * This method just renders the world!
+         */
+        renderGame: function () {
+            // Assumes that world.add(this) has been done.  See createNew() function at the bottom of this file.
+            model.getWorld().render();
+        },
 
-    /**
-     * Resizes the rendering area. Good to do on window resizes.
-     * @param width: number
-     * @param height: number
-     */
-    this.resize = function(width, height) {
-        renderer.resize(width, height);
-    };
+        renderParticles: function() {
+            update();
+        },
 
-    /**
-     * Rotates the renderer. If the pivot/location hasn't been set,
-     * it can result in rendered objects in strange places.
-     * @param radians: number
-     */
-    this.rotate = function(radians) {
-        var stage = renderer.stage;
-        stage.rotation += radians;
+        /**
+         * Adds an emitter.
+         * @param imageArray An array of different Pixi images to use as particles.
+         * @param config The PixiParticles config object to use.
+         */
+        addEmitter: function(imageArray, config) {
+            var emitter = new window.cloudkid.Emitter(
+                emitterContainer,
+                imageArray,
+                config
+            );
+            emitters.push(emitter);
+        },
+
+        addTestEmitter: function() {
+            this.addEmitter([Pixi.Texture.fromImage('res/Sparks.png')],
+                {
+                    "alpha": {
+                        "start": 1,
+                        "end": 0.31
+                    },
+                    "scale": {
+                        "start": 0.5,
+                        "end": 1
+                    },
+                    "color": {
+                        "start": "ffffff",
+                        "end": "9ff3ff"
+                    },
+                    "speed": {
+                        "start": 100,
+                        "end": 200
+                    },
+                    "startRotation": {
+                        "min": 225,
+                        "max": 320
+                    },
+                    "rotationSpeed": {
+                        "min": 0,
+                        "max": 20
+                    },
+                    "lifetime": {
+                        "min": 0.25,
+                        "max": 0.5
+                    },
+                    "blendMode": "normal",
+                    "frequency": 0.001,
+                    "emitterLifetime": 100,
+                    "maxParticles": 1000,
+                    "pos": {
+                        "x": Util.getRandomInt(0, 600),
+                        "y": Util.getRandomInt(0, 600)
+                    },
+                    "addAtBack": false,
+                    "spawnType": "circle",
+                    "spawnCircle": {
+                        "x": 0,
+                        "y": 0,
+                        "r": 0
+                    }
+                }
+            );
+        },
+
+        /**
+         * Rotates the renderer. If the pivot/location hasn't been set,
+         * it can result in rendered objects in strange places.
+         * @param radians: number
+         */
+        rotate: function(radians) {
+            var stage = this.stage;
+            stage.rotation += radians;
+        }
     };
+});
+
+
+/***
+ * Creates a polyball renderer and adds it to the model's world.
+ *
+ * @param {Object} config
+ * @property {Model} config.model
+ */
+module.exports.createNew = function(config) {
+    var renderer = Physics.renderer('polyball', config);
+
+    var world = config.model.getWorld();
+    world.add(renderer);
+
+    return renderer;
 };
-
-module.exports = GameRenderer;
