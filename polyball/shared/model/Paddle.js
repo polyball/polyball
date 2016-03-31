@@ -129,6 +129,17 @@ var Paddle = function(config){
         return bound.vadd(from);
     };
 
+    /**
+     *
+     * @param {Physics.vector} leftBound
+     * @param {Physics.vector} rightBound
+     */
+    var computeAngle = function (leftBound, rightBound){
+        var angleVector = new Physics.vector(0,0).clone(rightBound);
+        angleVector.vsub(leftBound);
+        return angleVector.angle() + Math.PI/8;
+    };
+
     // Initialization
     var leftBoundVect = new Physics.vector(config.leftBound.x, config.leftBound.y);
     var rightBoundVect = new Physics.vector(config.rightBound.x, config.rightBound.y);
@@ -147,6 +158,8 @@ var Paddle = function(config){
             styles: config.body.styles
         }
     );
+
+    this.body.state.angular.pos = computeAngle(this.leftBound, this.rightBound);
     previousPos.clone(this.body.state.pos);
 };
 
