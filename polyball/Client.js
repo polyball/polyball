@@ -23,7 +23,8 @@ $(document).ready(function() {
         Logger.debug(config);
 
         var gameRenderer = GameRenderer.createNew({
-            model: model
+            model: model,
+            el: 'viewport'
         });
 
         var width = window.innerWidth,
