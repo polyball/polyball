@@ -32,6 +32,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
     var elapsed;
     var bhRendered;
     var textContainer;
+    var bhSprite;
+    var bhContainer;
     var self;
 
 
@@ -44,6 +46,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         twistFilter.offset = self.worldToClient(model.getArena().getCenter());
         twistFilter.angle = 2.5;
         self.stage.filters = [twistFilter];
+
+        self.stage.addChild(bhContainer);
     };
 
     /**
@@ -51,6 +55,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
      */
     var deactivateBlackhole = function() {
         self.stage.filters = null;
+        self.stage.removeChild(bhContainer);
     };
 
     /**
@@ -106,6 +111,12 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             this.stage.addChild(emitterContainer);
 
             emitters = [];
+
+            bhContainer = new Pixi.Container();
+            bhContainer.layer = -1;
+            bhSprite = Pixi.Sprite.fromImage('res/blackhole.png');
+            bhSprite.anchor.set(0.5, 0.5);
+            bhContainer.addChild(bhSprite);
 
             elapsed = Date.now();
         },
@@ -176,6 +187,9 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 this.stage.pivot.set(center.x, center.y);
                 this.stage.position.set(center.x, center.y);
 
+                //bhContainer.pivot.set(center.x, center.y);
+                bhContainer.position.set(center.x, center.y);
+
                 var localPlayer = model.getPlayer(model.getLocalClientID());
                 if (model.playerCount() > 0 && localPlayer !== undefined) {
                     var desiredX = window.innerWidth/2;
@@ -211,11 +225,15 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 return x.name === Blackhole.Name;
             });
 
-            if (blackholes.length > 0 && bhRendered === false) {
+            if (blackholes.length > 0 && bhRendered === false && blackholes[0].active === true) {
                 activateBlackhole();
                 bhRendered = true;
             }
-            else if (blackholes.length === 0 && bhRendered === true) {
+            else if (blackholes.length > 0 && bhRendered === true && blackholes[0].active === false) {
+                deactivateBlackhole();
+                bhRendered = false;
+            }
+            else if (blackholes.length === 0) {
                 deactivateBlackhole();
                 bhRendered = false;
             }
