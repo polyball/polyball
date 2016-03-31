@@ -118,6 +118,27 @@ describe('Arena', function() {
             arena2.getRadius().should.equal(500);
         });
 
-        // Needs tests for the goals.
+        it('should give the players expected score location', function() {
+            var arena = new Arena({
+                numberPlayers: 3,
+                arenaRadius: 500,
+                bumperRadius: 25,
+                marginX: 0,
+                marginY: 0
+            });
+
+            var score1 = arena.getScorePosition(0);
+            var score2 = arena.getScorePosition(1);
+            var score3 = arena.getScorePosition(2);
+
+            score1.x.should.approximately(500, fpDelta);
+            score1.y.should.approximately(1000, fpDelta);
+
+            score2.x.should.approximately(933.0127, fpDelta);
+            score2.y.should.approximately(250, fpDelta);
+
+            score3.x.should.approximately(66.9873, fpDelta);
+            score3.y.should.approximately(250, fpDelta);
+        });
     });
 });
