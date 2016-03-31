@@ -22,7 +22,7 @@ $(document).ready(function() {
         Logger.info('Config received:');
         Logger.debug(config);
 
-        var gameRenderer = new GameRenderer({
+        var gameRenderer = GameRenderer.createNew({
             model: model
         });
 
@@ -59,7 +59,7 @@ $(document).ready(function() {
         });
 
         Physics.util.ticker.on(function (time) {
-            gameRenderer.render();
+            gameRenderer.renderGame();
             synchronizer.tick(time);
         });
 
