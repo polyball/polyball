@@ -316,12 +316,7 @@ var Arena = function(config) {
                 cof: 0,
                 styles: {
                     fillStyle: colors.blue,
-                    layer: 6,
-                    icon: '\uf0d6',
-                    fontstyle: {
-                        fill: '#ffffff',
-                        font: '40px fontawesome'
-                    }
+                    layer: 6
                 }
             })
         );
