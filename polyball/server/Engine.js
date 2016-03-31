@@ -164,6 +164,7 @@ var Engine = function (config) {
 
             var paddleConfig = {
                 maxVelocity: config.configuration.paddleMaximumVelocity,
+                radius: config.configuration.paddleRadius,
                 leftBound: {
                     x: leftBound.x,
                     y: leftBound.y
@@ -180,7 +181,6 @@ var Engine = function (config) {
                             y: paddlePos.y
                         }
                     },
-                    radius: config.configuration.paddleRadius
                 }
             };
 

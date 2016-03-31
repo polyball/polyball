@@ -15,7 +15,7 @@ var Util = require('polyball/shared/Util');
  * @property {number} config.rightBound.x
  * @property {number} config.rightBound.y
  * @property {number} config.maxVelocity
- * @property {number} config.body.radius
+ * @property {number} config.radius
  * @property {number} config.body.state.pos.x
  * @property {number} config.body.state.pos.y
  * @property {Object} config.body.styles
@@ -34,6 +34,7 @@ var Paddle = function(config){
      */
     this.toConfig = function(){
         return {
+            radius: config.radius,
             leftBound: {
                 x: this.leftBound.x,
                 y: this.leftBound.y
@@ -44,8 +45,7 @@ var Paddle = function(config){
             },
             body: {
                 state: Util.bodyToStateConfig(this.body),
-                radius: this.body.radius,
-                styles: this.body.styles
+                styles: this.body.styles,
             }
         };
     };
@@ -125,7 +125,7 @@ var Paddle = function(config){
      */
     var computeBound = function(from, to){
         var bound = new Physics.vector(0,0).clone(to);
-        bound.vsub(from).normalize().mult(config.body.radius);
+        bound.vsub(from).normalize().mult(config.radius);
         return bound.vadd(from);
     };
 
@@ -138,11 +138,11 @@ var Paddle = function(config){
     var maxVelocity = config.maxVelocity;
     var me = this;
 
-    this.body = Physics.body('circle',
+    this.body = Physics.body('convex-polygon',
         {
             x: config.body.state.pos.x,
             y: config.body.state.pos.y,
-            radius: config.body.radius,
+            vertices: Physics.geometry.regularPolygonVertices(8, config.radius),
             treatment: 'kinematic',
             styles: config.body.styles
         }
