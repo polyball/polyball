@@ -97,7 +97,8 @@ var Engine = function (config) {
         setTimeout(function(){
             model.addPowerup({
                 name: Blackhole.Name,
-                body: generatePowerupBody()
+                body: generatePowerupBody(),
+                duration: config.configuration.powerupDuration
             });
         }, 5000);
 

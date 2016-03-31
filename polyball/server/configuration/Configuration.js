@@ -67,6 +67,8 @@ var Configuration = function (config){
     checkLowerBound('powerupRadius', 1);
     checkLowerBound('commandAggregationInterval', 20);
     checkLowerBound('inputAccumulationInterval', 10);
+    checkLowerBound('powerupDuration', 1);
+    checkUpperBound('powerupDuration', defaults.roundLength);
     this.values = values;
 
     Object.freeze(this.values);
