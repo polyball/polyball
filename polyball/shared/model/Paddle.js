@@ -137,7 +137,13 @@ var Paddle = function(config){
     var computeAngle = function (leftBound, rightBound){
         var angleVector = new Physics.vector(0,0).clone(rightBound);
         angleVector.vsub(leftBound);
-        return angleVector.angle() + Math.PI/8;
+        var angle = angleVector.angle();
+        if (angle >= 0){
+            angle += Math.PI/8;
+        } else {
+            angle -= Math.PI/8;
+        }
+        return angle;
     };
 
     // Initialization

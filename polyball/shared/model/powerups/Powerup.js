@@ -50,6 +50,7 @@ Powerup.prototype.toConfig = function (){
         id: this.id,
         active: this.active,
         owner: this.owner,
+        duration: this.duration,
         body: {
             state: Util.bodyToStateConfig(this.body),
             radius: this.body.geometry.radius,
