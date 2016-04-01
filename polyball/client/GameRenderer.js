@@ -279,11 +279,29 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 textContainer.position.set(center.x, center.y);
 
                 var players = model.getPlayers();
+
+                var oldPlayersText = textContainer.children.filter(function(textChild) {
+                    if (textChild.polyID.indexOf('player') !== -1) {
+                        var discoveries = players.filter(function(player) {
+                            return textChild.polyID === 'player' + player.id;
+                        });
+
+                        if (discoveries.length === 0) {
+                            return textChild;
+                        }
+                    }
+                    return [];
+                });
+
+                oldPlayersText.forEach(function(player) {
+                    textContainer.removeChild(player);
+                });
+
                 for (var i = 0; i < players.length; i++) {
                     var player = players[i];
                     var worldPos = model.getArena().getScorePosition(player.arenaPosition);
                     var localPos = this.worldToClient(worldPos);
-                    rotation = (model.getArena().getGoalRotation(i) + this.stage.rotation);
+                    rotation = (model.getArena().getGoalRotation(player.arenaPosition) + this.stage.rotation);
 
                     if (rotation < -Math.PI / 2 && rotation > -(3/2) * Math.PI) {
                         rotation = rotation - Math.PI;
