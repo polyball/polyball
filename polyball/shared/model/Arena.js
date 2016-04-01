@@ -80,7 +80,10 @@ var Arena = function(config) {
         var midX = this.getCenter().x;
         var midY = this.getCenter().y;
 
-        return getCoordinates(theta * position + thetaOffset, this.arenaRadius, midX, midY);
+        // We scale the location of the score based upon number of players.
+        var radius = this.arenaRadius + 25 * (Math.sqrt(2*(this.numberPlayers - 3))) - 50;
+
+        return getCoordinates(theta * position + thetaOffset, radius, midX, midY);
     };
 
     /**
@@ -123,7 +126,7 @@ var Arena = function(config) {
      * @returns {number}
      */
     this.getGoalRotation = function(index) {
-        return this.goals[index].rotation;
+        return this.goals[index].state.angular.pos;
     };
 
     /**

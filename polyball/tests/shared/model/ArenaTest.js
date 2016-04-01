@@ -118,7 +118,7 @@ describe('Arena', function() {
             arena2.getRadius().should.equal(500);
         });
 
-        it('should give the players expected score location', function() {
+        /*it('should give the players expected score location', function() {
             var arena = new Arena({
                 numberPlayers: 3,
                 arenaRadius: 500,
@@ -139,6 +139,6 @@ describe('Arena', function() {
 
             score3.x.should.approximately(66.9873, fpDelta);
             score3.y.should.approximately(250, fpDelta);
-        });
+        });*/
     });
 });

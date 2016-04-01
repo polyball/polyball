@@ -251,6 +251,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         beforeRender: function() {
             var style;
             var center;
+            var rotation;
 
             if (model.getArena() !== undefined) {
                 // Remove the title
@@ -282,14 +283,21 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     var player = players[i];
                     var worldPos = model.getArena().getScorePosition(player.arenaPosition);
                     var localPos = this.worldToClient(worldPos);
-                    //var rotation = model.getArena().getGoalRotation(i);
+                    rotation = (model.getArena().getGoalRotation(i) + this.stage.rotation);
 
-                    this.addText(player.score + '\n' + player.client.name, style, localPos, 0, 'player' + player.id);
+                    if (rotation < -Math.PI / 2 && rotation > -(3/2) * Math.PI) {
+                        rotation = rotation - Math.PI;
+                    }
+                    else if (rotation > Math.PI / 2 && rotation < (3/2) * Math.PI) {
+                        rotation = rotation - Math.PI;
+                    }
+
+                    this.addText(player.client.name + ': ' + player.score, style, localPos, rotation, 'player' + player.id);
                 }
 
                 var localPlayer = model.getPlayer(model.getLocalClientID());
                 if (model.playerCount() > 0 && localPlayer !== undefined) {
-                    var rotation = localPlayer.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length;
+                    rotation = localPlayer.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length;
 
                     this.stage.rotation = 0;
                     this.rotate(rotation);
