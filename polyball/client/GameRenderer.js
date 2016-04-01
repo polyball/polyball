@@ -35,7 +35,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
     var textContainer;
     var bhSprite;
     var bhContainer;
-    var displacementFilter;
     var twistFilter;
     var twistUp;
     var self;
@@ -52,8 +51,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         twistFilter.angle = 0;
 
         twistUp = true;
-
-        //displacementFilter = new Pixi.filters.DisplacementFilter(bhSprite);
 
         self.stage.addChild(bhContainer);
 
@@ -74,14 +71,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
     var update = function() {
         requestAnimationFrame(update);
 
-        if (displacementFilter) {
-            var offset = 2;
-
-            displacementFilter.maskMatrix.tx += offset;
-            displacementFilter.maskMatrix.ty += offset;
-            //displacementFilter.offset.x += offset;
-            //displacementFilter.offset.y += offset;
-        }
         if (twistFilter) {
             var twistMax = 23;
             var twistMin = 7;
@@ -271,7 +260,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 deactivateBlackhole();
                 bhRendered = false;
             }
-            else if (blackholes.length === 0) {
+            else if (blackholes.length === 0 && bhRendered === true) {
                 deactivateBlackhole();
                 bhRendered = false;
             }
