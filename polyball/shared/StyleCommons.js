@@ -27,7 +27,7 @@ var paddleStyle = {
 var fontStyle = {
     font : '24px Cabin',
     fill : '#000000',
-    strokeThickness : 3
+    strokeThickness : 2
 };
 
 var titleFontStyle = {
