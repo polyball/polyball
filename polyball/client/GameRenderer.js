@@ -8,6 +8,7 @@ var PixiParticles = require('pixi-particles'); // jshint ignore:line
 var Physics = require('physicsjs');
 var Util = require('polyball/shared/Util');
 var Blackhole = require('polyball/shared/model/powerups/Blackhole');
+var StyleCommons = require('polyball/shared/StyleCommons');
 
 // Shim in the PIXI global that Physics.js is looking for to do its primitive rendering.
 window.PIXI = Pixi;
@@ -245,12 +246,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                         var worldPos = model.getArena().getScorePosition(player.arenaPosition);
                         //var localPos = this.worldToClient(worldPos);
 
-                        var style = {
-                            font : 'bold italic 36px Arial',
-                            fill : '#dc322f',
-                            stroke : '#1d6b98',
-                            strokeThickness : 5
-                        };
+                        var style = StyleCommons.fontStyle;
 
                         this.addText(player.score + '\n' + player.client.name, style, worldPos, -rotation);
                     }

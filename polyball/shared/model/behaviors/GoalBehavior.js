@@ -14,7 +14,11 @@ var GoalBehavior = function(config){
     var handleCollision = function(event){
         var player = config.model.getPlayer(event.ball.lastTouchedID);
         if (player != null){
-            player.score += 1;
+            if (player.id !== event.entity.id){
+                player.score += 1;
+            } else {
+                player.score -= 1;
+            }
         }
     };
 

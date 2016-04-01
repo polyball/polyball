@@ -18,6 +18,7 @@ var DefaultConfiguration=function () {
 
         //Powerup Config
         powerupRadius: 30,          // The radius for "Powerup Balls"
+        powerupDuration: 20000,    // Time the powerups should last (milliseconds)
 
         // Server Config
         serverTick: 30,             // What interval the server should progress the simulation (milliseconds)

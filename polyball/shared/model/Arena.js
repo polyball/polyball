@@ -5,6 +5,7 @@
 
 var Physics = require("physicsjs");
 var Util = require('polyball/shared/Util');
+var StyleCommons = require('polyball/shared/StyleCommons');
 
 /**
  * @param {Object} config
@@ -69,7 +70,7 @@ var Arena = function(config) {
     /**
      * This returns the location of the players score interface in arena physical coordinates.
      * This will be used to draw the HUD.
-     * @param playerId: number
+     * @param position: number
      * @returns {Physics.vector}
      */
     this.getScorePosition = function(position) {
@@ -264,14 +265,6 @@ var Arena = function(config) {
     this.bumpers = [];
     this.points = [];
 
-    var colors = {
-        black: '0x171717',
-        blue: '0x1d6b98',
-        blueDark: '0x14546f',
-        red: '0xdc322f',
-        redDark: '0xa42222'
-    };
-
     var midX = this.getCenter().x;
     var midY = this.getCenter().y;
 
@@ -301,10 +294,7 @@ var Arena = function(config) {
             height: 30,
             treatment: 'static',
             cof: 0,
-            styles: {
-                fillStyle: colors.red,
-                layer: 5
-            }
+            styles: StyleCommons.goalStyle
         }));
 
         this.bumpers.push(
@@ -314,10 +304,7 @@ var Arena = function(config) {
                 radius: this.bumperRadius,
                 treatment: 'static',
                 cof: 0,
-                styles: {
-                    fillStyle: colors.blue,
-                    layer: 6
-                }
+                styles: StyleCommons.bumperStyle
             })
         );
     }

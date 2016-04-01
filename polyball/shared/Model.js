@@ -309,11 +309,6 @@ var Model = function () {
 
         var newConfig = {
             id: config.id ? config.id : nextID(),
-            body: {
-                styles: {
-                    fillStyle: '0xa42222'
-                }
-            }
         };
 
         _.assign(newConfig, config);

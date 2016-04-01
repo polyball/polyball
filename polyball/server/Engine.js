@@ -109,7 +109,8 @@ var Engine = function (config) {
             };
             model.addPowerup({
                 name: Blackhole.Name,
-                body: bodyConfig
+                body: bodyConfig,
+                duration: config.configuration.powerupDuration
             });
         }, 5000);
 
@@ -125,6 +126,8 @@ var Engine = function (config) {
         // TODO tell all clients to show top 3 players for 5 seconds
         model.reset();
         removeBehaviors();
+        resetPowerups();
+        resetPlayScores();
         setTimeout(initializeGame, config.configuration.roundIntermission);
     };
 
@@ -251,6 +254,26 @@ var Engine = function (config) {
             behavior.disconnect();
         });
         behaviors = [];
+    };
+
+    /**
+     * Removes all powerups from the world
+     */
+    var resetPowerups = function(){
+        model.getPowerups().forEach(function(powerup){
+           powerup.deactivate(model);
+        });
+
+        model.clearPowerups();
+    };
+
+    /**
+     * Resets all the player scores to 0
+     */
+    var resetPlayScores = function(){
+        model.getPlayers().forEach(function(player){
+            player.score = 0;
+        });
     };
 
 

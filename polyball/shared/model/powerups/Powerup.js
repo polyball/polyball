@@ -11,12 +11,13 @@ var Util = require('polyball/shared/Util');
  * @property {number} config.body.state.vel.y
  * @property {number} config.body.radius
  * @property {Object} config.body.styles
+ * @property {number} config.duration
  */
 var Powerup = function(config){
     this.id = config.id;
     this.active = false;
     this.owner = config.owner;
-
+    this.duration = config.duration;
 
     var newBodyConfig = {
         x: config.body.state.pos.x,
@@ -38,6 +39,10 @@ var Powerup = function(config){
  */
 Powerup.prototype.activate = function(model){
     model.getWorld().removeBody(this.body);
+    var self = this;
+    setTimeout(function(){
+        self.deactivate(model);
+    }, this.duration);
 };
 
 Powerup.prototype.toConfig = function (){
