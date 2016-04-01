@@ -156,6 +156,11 @@ var Engine = function (config) {
      * @param {Spectator} spectator
      */
     var convertSpectatorToPlayer = function (spectator) {
+        if (spectator == null) {
+            Logger.warn('Spectator must have dropped after queueing.  Not converting to player.');
+            return;
+        }
+
         var config = {
             clientConfig: spectator.client.toConfig(),
             id: spectator.id
