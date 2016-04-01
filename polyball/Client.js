@@ -27,8 +27,9 @@ $(document).ready(function() {
             el: 'viewport'
         });
 
-        var width = window.innerWidth,
-            height = window.innerHeight;
+        var dim = Math.min(window.innerHeight, window.innerWidth);
+        var width = dim;
+        var height = dim;
 
         Logger.info('Width: ' + width + ' Height: ' + height);
 
@@ -37,8 +38,9 @@ $(document).ready(function() {
         gameRenderer.renderParticles();
 
         window.onresize = function () {
-            width = window.innerWidth;
-            height = window.innerHeight;
+            dim = Math.min(window.innerHeight, window.innerWidth);
+            width = dim;
+            height = dim;
 
             Logger.info('Width: ' + width + ' Height: ' + height);
             gameRenderer.resize(width - 25, height - 25);

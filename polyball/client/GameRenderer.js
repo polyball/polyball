@@ -34,6 +34,9 @@ Physics.renderer('polyball', 'pixi', function (parent) {
     var textContainer;
     var bhSprite;
     var bhContainer;
+    var displacementFilter;
+    var twistFilter;
+    var twistUp;
     var self;
 
 
@@ -41,13 +44,19 @@ Physics.renderer('polyball', 'pixi', function (parent) {
      * Applies the visual effects for the black hole to the arena.
      */
     var activateBlackhole = function() {
-        var twistFilter = new Pixi.filters.TwistFilter();
-        twistFilter.radius = 500;
-        twistFilter.offset = self.worldToClient(model.getArena().getCenter());
-        twistFilter.angle = 2.5;
-        self.stage.filters = [twistFilter];
+        twistFilter = new Pixi.filters.TwistFilter();
+        twistFilter.radius = 0.08;
+        twistFilter.offset.x = 0.5;
+        twistFilter.offset.y = 0.5;
+        twistFilter.angle = 0;
+
+        twistUp = true;
+
+        //displacementFilter = new Pixi.filters.DisplacementFilter(bhSprite);
 
         self.stage.addChild(bhContainer);
+
+        self.stage.filters = [twistFilter];
     };
 
     /**
@@ -63,6 +72,39 @@ Physics.renderer('polyball', 'pixi', function (parent) {
      */
     var update = function() {
         requestAnimationFrame(update);
+
+        if (displacementFilter) {
+            var offset = 2;
+
+            displacementFilter.maskMatrix.tx += offset;
+            displacementFilter.maskMatrix.ty += offset;
+            //displacementFilter.offset.x += offset;
+            //displacementFilter.offset.y += offset;
+        }
+        if (twistFilter) {
+            var twistMax = 23;
+            var twistMin = 7;
+            var twistChange = 0.3;
+
+            if (twistUp) {
+                twistFilter.angle += twistChange;
+            }
+            else {
+                twistFilter.angle -= twistChange;
+            }
+
+            if (twistFilter.angle > twistMax) {
+                twistUp = false;
+            }
+            else if (twistFilter.angle < twistMin) {
+                twistUp = true;
+            }
+
+            if (Math.random() > 0.995) {
+                twistUp = !twistUp;
+            }
+
+        }
 
         var now = Date.now();
 
@@ -192,8 +234,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
 
                 var localPlayer = model.getPlayer(model.getLocalClientID());
                 if (model.playerCount() > 0 && localPlayer !== undefined) {
-                    var desiredX = window.innerWidth/2;
-                    var desiredY = window.innerHeight/2;
+                    var desiredX = this.renderer.view.width / 2;
+                    var desiredY = this.renderer.view.height / 2;
                     var rotation = localPlayer.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length;
 
                     textContainer.removeChildren();
@@ -332,6 +374,11 @@ Physics.renderer('polyball', 'pixi', function (parent) {
          * @param height: number
          */
         resize: function(width, height) {
+            this.renderer.view.style.position = 'absolute';
+            this.renderer.view.style.left = '50%';
+            this.renderer.view.style.top = '50%';
+            this.renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
+
             parent.resize.call(this, width, height);
             this.renderer.resize(this.width, this.height);
         },
