@@ -5,6 +5,7 @@
 
 var Physics = require("physicsjs");
 var Util = require('polyball/shared/Util');
+var StyleCommons = require('polyball/shared/StyleCommons');
 
 /**
  * This *can* take a config returned by #toConfig(), but acceleration, angular state, and old state are
@@ -40,7 +41,8 @@ var Ball = function(config) {
         x: config.body.state.pos.x,
         y: config.body.state.pos.y,
         vx: config.body.state.vel.x,
-        vy: config.body.state.vel.y
+        vy: config.body.state.vel.y,
+        styles: StyleCommons.ballStyle
     };
     newBodyConfig.radius = config.body.radius;
     newBodyConfig.mass = 1;

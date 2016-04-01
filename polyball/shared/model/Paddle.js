@@ -5,6 +5,7 @@
 
 var Physics = require("physicsjs");
 var Util = require('polyball/shared/Util');
+var StyleCommons = require('polyball/shared/StyleCommons');
 
 
 /**
@@ -18,7 +19,6 @@ var Util = require('polyball/shared/Util');
  * @property {number} config.radius
  * @property {number} config.body.state.pos.x
  * @property {number} config.body.state.pos.y
- * @property {Object} config.body.styles
  * @constructor
  */
 var Paddle = function(config){
@@ -155,7 +155,7 @@ var Paddle = function(config){
             y: config.body.state.pos.y,
             vertices: Physics.geometry.regularPolygonVertices(8, config.radius),
             treatment: 'kinematic',
-            styles: config.body.styles
+            styles: StyleCommons.paddleStyle
         }
     );
 
