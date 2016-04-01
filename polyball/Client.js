@@ -33,7 +33,7 @@ $(document).ready(function() {
 
         Logger.info('Width: ' + width + ' Height: ' + height);
 
-        gameRenderer.resize(width - 25, height - 25);
+        gameRenderer.resize(width - 8, height - 8);
         gameRenderer.forceFontLoad();
         gameRenderer.renderParticles();
 
@@ -43,7 +43,7 @@ $(document).ready(function() {
             height = dim;
 
             Logger.info('Width: ' + width + ' Height: ' + height);
-            gameRenderer.resize(width - 25, height - 25);
+            gameRenderer.resize(width - 8, height - 8);
         };
 
         var synchronizer = new Synchronizer({
