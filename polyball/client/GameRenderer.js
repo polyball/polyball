@@ -426,9 +426,20 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             //this.renderer.view.style.left = '50%';
             //this.renderer.view.style.top = '50%';
             //this.renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
+            if (!height || !width) {
+                Logger.warn(
+                    "renderer resize called with suspicious values: width " + 
+                    width + 
+                    ", height " + 
+                    height);
+
+                return;
+            }
 
             parent.resize.call(this, width, height);
-            this.renderer.resize(this.width, this.height);
+            this.renderer.resize(width, height);
+
+            Logger.info('DEBUG: ' + width + ' ' + height);
         },
 
         worldToClient: function(point) {
