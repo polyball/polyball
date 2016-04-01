@@ -9,6 +9,7 @@ var Physics = require('physicsjs');
 var Util = require('polyball/shared/Util');
 var Blackhole = require('polyball/shared/model/powerups/Blackhole');
 var StyleCommons = require('polyball/shared/StyleCommons');
+var Logger = require('polyball/shared/Logger');
 
 // Shim in the PIXI global that Physics.js is looking for to do its primitive rendering.
 window.PIXI = Pixi;
@@ -193,6 +194,10 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             return view;
         },
 
+        /**
+         * This function forces awesomefonts to be loaded. If this isn't called,
+         * icons won't show up.
+         */
         forceFontLoad: function() {
             var text = new Pixi.Text('\uf254', {fill: '#ffffff', font: '40px fontawesome'});
             text.anchor.set(0.5, 0.5);
@@ -201,13 +206,42 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             text.renderable = false;
         },
 
-        addText: function(text, style, offset, rotation) {
-            var textObject = new Pixi.Text(text, style);
-            textObject.anchor.set(0.5, 0.5);
-            textObject.rotation = rotation;
-            textObject.position = offset;
+        /**
+         * Adds text to the scene. If the Text object already exists, it's modified.
+         * @param {String} text
+         * @param {Object} style - the Pixi.Text style object
+         * @param {Point} offset - the offset of Text relative to textContainer
+         * @param {Number} rotation - the rotation of the text object
+         * @param {String} id - used to uniquely identify text that already exists
+         */
+        addText: function(text, style, offset, rotation, id) {
+            var textObject;
 
-            textContainer.addChild(textObject);
+            // See if there exists a Text
+            var textObjects = textContainer.children.filter(function(textChild) {
+                return textChild.polyID === id;
+            });
+
+            if (textObjects.length > 1) {
+                Logger.error('Found multiple Text objects with id: ' + id + ' in addText');
+            }
+            else if (textObjects.length === 1) {
+                textObject = textObjects[0];
+                textObject.text = text;
+                textObject.style = style;
+                textObject.anchor.set(0.5, 0.5);
+                textObject.position = offset;
+                textObject.rotation = rotation;
+            }
+            else {
+                textObject = new Pixi.Text(text, style);
+                textObject.anchor.set(0.5, 0.5);
+                textObject.position = offset;
+                textObject.rotation = rotation;
+                textObject.polyID = id;
+
+                textContainer.addChild(textObject);
+            }
         },
 
         // NOTE: Used to be called render(), but overriding that is a last resort for physics renderers.
@@ -228,7 +262,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     var desiredY = this.renderer.view.height / 2;
                     var rotation = localPlayer.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length;
 
-                    textContainer.removeChildren();
+
                     var players = model.getPlayers();
                     for (var i = 0; i < players.length; i++) {
                         var player = players[i];
@@ -237,7 +271,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
 
                         var style = StyleCommons.fontStyle;
 
-                        this.addText(player.score + '\n' + player.client.name, style, worldPos, -rotation);
+                        this.addText(player.score + '\n' + player.client.name, style, worldPos, -rotation, 'player' + player.id);
                     }
 
                     this.stage.rotation = 0;
