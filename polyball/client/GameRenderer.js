@@ -282,6 +282,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     var player = players[i];
                     var worldPos = model.getArena().getScorePosition(player.arenaPosition);
                     var localPos = this.worldToClient(worldPos);
+                    //var rotation = model.getArena().getGoalRotation(i);
+
                     this.addText(player.score + '\n' + player.client.name, style, localPos, 0, 'player' + player.id);
                 }
 
@@ -421,9 +423,9 @@ Physics.renderer('polyball', 'pixi', function (parent) {
          */
         resize: function(width, height) {
             this.renderer.view.style.position = 'absolute';
-            this.renderer.view.style.left = '50%';
-            this.renderer.view.style.top = '50%';
-            this.renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
+            //this.renderer.view.style.left = '50%';
+            //this.renderer.view.style.top = '50%';
+            //this.renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
 
             parent.resize.call(this, width, height);
             this.renderer.resize(this.width, this.height);

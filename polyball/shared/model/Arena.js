@@ -118,6 +118,15 @@ var Arena = function(config) {
     };
 
     /**
+     * Returns the rotation of a players goal.
+     * @param index: number
+     * @returns {number}
+     */
+    this.getGoalRotation = function(index) {
+        return this.goals[index].rotation;
+    };
+
+    /**
      * Get an array containing all of the bumpers in the arena.
      * @return {Physics.body[]}
      */
