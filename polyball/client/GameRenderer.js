@@ -277,26 +277,26 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 textContainer.pivot.set(center.x, center.y);
                 textContainer.position.set(center.x, center.y);
 
+                var players = model.getPlayers();
+                for (var i = 0; i < players.length; i++) {
+                    var player = players[i];
+                    var worldPos = model.getArena().getScorePosition(player.arenaPosition);
+                    var localPos = this.worldToClient(worldPos);
+                    this.addText(player.score + '\n' + player.client.name, style, localPos, 0, 'player' + player.id);
+                }
+
                 var localPlayer = model.getPlayer(model.getLocalClientID());
                 if (model.playerCount() > 0 && localPlayer !== undefined) {
-                    var desiredX = this.renderer.view.width / 2;
-                    var desiredY = this.renderer.view.height / 2;
                     var rotation = localPlayer.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length;
-
-                    var players = model.getPlayers();
-                    for (var i = 0; i < players.length; i++) {
-                        var player = players[i];
-                        var worldPos = model.getArena().getScorePosition(player.arenaPosition);
-                        var localPos = this.worldToClient(worldPos);
-                        this.addText(player.score + '\n' + player.client.name, style, localPos, 0, 'player' + player.id);
-                    }
 
                     this.stage.rotation = 0;
                     this.rotate(rotation);
-                    this.stage.position.set(desiredX, desiredY);
                 }
 
+                var desiredX = this.renderer.view.width / 2;
+                var desiredY = this.renderer.view.height / 2;
 
+                this.stage.position.set(desiredX, desiredY);
             }
             else {
                 style = StyleCommons.titleFontStyle;
@@ -316,7 +316,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 activateBlackhole();
                 bhRendered = true;
             }
-            else if (blackholes.length > 0 && bhRendered === true && blackholes[0].active === false) {
+            else if (blackholes.length > 0 && blackholes[0].active === false) {
                 deactivateBlackhole();
                 bhRendered = false;
             }
