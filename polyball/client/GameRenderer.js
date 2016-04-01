@@ -261,12 +261,21 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     textObjects[0].visible = false;
                 }
 
+                style = StyleCommons.fontStyle;
                 center = model.getArena().getCenter();
+
+                // Add/update the round timer
+                // Update the round timer
+                if (model.currentRoundTime) {
+                    var timePoint = new Physics.vector(this.renderer.width / 2, this.renderer.height / 2);
+                    this.addText(model.currentRoundTime.toString(), style, timePoint, 0, 'round-timer');
+                }
+
                 this.stage.pivot.set(center.x, center.y);
                 this.stage.position.set(center.x, center.y);
-
-                //bhContainer.pivot.set(center.x, center.y);
                 bhContainer.position.set(center.x, center.y);
+                textContainer.pivot.set(center.x, center.y);
+                textContainer.position.set(center.x, center.y);
 
                 var localPlayer = model.getPlayer(model.getLocalClientID());
                 if (model.playerCount() > 0 && localPlayer !== undefined) {
@@ -274,14 +283,12 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     var desiredY = this.renderer.view.height / 2;
                     var rotation = localPlayer.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length;
 
-
                     var players = model.getPlayers();
                     for (var i = 0; i < players.length; i++) {
                         var player = players[i];
                         var worldPos = model.getArena().getScorePosition(player.arenaPosition);
-
-                        style = StyleCommons.fontStyle;
-                        this.addText(player.score + '\n' + player.client.name, style, worldPos, -rotation, 'player' + player.id);
+                        var localPos = this.worldToClient(worldPos);
+                        this.addText(player.score + '\n' + player.client.name, style, localPos, 0, 'player' + player.id);
                     }
 
                     this.stage.rotation = 0;
@@ -404,6 +411,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         rotate: function(radians) {
             var stage = this.stage;
             stage.rotation += radians;
+            textContainer.rotation = -radians;
         },
 
         /**
@@ -431,7 +439,17 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             point.y = point.y + offset.y - center.y;
 
             return point;
+        },
+
+        unrotate: function(point) {
+            var rotation = this.stage.rotation;
+            var center = model.getArena().getCenter();
+
+            point.rotate(-rotation, center);
+
+            return point;
         }
+
     };
 });
 
