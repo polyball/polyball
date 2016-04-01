@@ -38,6 +38,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
     var bhContainer;
     var twistFilter;
     var twistUp;
+    var titleID;
     var self;
 
 
@@ -133,6 +134,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             self = this;
 
             bhRendered = false;
+            titleID = 'title-screen';
 
             textContainer = new Pixi.Container();
             this.stage.addChild(textContainer);
@@ -247,9 +249,19 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         // NOTE: Used to be called render(), but overriding that is a last resort for physics renderers.
         //       See https://github.com/wellcaffeinated/PhysicsJS/wiki/Renderers#further-customization
         beforeRender: function() {
+            var style;
+            var center;
 
             if (model.getArena() !== undefined) {
-                var center = model.getArena().getCenter();
+                // Remove the title
+                var textObjects = textContainer.children.filter(function(textChild) {
+                    return textChild.polyID === titleID;
+                });
+                if (textObjects.length > 0) {
+                    textObjects[0].visible = false;
+                }
+
+                center = model.getArena().getCenter();
                 this.stage.pivot.set(center.x, center.y);
                 this.stage.position.set(center.x, center.y);
 
@@ -267,10 +279,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     for (var i = 0; i < players.length; i++) {
                         var player = players[i];
                         var worldPos = model.getArena().getScorePosition(player.arenaPosition);
-                        //var localPos = this.worldToClient(worldPos);
 
-                        var style = StyleCommons.fontStyle;
-
+                        style = StyleCommons.fontStyle;
                         this.addText(player.score + '\n' + player.client.name, style, worldPos, -rotation, 'player' + player.id);
                     }
 
@@ -280,6 +290,15 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 }
 
 
+            }
+            else {
+                style = StyleCommons.titleFontStyle;
+                center = {
+                    x : this.renderer.width / 2,
+                    y : this.renderer.height / 2
+                };
+
+                this.addText('polyball', style, center, 0, titleID);
             }
 
             var blackholes = model.getPowerups(function(x) {

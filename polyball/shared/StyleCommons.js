@@ -25,14 +25,20 @@ var paddleStyle = {
 };
 
 var fontStyle = {
-    font : '36px Cabin',
+    font : '24px Cabin',
     fill : '#000000',
     strokeThickness : 3
 };
 
+var titleFontStyle = {
+    font : '96px Cabin',
+    fill : '#000000',
+    strokeThickness : 6
+};
 
 exports.ballStyle = ballStyle;
 exports.goalStyle = goalStyle;
 exports.bumperStyle = bumperStyle;
 exports.paddleStyle = paddleStyle;
 exports.fontStyle = fontStyle;
+exports.titleFontStyle = titleFontStyle;
