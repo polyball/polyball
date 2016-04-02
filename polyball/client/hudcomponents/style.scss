@@ -20,6 +20,10 @@ canvas{ position: absolute; z-index: $canvasZIndex }
   color: #8e8e8e;
 }
 
+.grayed {
+  color: #8e8e8e;
+}
+
 #hudColumn {
   float: right;
   width: 20em;

@@ -68,14 +68,14 @@ var HUD = function (config) {
         spectatorList.empty();
         model.getSpectators().forEach(appendNameToList(spectatorList));
 
-        if (model.getAllQueuedPlayers().length === 0) {
-            $('.playerQueueHeading').css("visibility", "hidden");
-        } else {
-
-            $('.playerQueueHeading').css("visibility", "visible");
-        }
         var playerQueueList = $('.playerQueue');
         playerQueueList.empty();
+
+        if (model.getAllQueuedPlayers().length === 0) {
+            playerQueueList.append(
+                $('<li>').addClass('grayed').text('No players queued.')
+            );
+        }
         model.getAllQueuedPlayers().forEach(appendNameToList(playerQueueList));
     };
 };
