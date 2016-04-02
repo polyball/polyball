@@ -6,8 +6,11 @@
 }
 
 .addToQueue {
-  top: 80%;
-  left: 85%;
+  bottom: 0;
+  right: 0;
+  padding-bottom: 1rem;
+  padding-right: 1rem;
+  position: fixed;
 }
 
 i {
