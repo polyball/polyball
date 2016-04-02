@@ -166,6 +166,7 @@ PassthroughSynchronizer.sync = function (snapshot, model) {
 
     model.setPlayerQueue(snapshot.playerQueue);
     model.setRoundLength(snapshot.roundLength);
+    model.gameStatus = snapshot.gameStatus;
 };
 
 module.exports = PassthroughSynchronizer;
