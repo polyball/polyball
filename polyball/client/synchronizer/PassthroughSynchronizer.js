@@ -93,6 +93,13 @@ function syncDiscretePlayerState(players, model) {
                 throw 'syncDiscretePlayerState could not find player that MUST exist by now.';
             }
 
+            if (player.paddle == null) {
+                var paddleAddConfig = {
+                    playerID: snapshotPlayer.id,
+                    paddleConfig: snapshotPlayer.paddleConfig
+                };
+                model.addPaddleToPlayer(paddleAddConfig);
+            }
             player.arenaPosition = snapshotPlayer.arenaPosition;
             player.score = snapshotPlayer.score;
             player.client.name = snapshotPlayer.clientConfig.name;

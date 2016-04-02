@@ -96,6 +96,7 @@ var Synchronizer = function (config) {
             return;
         }
 
+        model.reset();
         //TODO: HUD.roundCountdown(newRoundData.delay);
     };
 
