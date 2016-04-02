@@ -135,6 +135,10 @@ var Engine = function (config) {
     var endGame = function(){
         model.gameStatus = EngineStatus.gameFinishing;
         // TODO tell all clients to show top 3 players for 5 seconds
+        //   it could be simpler - just rely on the snapshot.  the client will get lots of snapshots during the
+        //   round intermission (pending #214) with the model.gameStatus === gameFinishing.  during that time,
+        //   a round intermission message will be displayed.  put a gameResult field on the model with the scores,
+        //   and the client will just display it alongside the intermission message.
         model.reset();
         removeBehaviors();
         resetPowerups();
