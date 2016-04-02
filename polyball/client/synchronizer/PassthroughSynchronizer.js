@@ -93,7 +93,7 @@ function syncDiscretePlayerState(players, model) {
                 throw 'syncDiscretePlayerState could not find player that MUST exist by now.';
             }
 
-            if (player.paddle == null) {
+            if (player.paddle == null && snapshotPlayer.paddleConfig != null) {
                 var paddleAddConfig = {
                     playerID: snapshotPlayer.id,
                     paddleConfig: snapshotPlayer.paddleConfig
