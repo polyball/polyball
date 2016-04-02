@@ -43,7 +43,7 @@ var HUD = function (config) {
     this.render = function () {
         var spectatorList = $('.spectatorList');
         spectatorList.empty();
-        model.getSpectators().forEach(function (spectator) {;
+        model.getSpectators().forEach(function (spectator) {
             var spectatorElement = $('<li>').text(spectator.client.name);
             
             if (spectator.id === model.getLocalClientID()) {
