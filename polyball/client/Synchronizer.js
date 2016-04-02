@@ -55,7 +55,7 @@ var Synchronizer = function (config) {
         slowDecayRate: 0.15
     });
 
-    var roundStartTime = 0;
+    var roundStartTime = null;  // TODO: roundStartTime will be managed by round engine
     
     //
     //             INTERNAL METHODS
@@ -76,6 +76,12 @@ var Synchronizer = function (config) {
         if (snapshot == null) {
             Logger.warn('Synchronizer#synchronizeSnapshot called with null snapshot.');
             return;
+        }
+
+        if (roundStartTime == null) {
+            Logger.info('Connection as spectator for in-progress round detected.  Estimating current round time.');
+
+            roundStartTime = Date.now() - snapshot.currentRoundTime;
         }
         
         PassthroughSynchronizer.sync(snapshot, model);
@@ -102,7 +108,7 @@ var Synchronizer = function (config) {
         model.setCurrentRoundTime(0);
 
         roundStartTime = Date.now();
-        
+
         //TODO: HUD.roundCountdown(newRoundData.delay);
     };
 
