@@ -13,6 +13,19 @@ var _ = require('lodash');
  * @constructor
  */
 var Blackhole = function(config){
+
+    config.body.styles = {
+        fillStyle: '#000000',
+        lineWidth: 1,
+        strokeStyle: '#000000',
+        layer: 6,
+        icon: '\uf069',
+        fontstyle: {
+            fill: '#ffffff',
+            font: '30px fontawesome'
+        }
+    };
+
     Powerup.call(this, config);
     this.name = Blackhole.Name;
 };
