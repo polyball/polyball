@@ -1,5 +1,11 @@
 @import 'constants';
 
 .statusMessage {
+  margin-top: 3em;
+  margin-right: $hudMargin;
+  padding: 1em 1em 1em  1em;
+  font-size: 2em;
   font-weight: bold;
+  border-radius: 1em;
+  background: $darkGrayTransparent;
 }

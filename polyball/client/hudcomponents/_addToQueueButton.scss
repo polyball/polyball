@@ -8,8 +8,8 @@
 .addToQueue {
   bottom: 0;
   right: 0;
-  padding-bottom: 1rem;
-  padding-right: 1rem;
+  padding-bottom: $hudMargin;
+  padding-right: $hudMargin;
   position: fixed;
 }
 

@@ -3,6 +3,7 @@
 // Component Imports
 @import "addToQueueButton";
 @import "hudList";
+@import "statusMessages";
 @import url(https://fonts.googleapis.com/css?family=Cabin);
 
 body {
@@ -17,14 +18,14 @@ canvas{ position: absolute; z-index: $canvasZIndex }
 }
 
 .hud .localClient {
-  color: #8e8e8e;
+  color: $veryLightGray;
 }
 
 .grayed {
-  color: #8e8e8e;
+  color: $veryLightGray;
 }
 
 #hudColumn {
   float: right;
-  width: 20em;
+  width: 16em;
 }
