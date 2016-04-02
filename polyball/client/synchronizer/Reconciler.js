@@ -62,7 +62,11 @@ var Reconciler = function (config) {
             var localPlayer = model.getPlayer(model.getLocalClientID());
             players.forEach(function (snapshotPlayer) {
 
-                if (localPlayer != null && localPlayer.id === snapshotPlayer.id) {
+                if (localPlayer != null &&
+                    localPlayer.id === snapshotPlayer.id &&
+                    localPlayer.paddle != null &&
+                    snapshotPlayer.paddleConfig != null) {
+
                     localPlayer.paddle.body.state.pos.x = snapshotPlayer.paddleConfig.body.state.pos.x;
                     localPlayer.paddle.body.state.pos.y = snapshotPlayer.paddleConfig.body.state.pos.y;
                 }
