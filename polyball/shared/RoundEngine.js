@@ -29,7 +29,6 @@ var RoundEngine = function(config){
     var gameStartTime;
     var gameLoop;
     var behaviors = [];
-    var collisionsPruner;
 
     /**
      * For event subscribers.
@@ -68,7 +67,7 @@ var RoundEngine = function(config){
     //
     /////////////////////////////////////////////////////////////////
     var initializeGame = function(){
-        collisionsPruner = new BodyCollider({world: model.getWorld(), model: model});
+        model.collisionsPruner = new BodyCollider({world: model.getWorld(), model: model});
 
         addPhysicsBehavior(PaddleBehavior, {paddleEventsPublisher: config.paddleEventsPublisher,
             paddleMoveEvent: config.paddleMoveEvent,
@@ -102,7 +101,7 @@ var RoundEngine = function(config){
     var endGame = function(){
         clearInterval(gameLoop);
         removeBehaviors();
-        collisionsPruner.disconnect();
+        model.collisionsPruner.disconnect();
         pubsub.fireEvent(RoundEvents.gameEnded);
     };
 

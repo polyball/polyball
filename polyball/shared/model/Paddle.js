@@ -36,12 +36,12 @@ var Paddle = function(config){
         return {
             radius: config.radius,
             leftBound: {
-                x: this.leftBound.x,
-                y: this.leftBound.y
+                x: config.leftBound.x,
+                y: config.leftBound.y
             },
             rightBound: {
-                x: this.rightBound.x,
-                y: this.rightBound.y
+                x: config.rightBound.x,
+                y: config.rightBound.y
             },
             body: {
                 state: Util.bodyToStateConfig(this.body),
@@ -125,8 +125,8 @@ var Paddle = function(config){
      */
     var computeBound = function(from, to){
         var bound = new Physics.vector(0,0).clone(to);
-        bound.vsub(from).normalize().mult(config.radius);
-        return bound.vadd(from);
+        bound.vsub(from).normalize().mult(config.radius).vadd(from);
+        return bound;
     };
 
     /**
@@ -147,11 +147,12 @@ var Paddle = function(config){
     };
 
     // Initialization
-    var leftBoundVect = new Physics.vector(config.leftBound.x, config.leftBound.y);
-    var rightBoundVect = new Physics.vector(config.rightBound.x, config.rightBound.y);
+    this.goalLeftBound = new Physics.vector(config.leftBound.x, config.leftBound.y);
+    this.goalRightBound = new Physics.vector(config.rightBound.x, config.rightBound.y);
+    this.radius = config.radius;
 
-    this.leftBound = computeBound(leftBoundVect, rightBoundVect);
-    this.rightBound = computeBound(rightBoundVect, leftBoundVect);
+    this.leftBound = computeBound(this.goalLeftBound, this.goalRightBound);
+    this.rightBound = computeBound(this.goalRightBound, this.goalLeftBound);
     var maxVelocity = config.maxVelocity;
     var me = this;
 

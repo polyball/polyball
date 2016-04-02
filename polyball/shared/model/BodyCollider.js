@@ -23,7 +23,7 @@ var Events = require('polyball/shared/model/behaviors/Events');
  */
 var BodyCollider = function (config) {
     var world = config.world;
-    var ignoredBodies = [];
+    var ignoredBodies = {};
     var model = config.model;
 
     // Model Entities
@@ -59,6 +59,7 @@ var BodyCollider = function (config) {
                 handleEntityBallCollision(collision, paddles, Events.paddleBallCollision);
                 handleEntityBallCollision(collision, goals, Events.ballGoalCollision);
                 handleEntityBallCollision(collision, powerups, Events.ballPowerupCollision);
+                handleEntityBallCollision(collision, ignoredBodies, Events.nonImpulsiveCollision);
             }
 
             // iterate through ignored bodies, returning one that is in the collision (if any)
@@ -70,7 +71,6 @@ var BodyCollider = function (config) {
             return ignoredBodyFromCollision != null;
         });
 
-        world.emit('nonimpulseCollisions:detected', nonImpulseEvent);
         world.emit('impulseCollisions:detected', event);
     };
 
@@ -144,7 +144,7 @@ var BodyCollider = function (config) {
      */
     this.addIgnoredBody = function (body) {
         if (body != null) {
-            ignoredBodies.push(body);
+            ignoredBodies[body.uid] = body;
         }
     };
 
@@ -154,7 +154,7 @@ var BodyCollider = function (config) {
      */
     this.removeIgnoredBody = function (body) {
         if (body != null) {
-            lodash.remove(ignoredBodies, function (ignoredBody) { return body === ignoredBody;});
+            ignoredBodies = lodash.omit(ignoredBodies, [body.uid]);
         }
     };
 

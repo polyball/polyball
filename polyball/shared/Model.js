@@ -178,8 +178,7 @@ var Model = function () {
     //
     ///////////////////////////////////////////////////////////////////////////
     this.gameStatus = EngineStatus.gameInitializing;
-
-
+    this.collisionsPruner = null;
 
     /**
      * If there is not yet an arena in the model, add one according to the config.

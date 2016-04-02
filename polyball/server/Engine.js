@@ -7,6 +7,7 @@ var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
 var Blackhole = require('polyball/shared/model/powerups/Blackhole'); //jshint ignore:line
 var KingMidas = require('polyball/shared/model/powerups/KingMidas'); //jshint ignore:line
+var BulletTime = require('polyball/shared/model/powerups/BulletTime'); //jshint ignore:line
 var RoundEngine = require('polyball/shared/RoundEngine');
 var RoundEvents = require('polyball/shared/RoundEvents');
 var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
@@ -102,12 +103,23 @@ var Engine = function (config) {
         });
 
         //TEST BLACKHOLE
+        //setTimeout(function(){
+        //    var bodyConfig = generatePowerupBody();
+        //    model.addPowerup({
+        //        name: Blackhole.Name,
+        //        body: bodyConfig,
+        //        duration: config.configuration.powerupDuration
+        //    });
+        //}, 5000);
+
+        //TEST Bullet Time
         setTimeout(function(){
             var bodyConfig = generatePowerupBody();
             model.addPowerup({
-                name: Blackhole.Name,
+                name: BulletTime.Name,
                 body: bodyConfig,
-                duration: config.configuration.powerupDuration
+                duration: config.configuration.powerupDuration,
+                maxBallVelocity: config.configuration.ballMaxVelocity
             });
         }, 5000);
 
