@@ -1,7 +1,7 @@
 /**
  * Created by ryan on 13/03/16.
  */
-var EngineStatus = require('polyball/server/EngineStatus.js');
+var EngineStatus = require('polyball/shared/EngineStatus.js');
 var _ = require('lodash');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
