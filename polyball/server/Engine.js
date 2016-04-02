@@ -6,6 +6,7 @@ var _ = require('lodash');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
 var Blackhole = require('polyball/shared/model/powerups/Blackhole'); //jshint ignore:line
+var KingMidas = require('polyball/shared/model/powerups/KingMidas'); //jshint ignore:line
 var RoundEngine = require('polyball/shared/RoundEngine');
 var RoundEvents = require('polyball/shared/RoundEvents');
 var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
@@ -94,21 +95,42 @@ var Engine = function (config) {
         });
 
         //TEST BLACKHOLE
+        //setTimeout(function(){
+        //    var bodyConfig = generatePowerupBody();
+        //    bodyConfig.styles = {
+        //        fillStyle: '#000000',
+        //        lineWidth: 1,
+        //        strokeStyle: '#000000',
+        //        layer: 6,
+        //        icon: '\uf069',
+        //        fontstyle: {
+        //            fill: '#ffffff',
+        //            font: '30px fontawesome'
+        //        }
+        //    };
+        //    model.addPowerup({
+        //        name: Blackhole.Name,
+        //        body: bodyConfig,
+        //        duration: config.configuration.powerupDuration
+        //    });
+        //}, 5000);
+
+        //TEST KINGMIDAS
         setTimeout(function(){
             var bodyConfig = generatePowerupBody();
-            bodyConfig.styles = {
-                fillStyle: '#000000',
-                lineWidth: 1,
-                strokeStyle: '#000000',
-                layer: 6,
-                icon: '\uf069',
-                fontstyle: {
-                    fill: '#ffffff',
-                    font: '30px fontawesome'
-                }
-            };
+            //bodyConfig.styles = {
+            //    fillStyle: '#000000',
+            //    lineWidth: 1,
+            //    strokeStyle: '#000000',
+            //    layer: 6,
+            //    icon: '\uf069',
+            //    fontstyle: {
+            //        fill: '#ffffff',
+            //        font: '30px fontawesome'
+            //    }
+            //};
             model.addPowerup({
-                name: Blackhole.Name,
+                name: KingMidas.Name,
                 body: bodyConfig,
                 duration: config.configuration.powerupDuration
             });
