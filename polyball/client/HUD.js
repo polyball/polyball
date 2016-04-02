@@ -3,7 +3,7 @@
  */
 
 var $ = require('jquery');
-var Physics = require('physicsjs');
+var PointerListener = require('polyball/client/hudbehaviors/PointerListener');
 
 /**
  * @param config
@@ -14,15 +14,14 @@ var Physics = require('physicsjs');
  * @constructor
  */
 var HUD = function (config) {
-
-    var accumulationInterval = config.accumulationInterval;
     
     var comms = config.comms;
     var model = config.model;  // jshint ignore: line
-    var synchronizer = config.synchronizer;
-    
-    var previousMouseX;
-    var accumulatedMouseDeltaX = 0;
+
+    new PointerListener({
+        accumulationInterval: config.accumulationInterval,
+        synchronizer: config.synchronizer
+    }).listenElement(document);
 
     // Inject and listen to queue-to-play button
     $.get('hudcomponenets/addToQueueButton.html', function(data) {
@@ -31,28 +30,6 @@ var HUD = function (config) {
             comms.queueToPlay();
         });
     });
-
-
-    var registerMouseMove = function() {
-        // Do not set the paddle position in here!  Pass the movement command (amount) through the synchronizer.
-        if (accumulatedMouseDeltaX !== 0) {
-            synchronizer.registerMouseMove(accumulatedMouseDeltaX);
-            accumulatedMouseDeltaX = 0;
-        }
-    };
-    var throttledRegisterMouseMove = Physics.util.throttle(registerMouseMove, accumulationInterval);
-
-    // Listen to mouse movements
-    $(document).mousemove(function (evt) {
-        if (previousMouseX != null) {
-            accumulatedMouseDeltaX += evt.pageX - previousMouseX;
-
-            throttledRegisterMouseMove();
-        }
-
-        previousMouseX = evt.pageX;
-    });
-
 };
 
 
