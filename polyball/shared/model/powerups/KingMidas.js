@@ -3,6 +3,7 @@
  */
 var inherits = require('inherits');
 var Powerup = require('polyball/shared/model/powerups/Powerup');
+var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
 
@@ -12,6 +13,8 @@ var Events = require('polyball/shared/model/behaviors/Events');
  * @constructor
  */
 var KingMidas = function (config){
+    config.body.styles = StyleCommons.kingMidasStyle;
+
     Powerup.call(this, config);
     this.name = KingMidas.Name;
 };
