@@ -8,7 +8,7 @@ var Configuration = require('polyball/server/configuration/Configuration');
 var Model = require('polyball/shared/Model');
 var Engine = require('polyball/server/Engine');
 var Util = require('polyball/shared/Util');
-var EngineStatus = require('polyball/server/EngineStatus');
+var EngineStatus = require('polyball/shared/EngineStatus');
 var _ = require('lodash');
 var Logger = require('polyball/shared/Logger');
 
