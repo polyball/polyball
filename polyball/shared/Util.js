@@ -3,6 +3,7 @@
  */
 var fs = require('fs');
 var Logger = require('polyball/shared/Logger');
+var _ = require('lodash');
 
 var Util = function(){
 
@@ -375,6 +376,23 @@ Util.assignPhysicsState = function (srcState, targetState) {
     targetState.old.angular.pos = srcState.old.angular.pos;
     targetState.old.angular.vel = srcState.old.angular.vel;
     targetState.old.angular.acc = srcState.old.angular.acc;
+};
+
+
+Util.millisToCountDown = function (millis) {
+    if (!_.isFinite(millis)) {
+        millis = 0;
+    }
+    var minutes = Math.max(0, Math.floor(millis / 60000));
+    var seconds = Math.max(0, Math.floor(millis / 1000));
+
+    var separator = ':';
+
+    if (seconds < 10) {
+        separator += '0';
+    }
+    
+    return '' + minutes + separator + seconds;
 };
 
 module.exports = Util;

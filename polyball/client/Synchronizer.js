@@ -54,6 +54,8 @@ var Synchronizer = function (config) {
         rapidDecayRate: 0.7,
         slowDecayRate: 0.15
     });
+
+    var roundStartTime = 0;
     
     //
     //             INTERNAL METHODS
@@ -97,6 +99,10 @@ var Synchronizer = function (config) {
         }
 
         model.reset();
+        model.setCurrentRoundTime(0);
+
+        roundStartTime = Date.now();
+        
         //TODO: HUD.roundCountdown(newRoundData.delay);
     };
 
@@ -135,7 +141,7 @@ var Synchronizer = function (config) {
      * @param {Number} tickTime - The current time in millis.
      */
     this.tick = function (tickTime) {
-        model.setCurrentRoundTime(tickTime);
+        model.setCurrentRoundTime(tickTime - roundStartTime);
 
         var isPlayer = model.getPlayer(model.getLocalClientID()) != null;
 

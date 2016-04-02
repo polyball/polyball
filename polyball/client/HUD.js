@@ -5,6 +5,7 @@
 var $ = require('jquery');
 var PointerListener = require('polyball/client/hudbehaviors/PointerListener');
 var Logger = require('polyball/shared/Logger');
+var Util = require('polyball/shared/Util');
 
 /**
  * @param config
@@ -23,6 +24,12 @@ var HUD = function (config) {
         accumulationInterval: config.accumulationInterval,
         synchronizer: config.synchronizer
     }).listenElement(document);
+
+    $.get('hudcomponents/roundTimer.html', function (data) {
+        Logger.debug('Injecting round timer.');
+
+        $('#hudColumn').append(data);
+    });
 
     // Inject and listen to queue-to-play button
     $.get('hudcomponents/addToQueueButton.html', function(data) {
@@ -64,6 +71,8 @@ var HUD = function (config) {
     };
 
     this.render = function () {
+        $('.roundTimer').text(Util.millisToCountDown(model.getRoundLength() - model.getCurrentRoundTime()));
+
         var spectatorList = $('.spectatorList');
         spectatorList.empty();
         model.getSpectators().forEach(appendNameToList(spectatorList));
