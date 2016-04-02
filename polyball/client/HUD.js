@@ -5,6 +5,7 @@
 var $ = require('jquery');
 var PointerListener = require('polyball/client/hudbehaviors/PointerListener');
 var Logger = require('polyball/shared/Logger');
+var EngineStatus = require('polyball/shared/EngineStatus');
 var Util = require('polyball/shared/Util');
 
 /**
@@ -52,6 +53,10 @@ var HUD = function (config) {
 
         $('#hudColumn').append(data);
     });
+
+    $.get('hudcomponents/waitingForPlayers.html', function (data) {
+        $('#hudColumn').append(data);
+    });
     
     var appendNameToList = function (listElement) {
         
@@ -86,6 +91,11 @@ var HUD = function (config) {
             );
         }
         model.getAllQueuedPlayers().forEach(appendNameToList(playerQueueList));
+
+        $('.statusMessage').hide();
+        if (model.gameStatus === EngineStatus.gameInitializing) {
+            $('.waitingForPlayers').show();
+        }
     };
 };
 
