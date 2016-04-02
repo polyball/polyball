@@ -2,6 +2,7 @@
 
 // Component Imports
 @import "addToQueueButton";
+@import "hudList";
 @import url(https://fonts.googleapis.com/css?family=Cabin);
 
 body {
@@ -13,4 +14,13 @@ canvas{ position: absolute; z-index: $canvasZIndex }
 
 .hud{
   z-index: $hudZIndex;
+}
+
+.hud .localPlayer {
+  color: #8e8e8e;
+}
+
+#hudColumn {
+  float: right;
+  width: 20em;
 }

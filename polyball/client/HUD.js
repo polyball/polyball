@@ -4,6 +4,7 @@
 
 var $ = require('jquery');
 var PointerListener = require('polyball/client/hudbehaviors/PointerListener');
+var Logger = require('polyball/shared/Logger');
 
 /**
  * @param config
@@ -24,12 +25,34 @@ var HUD = function (config) {
     }).listenElement(document);
 
     // Inject and listen to queue-to-play button
-    $.get('hudcomponenets/addToQueueButton.html', function(data) {
-        $('#viewport').append(data);
+    $.get('hudcomponents/addToQueueButton.html', function(data) {
+        Logger.debug('Injecting add to queue button.');
+
+        $('#hudColumn').append(data);
         $('#addToQueueButton').click(function (){
             comms.queueToPlay();
         });
     });
+    
+    $.get('hudcomponents/spectatorList.html', function (data) {
+        Logger.debug('Injecting spectator list.');
+
+        $('#hudColumn').append(data);
+    });
+
+    this.render = function () {
+        var spectatorList = $('.spectatorList');
+        spectatorList.empty();
+        model.getSpectators().forEach(function (spectator) {;
+            var spectatorElement = $('<li>').text(spectator.client.name);
+            
+            if (spectator.id === model.getLocalClientID()) {
+                var localElement = $('<span>').addClass('localPlayer').text('  (you)');
+                spectatorElement.append(localElement);
+            }
+            spectatorList.append(spectatorElement);
+        });
+    };
 };
 
 

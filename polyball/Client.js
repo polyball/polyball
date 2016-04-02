@@ -58,12 +58,14 @@ $(document).ready(function() {
         var hud = new HUD({ //jshint ignore: line
             comms: comms,
             synchronizer: synchronizer,
-            accumulationInterval: config.inputAccumulationInterval
+            accumulationInterval: config.inputAccumulationInterval,
+            model: model
         });
 
         Physics.util.ticker.on(function (time) {
             gameRenderer.renderGame();
             synchronizer.tick(time);
+            hud.render();
         });
 
     });

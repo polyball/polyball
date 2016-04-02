@@ -1,7 +1,13 @@
 @import 'constants';
 
-.spectatorList {
+.hudListHeading {
+  margin-bottom: 0.7rem;
+}
+
+.hudList {
   float: left;
   list-style-type: none;
   font: $gameFont;
+  padding-top: 0;
+  margin-top: 0;
 }
