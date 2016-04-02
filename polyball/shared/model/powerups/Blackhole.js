@@ -5,6 +5,7 @@
 var Physics = require('physicsjs');
 var inherits = require('inherits');
 var Powerup = require('polyball/shared/model/powerups/Powerup');
+var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 
 /**
@@ -14,17 +15,7 @@ var _ = require('lodash');
  */
 var Blackhole = function(config){
 
-    config.body.styles = {
-        fillStyle: '#000000',
-        lineWidth: 1,
-        strokeStyle: '#000000',
-        layer: 6,
-        icon: '\uf069',
-        fontstyle: {
-            fill: '#ffffff',
-            font: '30px fontawesome'
-        }
-    };
+    config.body.styles = StyleCommons.blackholeStyle;
 
     Powerup.call(this, config);
     this.name = Blackhole.Name;
