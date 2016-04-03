@@ -463,11 +463,20 @@ var Model = function () {
     };
 
     /**
+     * Test if a spectator is queued to play.
+     * @param {number} spectatorID - the id of the spectator.
+     * @returns {boolean} true iff the spectator is queued.
+     */
+    this.hasQueuedPlayer = function (spectatorID) {
+        return _.indexOf(playerQueue, spectatorID) !== -1;
+    };
+
+    /**
      * Remove a spectator from the player queue
      * @param {Number} id
      */
     this.removeFromPlayerQueue = function (id) {
-        _.remove(playerQueue, function(x) {return x === id;});
+        _.remove(playerQueue, function(queuedID) {return queuedID === id;});
     };
 
 
@@ -689,8 +698,10 @@ var Model = function () {
      */
     this.deletePowerup = function (id) {
         var pu = removeByID(powerups, id);
-        pu.deactivate();
-        world.removeBody(pu.body);
+        if (pu != null) {
+            pu.deactivate(this);
+            world.removeBody(pu.body);
+        }
     };
 
     /**

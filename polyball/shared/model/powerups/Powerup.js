@@ -41,7 +41,7 @@ Powerup.prototype.activate = function(model){
     model.getWorld().removeBody(this.body);
     var self = this;
     setTimeout(function(){
-        self.deactivate(model);
+        model.deletePowerup(self.id);
     }, this.duration);
 };
 

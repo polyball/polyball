@@ -142,6 +142,16 @@ function syncDiscretePowerupState(powerups, model) {
 }
 
 
+function syncPowerupElection(election, model) {
+    if (election != null) {
+        model.setPowerupElection(election);
+    } else {
+        model.clearPowerupElection();
+    }
+}
+
+
+
 var PassthroughSynchronizer = {};
 /**
  * 
@@ -161,8 +171,7 @@ PassthroughSynchronizer.sync = function (snapshot, model) {
     syncDiscreteBallState(snapshot.balls, model);
     syncDiscretePowerupState(snapshot.powerups, model);
     
-    //   TODO powerups and powerup elections need to be config/construct isomorphic before usable here.  see #136
-    // model.setPowerupElection()
+    syncPowerupElection(snapshot.powerupElection, model);
 
     model.setPlayerQueue(snapshot.playerQueue);
     model.setRoundLength(snapshot.roundLength);

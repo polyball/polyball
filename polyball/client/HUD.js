@@ -54,7 +54,15 @@ var HUD = function (config) {
         $('#hudColumn').append(data);
     });
 
+    $.get('hudcomponents/powerupElection.html', function (data) {
+        Logger.debug('Injecting powerup election.');
+
+        $('#hudColumn').append(data);
+    });
+
     $.get('hudcomponents/waitingForPlayers.html', function (data) {
+        Logger.debug('Injecting powerup election.');
+
         $('#hudColumn').append(data);
     });
     
@@ -78,13 +86,14 @@ var HUD = function (config) {
     this.render = function () {
         $('.roundTimer').text(Util.millisToCountDown(model.getRoundLength() - model.getCurrentRoundTime()));
 
+
         var spectatorList = $('.spectatorList');
         spectatorList.empty();
         model.getSpectators().forEach(appendNameToList(spectatorList));
 
+
         var playerQueueList = $('.playerQueue');
         playerQueueList.empty();
-
         if (model.getAllQueuedPlayers().length === 0) {
             playerQueueList.append(
                 $('<li>').addClass('grayed').text('No players queued.')
@@ -92,24 +101,23 @@ var HUD = function (config) {
         }
         model.getAllQueuedPlayers().forEach(appendNameToList(playerQueueList));
 
-        model.getAllQueuedPlayers().forEach(function(qPlayer) {
-            if (qPlayer.id === model.getLocalClientID()) {
-                $('#addToQueueButton').css('visibility', 'hidden');
-            }
-        });
 
-        var qPlayers = model.getAllQueuedPlayers().filter(function(qPlayer) {
-            return qPlayer.id === model.getLocalClientID();
-        });
-        var players = model.getPlayers().filter(function(player) {
-            return player.id === model.getLocalClientID();
-        });
-        if (qPlayers.length === 0 && players.length === 0) {
+        var localQueued = model.hasQueuedPlayer(model.getLocalClientID());
+        var localPlaying = model.hasPlayer(model.getLocalClientID());
+        if (!localQueued && !localPlaying) {
             $('#addToQueueButton').css('visibility', 'visible');
         }
-        else if (qPlayers.length > 0 || players.length > 0) {
+        else if (localQueued || localPlaying) {
             $('#addToQueueButton').css('visibility', 'hidden');
         }
+        
+
+        var powerupElection = $('.powerupElection');
+        powerupElection.hide();
+        if (model.getPowerupElection() != null) {
+            powerupElection.show();
+        }
+
 
         $('.statusMessage').hide();
         if (model.gameStatus === EngineStatus.gameInitializing) {
