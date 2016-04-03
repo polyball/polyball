@@ -69,6 +69,8 @@ var Configuration = function (config){
     checkLowerBound('inputAccumulationInterval', 10);
     checkLowerBound('powerupDuration', 1);
     checkUpperBound('powerupDuration', defaults.roundLength);
+    checkLowerBound('powerupVoteDuration', 1);
+    checkLowerBound('powerupVoteFrequency', values.powerupVoteDuration);
     this.values = values;
 
     Object.freeze(this.values);

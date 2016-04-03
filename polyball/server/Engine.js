@@ -12,6 +12,7 @@ var RoundEngine = require('polyball/shared/RoundEngine');
 var RoundEvents = require('polyball/shared/RoundEvents');
 var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
 var PowerupBehavior = require('polyball/shared/model/behaviors/PowerupBehavior');
+var PowerupFactory = require('polyball/shared/PowerupFactory');
 
 /**
  * Initializes the engine
@@ -31,6 +32,7 @@ var Engine = function (config) {
     var roundEngine;
     var behaviors = [];
     var backgroundSnapshotInterval;
+    var powerupVoteInterval;
 
     // ============================= Private Methods ==============================
     // ============================================================================
@@ -111,16 +113,18 @@ var Engine = function (config) {
             setTimeout(addBall, x * 500);
         });
 
+        setupPowerupVote();
+
         //TEST Bullet Time
-        setTimeout(function(){
-            var bodyConfig = generatePowerupBody();
-            model.addPowerup({
-                name: BulletTime.Name,
-                body: bodyConfig,
-                duration: config.configuration.powerupDuration,
-                maxBallVelocity: config.configuration.ballMaxVelocity
-            });
-        }, 5000);
+        //setTimeout(function(){
+        //    var bodyConfig = generatePowerupBody();
+        //    model.addPowerup({
+        //        name: BulletTime.Name,
+        //        body: bodyConfig,
+        //        duration: config.configuration.powerupDuration,
+        //        maxBallVelocity: config.configuration.ballMaxVelocity
+        //    });
+        //}, 5000);
 
         //setTimeout(function(){
         //    var bodyConfig = generatePowerupBody();
@@ -159,6 +163,7 @@ var Engine = function (config) {
         removeBehaviors();
         resetPowerups();
         resetPlayScores();
+        clearPowerupVote();
         setTimeout(initializeGame, config.configuration.roundIntermission);
     };
 
@@ -170,6 +175,23 @@ var Engine = function (config) {
         comms.broadcastSnapshot(model.getSnapshot());
     };
 
+    var startPoweupVote = function (){
+        model.setPowerupElection({powerups: PowerupFactory.getAllPowerupNames()});
+        setTimeout(endPowerupVote, config.configuration.powerupVoteDuration);
+    };
+
+    var endPowerupVote = function (){
+        var winner = model.getPowerupElection().getWinner();
+        model.clearPowerupElection();
+        var bodyConfig = generatePowerupBody();
+        model.addPowerup({
+            name: winner,
+            body: bodyConfig,
+            duration: config.configuration.powerupDuration,
+            maxBallVelocity: config.configuration.ballMaxVelocity
+        });
+
+    };
 
     // ============================= Game Setup Helpers ===============================
     // ============================================================================
@@ -310,6 +332,14 @@ var Engine = function (config) {
         model.getPlayers().forEach(function(player){
             player.score = 0;
         });
+    };
+
+    var setupPowerupVote = function(){
+        powerupVoteInterval = setInterval(startPoweupVote, config.configuration.powerupVoteFrequency);
+    };
+
+    var clearPowerupVote = function(){
+        clearInterval(powerupVoteInterval);
     };
 
 

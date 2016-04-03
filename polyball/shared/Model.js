@@ -726,6 +726,13 @@ var Model = function () {
         powerupElection = new PowerupElection(config);
     };
 
+    /**
+     * Stops the current powerup election
+     */
+    this.clearPowerupElection = function(){
+        powerupElection = null;
+    };
+
 
     //
     //             SNAPSHOT
