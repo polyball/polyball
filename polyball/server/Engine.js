@@ -160,12 +160,12 @@ var Engine = function (config) {
         //   round intermission (pending #214) with the model.gameStatus === gameFinishing.  during that time,
         //   a round intermission message will be displayed.  put a gameResult field on the model with the scores,
         //   and the client will just display it alongside the intermission message.
+        comms.broadcastRoundEnded({winners: getWinners()});
         model.reset();
         removeBehaviors();
         resetPowerups();
         resetPlayScores();
         clearPowerupVote();
-        comms.broadcastRoundEnded({whateverData: 'everybody wins'});
         setTimeout(initializeGame, config.configuration.roundIntermission);
     };
 
@@ -347,7 +347,20 @@ var Engine = function (config) {
         clearInterval(powerupVoteInterval);
     };
 
-
+    /**
+     * Gets the top 3 players for the round
+     * @returns {Array}
+     */
+    var getWinners = function(){
+        var players = model.getPlayers().sort(function(a,b){
+            return b.score - a.score;
+        });
+        var winners = [];
+        _.times(3, function(i){
+            winners.push({name: players[i].client.name, score: players[i].score});
+        });
+        return winners;
+    };
 
     // ============================= Public Methods ===============================
     // ============================================================================
