@@ -92,6 +92,25 @@ var HUD = function (config) {
         }
         model.getAllQueuedPlayers().forEach(appendNameToList(playerQueueList));
 
+        model.getAllQueuedPlayers().forEach(function(qPlayer) {
+            if (qPlayer.id === model.getLocalClientID()) {
+                $('#addToQueueButton').css('visibility', 'hidden');
+            }
+        });
+
+        var qPlayers = model.getAllQueuedPlayers().filter(function(qPlayer) {
+            return qPlayer.id === model.getLocalClientID();
+        });
+        var players = model.getPlayers().filter(function(player) {
+            return player.id === model.getLocalClientID();
+        });
+        if (qPlayers.length === 0 && players.length === 0) {
+            $('#addToQueueButton').css('visibility', 'visible');
+        }
+        else if (qPlayers.length > 0 || players.length > 0) {
+            $('#addToQueueButton').css('visibility', 'hidden');
+        }
+
         $('.statusMessage').hide();
         if (model.gameStatus === EngineStatus.gameInitializing) {
             $('.waitingForPlayers').show();

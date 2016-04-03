@@ -113,17 +113,25 @@ BulletTime.prototype.handleCollisions = function (event){
 
 BulletTime.prototype.fireBalls = function (model){
     var player = model.getPlayer(this.owner);
-    var zonePosition = model.getArena().getGoal(player.arenaPosition).state.pos;
+    var ball;
 
     for (var index in this.affectedBalls){
-      if (this.affectedBalls.hasOwnProperty(index)){
-          var ball = this.affectedBalls[index];
+      if (this.affectedBalls.hasOwnProperty(index) && player !== undefined){
+          var zonePosition = model.getArena().getGoal(player.arenaPosition).state.pos;
+
+          ball = this.affectedBalls[index];
           this.velVect.x = ball.body.state.pos.x;
           this.velVect.y = ball.body.state.pos.y;
           this.velVect.sub(zonePosition.x, zonePosition.y);
           this.velVect.normalize().mult(this.maxBallVelocity);
           ball.body.treatment = 'dynamic';
           ball.body.state.vel.clone(this.velVect);
+      }
+        else if (this.affectedBalls.hasOwnProperty(index)) {
+          ball = this.affectedBalls[index];
+          ball.body.treatment = 'dynamic';
+          ball.body.state.vel.x = Math.random();
+          ball.body.state.vel.y = Math.random();
       }
     }
 
