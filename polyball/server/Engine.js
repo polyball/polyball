@@ -54,10 +54,11 @@ var Engine = function (config) {
         model.gameStatus = EngineStatus.gameInitializing;
         Logger.info('Initializing game');
 
-        setupPlayers();
         Logger.info("Number of Players: " + model.playerCount());
 
-        if (model.playerCount() >= configuration.minimumPlayers){
+        if (model.numberOfQueuedPlayers() + model.playerCount() >= configuration.minimumPlayers){
+            setupPlayers();
+
             //TODO figure out radius as a function of # players
             model.addOrResetArena({
                 numberPlayers: model.playerCount(),
@@ -88,6 +89,13 @@ var Engine = function (config) {
                 snapshot: model.getSnapshot(),
                 minimumDelay: 0
             }, startGame);
+        } else {
+            Logger.info(
+                "Insufficient players (" +
+                model.playerCount() +
+                ") and queued players " +
+                model.numberOfQueuedPlayers() +
+                ").  Waiting to start game.");
         }
     };
 

@@ -72,14 +72,16 @@ describe('Engine', function() {
 
     describe('#handleAddPlayerToQueue', function() {
 
-        it('should add directly to players when players < minPlayers', function () {
+        it('should queue players when players < minPlayers', function () {
             addAndJoinQueue();
 
             var spectators = model.getSpectators();
-            spectators.should.be.empty();
+            spectators.length.should.equal(1);
+
+            model.numberOfQueuedPlayers().should.equal(1);
 
             var players = model.getPlayers();
-            players.length.should.equal(1);
+            players.should.be.empty();
         });
         it('should start a game when enough players queue', function () {
             startGameWithMinPlayers();
