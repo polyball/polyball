@@ -689,8 +689,10 @@ var Model = function () {
      */
     this.deletePowerup = function (id) {
         var pu = removeByID(powerups, id);
-        pu.deactivate();
-        world.removeBody(pu.body);
+        if (pu != null) {
+            pu.deactivate(this);
+            world.removeBody(pu.body);
+        }
     };
 
     /**
