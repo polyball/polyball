@@ -30,9 +30,17 @@ var Engine = function (config) {
     var model = config.model;
     var roundEngine;
     var behaviors = [];
+    var backgroundSnapshotInterval;
 
     // ============================= Private Methods ==============================
     // ============================================================================
+
+    // Broadcast snapshots at a lower frequency while the round engine is not running.
+    backgroundSnapshotInterval = setInterval(function () {
+        if (model.gameStatus !== EngineStatus.gameRunning) {
+            broadcastModel();
+        }
+    }, 200);
 
     // ========================= Game Lifecycle Functions =========================
     // ============================================================================
@@ -48,13 +56,6 @@ var Engine = function (config) {
 
         setupPlayers();
         Logger.info("Number of Players: " + model.playerCount());
-
-        // Broadcast snapshots at a lower frequency while the round engine is not running.
-        setInterval(function () {
-            if (model.gameStatus !== EngineStatus.gameRunning) {
-                broadcastModel();
-            }
-        }, 200);
 
         if (model.playerCount() >= configuration.minimumPlayers){
             //TODO figure out radius as a function of # players
@@ -356,6 +357,7 @@ var Engine = function (config) {
         if (roundEngine) {
             roundEngine.kill();
         }
+        clearInterval(backgroundSnapshotInterval);
     };
 
     // ========================== Engine Construction =============================
