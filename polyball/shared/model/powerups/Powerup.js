@@ -18,6 +18,7 @@ var Powerup = function(config){
     this.active = false;
     this.owner = config.owner;
     this.duration = config.duration;
+    this.deleteTimeout = null;
 
     var newBodyConfig = {
         x: config.body.state.pos.x,
@@ -40,7 +41,7 @@ var Powerup = function(config){
 Powerup.prototype.activate = function(model){
     model.getWorld().removeBody(this.body);
     var self = this;
-    setTimeout(function(){
+    this.deleteTimeout = setTimeout(function(){
         model.deletePowerup(self.id);
     }, this.duration);
 };

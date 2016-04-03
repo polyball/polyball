@@ -24,6 +24,7 @@ var BulletTime = function(config){
     this.affectedBalls = {};
     this.velVect = new Physics.vector(0,0);
     this.maxBallVelocity = config.maxBallVelocity || 3;
+    this.model = null;
 };
 
 inherits(BulletTime, Powerup);
@@ -61,7 +62,7 @@ BulletTime.prototype.activate = function(model){
             model.collisionsPruner.addIgnoredBody(this.zone);
             model.getWorld().on(Events.nonImpulsiveCollision, this.handleCollisions, this);
         }
-
+        this.model = model;
         model.getWorld().addBody(this.zone);
         BulletTime.super_.prototype.activate.call(this, model);
 
@@ -103,11 +104,19 @@ BulletTime.prototype.toConfig = function (){
 BulletTime.prototype.handleCollisions = function (event){
     if (!this.affectedBalls[event.ball.id]){
         var ball = event.ball;
+        var self = this;
         ball.lastTouchedID = this.owner;
         this.affectedBalls[ball.id] = ball;
         ball.body.treatment = 'static';
         ball.body.state.vel.x = 0;
         ball.body.state.vel.y = 0;
+
+        if (Object.keys(this.affectedBalls).length === this.model.ballCount()){
+            clearTimeout(this.deleteTimeout);
+            this.deleteTimeout = setTimeout(function(){
+                self.model.deletePowerup(self.id);
+            }, 2000);
+        }
     }
 };
 
