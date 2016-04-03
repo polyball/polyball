@@ -6,6 +6,7 @@ var Synchronizer = require('polyball/client/Synchronizer');
 var Model = require('polyball/shared/Model');
 var PubSub = require('polyball/shared/PubSub');
 var CommsEvents = require('polyball/shared/CommsEvents');
+var Logger = require('polyball/shared/Logger');
 
 describe('Synchronizer', function () {
     describe('#synchronizeSnapshot', function () {
@@ -18,6 +19,8 @@ describe('Synchronizer', function () {
             deleteSnapshot;
 
         beforeEach(function () {
+            Logger.setLevel("WARN");
+
             model = new Model();
             comms = new PubSub({
                 events: CommsEvents.ClientToClient
