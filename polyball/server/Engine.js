@@ -2,7 +2,7 @@
  * Created by ryan on 13/03/16.
  */
 var EngineStatus = require('polyball/shared/EngineStatus.js');
-var _ = require('lodash');
+var _ = require('lodash'); //jshint ignore:line
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
 var Blackhole = require('polyball/shared/model/powerups/Blackhole'); //jshint ignore:line
@@ -103,16 +103,6 @@ var Engine = function (config) {
             setTimeout(addBall, x * 500);
         });
 
-        //TEST BLACKHOLE
-        //setTimeout(function(){
-        //    var bodyConfig = generatePowerupBody();
-        //    model.addPowerup({
-        //        name: Blackhole.Name,
-        //        body: bodyConfig,
-        //        duration: config.configuration.powerupDuration
-        //    });
-        //}, 5000);
-
         //TEST Bullet Time
         setTimeout(function(){
             var bodyConfig = generatePowerupBody();
@@ -124,20 +114,18 @@ var Engine = function (config) {
             });
         }, 5000);
 
+        //setTimeout(function(){
+        //    var bodyConfig = generatePowerupBody();
+        //    model.addPowerup({
+        //        name: Blackhole.Name,
+        //        body: bodyConfig,
+        //        duration: config.configuration.powerupDuration
+        //    });
+        //}, 5000);
+
         //TEST KINGMIDAS
         //setTimeout(function(){
         //    var bodyConfig = generatePowerupBody();
-        //    //bodyConfig.styles = {
-        //    //    fillStyle: '#000000',
-        //    //    lineWidth: 1,
-        //    //    strokeStyle: '#000000',
-        //    //    layer: 6,
-        //    //    icon: '\uf069',
-        //    //    fontstyle: {
-        //    //        fill: '#ffffff',
-        //    //        font: '30px fontawesome'
-        //    //    }
-        //    //};
         //    model.addPowerup({
         //        name: KingMidas.Name,
         //        body: bodyConfig,
