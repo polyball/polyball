@@ -6,7 +6,6 @@ var Powerup = require('polyball/shared/model/powerups/Powerup');
 var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
-var Util = require('polyball/shared/Util');
 
 /**
  * This powerup makes balls worth an additional point
@@ -70,10 +69,6 @@ KingMidas.prototype.render = function(renderer) {
             });
 
             if (foundEmitters.length === 0) { // Create a new emitter
-                var radius = ball.body.geometry.radius;
-
-                kingMidasParticleStyle.pos.x += Util.getRandomArbitrary(-radius, radius);
-                kingMidasParticleStyle.pos.y += Util.getRandomArbitrary(-radius, radius);
                 emitter = renderer.addEmitter(['res/particle.png'], kingMidasParticleStyle);
                 emitter.ball = ball;
             }
@@ -117,15 +112,15 @@ var kingMidasParticleStyle = {
         "end": 0
     },
     "scale": {
-        "start": 0.1,
-        "end": 0.2
+        "start": 0.11,
+        "end": 0.01
     },
     "color": {
-        "start": StyleCommons.midasParticleColor,
-        "end": StyleCommons.midasParticleColor
+        "start": StyleCommons.midasParticleStartColor,
+        "end": StyleCommons.midasParticleEndColor
     },
     "speed": {
-        "start": 0,
+        "start": 12,
         "end": 0
     },
     "startRotation": {
@@ -138,22 +133,22 @@ var kingMidasParticleStyle = {
     },
     "lifetime": {
         "min": 1,
-        "max": 1
+        "max": 2
     },
     "blendMode": "normal",
-    "frequency": 0.15,
+    "frequency": 0.005,
     "emitterLifetime": this.duration,
-    "maxParticles": 200,
+    "maxParticles": 500,
     "pos": {
         "x": 0,
         "y": 0
     },
-    "addAtBack": false,
+    "addAtBack": true,
     "spawnType": "circle",
     "spawnCircle": {
         "x": 0,
         "y": 0,
-        "r": 0
+        "r": 6
     }
 };
 
