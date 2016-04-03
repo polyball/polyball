@@ -6,7 +6,6 @@
 var Pixi = require('pixi.js');
 var PixiParticles = require('pixi-particles'); // jshint ignore:line
 var Physics = require('physicsjs');
-var Blackhole = require('polyball/shared/model/powerups/Blackhole');
 var StyleCommons = require('polyball/shared/StyleCommons');
 var Logger = require('polyball/shared/Logger');
 
@@ -31,40 +30,10 @@ Physics.renderer('polyball', 'pixi', function (parent) {
     var emitterContainer;
     var emitters;
     var elapsed;
-    var bhRendered;
     var textContainer;
-    var bhSprite;
-    var bhContainer;
-    var twistFilter;
-    var twistUp;
     var titleID;
     var self;
 
-
-    /**
-     * Applies the visual effects for the black hole to the arena.
-     */
-    var activateBlackhole = function() {
-        twistFilter = new Pixi.filters.TwistFilter();
-        twistFilter.radius = 0.08;
-        twistFilter.offset.x = 0.5;
-        twistFilter.offset.y = 0.5;
-        twistFilter.angle = 0;
-
-        twistUp = true;
-
-        self.stage.addChild(bhContainer);
-
-        self.stage.filters = [twistFilter];
-    };
-
-    /**
-     * Removes the visual effects of the black hole.
-     */
-    var deactivateBlackhole = function() {
-        self.stage.filters = null;
-        self.stage.removeChild(bhContainer);
-    };
 
     /**
      * Updates the particle rendering.
@@ -72,35 +41,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
     var update = function() {
         requestAnimationFrame(update);
 
-        if (twistFilter) {
-            var twistMax = 23;
-            var twistMin = 7;
-            var twistChange = 0.3;
-
-            if (twistUp) {
-                twistFilter.angle += twistChange;
-            }
-            else {
-                twistFilter.angle -= twistChange;
-            }
-
-            if (twistFilter.angle > twistMax) {
-                twistUp = false;
-            }
-            else if (twistFilter.angle < twistMin) {
-                twistUp = true;
-            }
-
-            if (Math.random() > 0.995) {
-                twistUp = !twistUp;
-            }
-
-        }
-
         var now = Date.now();
 
-        // The emitter requires the elapsed
-        // number of seconds since the last update
         for (var i = 0; i < emitters.length; i++) {
             emitters[i].update((now - elapsed) * 0.001);
         }
@@ -131,8 +73,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             parent.init.call(this, config);
 
             self = this;
+            this.Pixi = Pixi;
 
-            bhRendered = false;
             titleID = 'title-screen';
 
             textContainer = new Pixi.Container();
@@ -141,16 +83,10 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             model = config.model;
 
             emitterContainer = new Pixi.Container();
-            emitterContainer.layer = 100;
+            emitterContainer.layer = 10;
             this.stage.addChild(emitterContainer);
 
             emitters = [];
-
-            bhContainer = new Pixi.Container();
-            bhContainer.layer = -1;
-            bhSprite = Pixi.Sprite.fromImage('res/blackhole.png');
-            bhSprite.anchor.set(0.5, 0.5);
-            bhContainer.addChild(bhSprite);
 
             elapsed = Date.now();
         },
@@ -246,7 +182,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         // NOTE: Used to be called render(), but overriding that is a last resort for physics renderers.
         //       See https://github.com/wellcaffeinated/PhysicsJS/wiki/Renderers#further-customization
         beforeRender: function() {
-            var style;
             var center;
             var rotation;
 
@@ -259,19 +194,10 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     textObjects[0].visible = false;
                 }
 
-                style = StyleCommons.fontStyle;
                 center = model.getArena().getCenter();
-
-                // Add/update the round timer
-                // Update the round timer
-                if (model.currentRoundTime) {
-                    var timePoint = new Physics.vector(this.renderer.width / 2, this.renderer.height / 2);
-                    this.addText(model.currentRoundTime.toString(), style, timePoint, 0, 'round-timer');
-                }
 
                 this.stage.pivot.set(center.x, center.y);
                 this.stage.position.set(center.x, center.y);
-                bhContainer.position.set(center.x, center.y);
                 textContainer.pivot.set(center.x, center.y);
                 textContainer.position.set(center.x, center.y);
 
@@ -294,6 +220,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     textContainer.removeChild(player);
                 });
 
+                // Player name rotation
                 for (var i = 0; i < players.length; i++) {
                     var player = players[i];
                     var worldPos = model.getArena().getScorePosition(player.arenaPosition);
@@ -307,7 +234,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                         rotation = rotation - Math.PI;
                     }
 
-                    this.addText(player.client.name + ': ' + player.score, style, localPos, rotation, 'player' + player.id);
+                    this.addText(player.client.name + ': ' + player.score, StyleCommons.fontStyle, localPos, rotation, 'player' + player.id);
                 }
 
                 var localPlayer = model.getPlayer(model.getLocalClientID());
@@ -324,36 +251,18 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 this.stage.position.set(desiredX, desiredY);
             }
             else {
-                style = StyleCommons.titleFontStyle;
                 center = {
                     x : this.renderer.width / 2,
                     y : this.renderer.height / 2
                 };
 
-                this.addText('polyball', style, center, 0, titleID);
+                this.addText('polyball', StyleCommons.titleFontStyle, center, 0, titleID);
             }
 
             // Render powerups
             model.getPowerups().forEach(function(powerup) {
                 powerup.render(self);
             });
-
-            var blackholes = model.getPowerups(function(x) {
-                return x.name === Blackhole.Name;
-            });
-
-            if (blackholes.length > 0 && bhRendered === false && blackholes[0].active === true) {
-                activateBlackhole();
-                bhRendered = true;
-            }
-            else if (blackholes.length > 0 && blackholes[0].active === false) {
-                deactivateBlackhole();
-                bhRendered = false;
-            }
-            else if (blackholes.length === 0 && bhRendered === true) {
-                deactivateBlackhole();
-                bhRendered = false;
-            }
         },
 
         /**
@@ -503,9 +412,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
          */
         resize: function(width, height) {
             this.renderer.view.style.position = 'absolute';
-            //this.renderer.view.style.left = '50%';
-            //this.renderer.view.style.top = '50%';
-            //this.renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
+
             if (!height || !width) {
                 Logger.debug(
                     "renderer resize called with suspicious values: width " + 
@@ -520,6 +427,13 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             this.renderer.resize(width, height);
         },
 
+        /**
+         * Converts from world (arena) coordinates to client
+         * (drawing_ coordinates. Takes into account client offset
+         * and rotation.
+         * @param point: Point || Physics.vector - world coordinates
+         * @returns {Physics.vector}
+         */
         worldToClient: function(point) {
             var rotation = this.stage.rotation;
             var offset = this.stage.position;
@@ -534,15 +448,22 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             return newPoint;
         },
 
-        unrotate: function(point) {
-            var rotation = this.stage.rotation;
-            var center = model.getArena().getCenter();
+        /**
+         * Gets the client side center point for drawing.
+         * @returns {Physics.vector}
+         */
+        getClientCenter: function() {
+            var point = model.getArena().getCenter();
+            return this.worldToClient(point);
+        },
 
-            point.rotate(-rotation, center);
-
-            return point;
+        /**
+         * Gets the world (arena) center. Used for objects that don't have access to model.
+         * @returns {Physics.vector}
+         */
+        getWorldCenter: function() {
+            return model.getArena().getCenter();
         }
-
     };
 });
 
