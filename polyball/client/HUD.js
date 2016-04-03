@@ -4,6 +4,7 @@
 
 var $ = require('jquery');
 var PointerListener = require('polyball/client/hudbehaviors/PointerListener');
+var PowerupElectionRenderer = require('polyball/client/hudbehaviors/PowerupElectionRenderer');
 var Logger = require('polyball/shared/Logger');
 var EngineStatus = require('polyball/shared/EngineStatus');
 var Util = require('polyball/shared/Util');
@@ -20,11 +21,6 @@ var HUD = function (config) {
     
     var comms = config.comms;
     var model = config.model;  // jshint ignore: line
-
-    new PointerListener({
-        accumulationInterval: config.accumulationInterval,
-        synchronizer: config.synchronizer
-    }).listenElement(document);
 
     $.get('hudcomponents/roundTimer.html', function (data) {
         Logger.debug('Injecting round timer.');
@@ -54,17 +50,19 @@ var HUD = function (config) {
         $('#hudColumn').append(data);
     });
 
-    $.get('hudcomponents/powerupElection.html', function (data) {
-        Logger.debug('Injecting powerup election.');
-
-        $('#hudColumn').append(data);
-    });
-
     $.get('hudcomponents/waitingForPlayers.html', function (data) {
         Logger.debug('Injecting powerup election.');
 
         $('#hudColumn').append(data);
     });
+    
+
+    new PointerListener({
+        accumulationInterval: config.accumulationInterval,
+        synchronizer: config.synchronizer
+    }).listenElement(document);
+    
+    var powerupElectionRenderer = new PowerupElectionRenderer({appendTo: '#hudColumn'});
     
     var appendNameToList = function (listElement) {
         
@@ -111,12 +109,8 @@ var HUD = function (config) {
             $('#addToQueueButton').css('visibility', 'hidden');
         }
         
-
-        var powerupElection = $('.powerupElection');
-        powerupElection.hide();
-        if (model.getPowerupElection() != null) {
-            powerupElection.show();
-        }
+        
+        powerupElectionRenderer.render(model);
 
 
         $('.statusMessage').hide();
