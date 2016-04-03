@@ -384,7 +384,7 @@ Util.millisToCountDown = function (millis) {
         millis = 0;
     }
     var minutes = Math.max(0, Math.floor(millis / 60000));
-    var seconds = Math.max(0, Math.floor(millis / 1000));
+    var seconds = Math.max(0, Math.floor(millis / 1000)) % 60;
 
     var separator = ':';
 
