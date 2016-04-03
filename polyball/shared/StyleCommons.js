@@ -49,6 +49,15 @@ var kingMidasStyle = {
     }
 };
 
+var bulletTimeStyle = {
+    fillStyle: turqoise,
+    icon: '\uf254',
+    fontstyle: {
+        fill: blueText,
+        font: '30px fontawesome'
+    }
+};
+
 var fontStyle = {
     font : '24px Cabin',
     fill : '#000000',
@@ -68,5 +77,6 @@ exports.paddleStyle = paddleStyle;
 exports.blackholeStyle = blackholeStyle;
 exports.kingMidasStyle = kingMidasStyle;
 exports.midasParticleColor = midasParticleColor;
+exports.bulletTimeStyle = bulletTimeStyle;
 exports.fontStyle = fontStyle;
 exports.titleFontStyle = titleFontStyle;

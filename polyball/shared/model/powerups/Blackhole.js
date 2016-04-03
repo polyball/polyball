@@ -54,6 +54,10 @@ Blackhole.prototype.deactivate = function (model){
     }
 };
 
+Blackhole.prototype.render = function(renderer) { //jshint ignore:line
+
+};
+
 Blackhole.prototype.toConfig = function (){
     var config = { name: this.name};
     _.assign(config, Blackhole.super_.prototype.toConfig.call(this));

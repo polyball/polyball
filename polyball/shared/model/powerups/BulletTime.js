@@ -4,6 +4,7 @@
 var Physics = require('physicsjs');
 var inherits = require('inherits');
 var Powerup = require('polyball/shared/model/powerups/Powerup');
+var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
 
@@ -14,6 +15,8 @@ var Events = require('polyball/shared/model/behaviors/Events');
  * @constructor
  */
 var BulletTime = function(config){
+    config.body.styles = StyleCommons.bulletTimeStyle;
+
     Powerup.call(this, config);
     this.name = BulletTime.Name;
     this.radius = 0;
@@ -82,6 +85,10 @@ BulletTime.prototype.deactivate = function (model){
         model.getWorld().removeBody(this.zone);
         this.fireBalls(model);
     }
+};
+
+BulletTime.prototype.render = function(renderer) { //jshint ignore:line
+
 };
 
 BulletTime.prototype.toConfig = function (){

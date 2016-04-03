@@ -2,7 +2,7 @@
  * Created by ryan on 13/03/16.
  */
 var EngineStatus = require('polyball/shared/EngineStatus.js');
-var _ = require('lodash');
+var _ = require('lodash'); //jshint ignore:line
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
 var Blackhole = require('polyball/shared/model/powerups/Blackhole'); //jshint ignore:line
@@ -98,10 +98,10 @@ var Engine = function (config) {
         model.gameStatus = EngineStatus.gameRunning;
 
         //Add the balls to the game
-        //_.times(model.playerCount(), function(x){
-        //    setTimeout(addBall, x * 500);
-        //});
-        addBall();
+        _.times(model.playerCount(), function(x){
+            setTimeout(addBall, x * 500);
+        });
+
         //TEST Bullet Time
         setTimeout(function(){
             var bodyConfig = generatePowerupBody();
