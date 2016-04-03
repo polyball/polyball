@@ -18,6 +18,7 @@ var PowerupElectionRenderer = function (config) {
     var mainElement;
     var resultsBody;
     var scoreElements;
+    var rowElements;
 
     var currentElectionID;
     
@@ -29,9 +30,9 @@ var PowerupElectionRenderer = function (config) {
         resultsBody = mainElement.find('tbody');
     });
 
-    var closedVoteCallback = function (powerupName, countVotes) {
+    var closedVoteCallback = function (powerupName) {
         return function () {
-            if (typeof config.voteCallback === 'function' && countVotes) {
+            if (typeof config.voteCallback === 'function') {
                 config.voteCallback(powerupName);
             }
         };
@@ -44,30 +45,45 @@ var PowerupElectionRenderer = function (config) {
      */
     var fillResults = function (tally, countVotes) {
         scoreElements = {};
+        rowElements = {};
 
         Object.keys(tally).forEach(function (powerupName) {
 
+            var powerupNameElement = $('<td>').text(powerupName).attr('id', powerupName);
+            
             var powerupScoreElement = $('<td>').text(tally[powerupName]).addClass('voteScore');
             scoreElements[powerupName] = powerupScoreElement;
 
-            resultsBody.append(
-                $('<tr>').append(
-                    $('<td>').text(powerupName).attr('id', powerupName)
-                ).append(
-                    powerupScoreElement
-                ).addClass('powerupRow').click(closedVoteCallback(powerupName, countVotes))
-            );
+            var powerupRowElement = 
+                $('<tr>')
+                    .append(powerupNameElement)
+                    .append(powerupScoreElement)
+                    .addClass('powerupRow');
+            rowElements[powerupName] = powerupRowElement;
+            
+            if (countVotes) {
+                powerupRowElement.click(closedVoteCallback(powerupName));
+                powerupRowElement.addClass('voteButton');
+            }
+            
+            resultsBody.append(powerupRowElement);
         });
     };
 
     /**
      *
      * @param {Object<string,number>} tally - the number of votes for each powerup
+     * @param {Vote} localVote - the vote made locally (or null)
      */
-    var updateResults = function (tally) {
+    var updateResults = function (tally, localVote) {
         Object.keys(tally).forEach(function (powerupName) {
             scoreElements[powerupName].text(tally[powerupName]);
+            rowElements[powerupName].removeClass('votedButton');
         });
+
+        if (localVote != null) {
+            rowElements[localVote.powerup].addClass('votedButton');
+        }
     };
 
 
@@ -98,7 +114,9 @@ var PowerupElectionRenderer = function (config) {
 
             currentElectionID = election.id;
         } else {
-            updateResults(election.getTally());
+            var localVoteIndex = election.getPlayerVoteIndex(model.getLocalClientID());
+            var localVote = localVoteIndex === -1 ? null : election.votes[localVoteIndex];
+            updateResults(election.getTally(), localVote);
         }
 
         if (countVotes) {

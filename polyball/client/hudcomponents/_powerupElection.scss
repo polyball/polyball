@@ -26,11 +26,19 @@
   border-bottom: 1px solid $lightGray;
 }
 
-.powerupRow:hover {
+.voteButton:hover {
   background-color: rgba(0,0,0,0.4);
   color: #e7e7e7;
   cursor: pointer;
 }
+
+.votedButton {
+  background-color: rgba(0,0,0,0.4);
+  color: #e7e7e7;
+  cursor: default !important;
+}
+
+
 
 .voteScore {
   text-align: right;
