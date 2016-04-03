@@ -10,7 +10,7 @@ var fuchsia = '0xC00029'; //jshint ignore:line
 
 var blueText = '#3b4c60';
 
-var midasParticleStartColor = 'ffcc00';
+var midasParticleStartColor = 'd04900';
 var midasParticleEndColor = '545454';
 
 var ballStyle = {
