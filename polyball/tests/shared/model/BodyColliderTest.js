@@ -57,18 +57,6 @@ describe('BodyCollider', function () {
             world.emit('collisions:detected', event);
         });
 
-        it('should retransmit collisions of ignored body on nonimpulseCollisions:detected channel', function (done) {
-            world.on('nonimpulseCollisions:detected', function (evt) {
-                evt.collisions.length.should.equal(1);
-                evt.collisions[0].bodyA.should.equal(ball1);
-                done();
-            });
-
-            collisionsPruner.addIgnoredBody(ball1);
-
-            world.emit('collisions:detected', event);
-        });
-
         it('should filter collisions of ignored body regardless of which body is ignored', function (done) {
             world.on('impulseCollisions:detected', function (evt) {
                 evt.collisions.length.should.equal(0);
