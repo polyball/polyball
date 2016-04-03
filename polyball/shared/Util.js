@@ -94,7 +94,7 @@ var adjectives = [
     "boring",
     "aware",
     "obvious",
-    "sexual",
+    "sexy",
     "civil",
     "suitable"
 ];
@@ -116,7 +116,7 @@ var nouns = [
     "base",
     "glove",
     "bubble",
-    "hate",
+    "hat",
     "horse",
     "soup",
     "desire",
@@ -133,7 +133,7 @@ var nouns = [
     "book",
     "parcel",
     "wheel",
-    "join",
+    "joinery",
     "eye",
     "back",
     "substance",
