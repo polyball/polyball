@@ -29,9 +29,9 @@ var PowerupElectionRenderer = function (config) {
         resultsBody = mainElement.find('tbody');
     });
 
-    var closedVoteCallback = function (powerupName) {
+    var closedVoteCallback = function (powerupName, countVotes) {
         return function () {
-            if (typeof config.voteCallback === 'function') {
+            if (typeof config.voteCallback === 'function' && countVotes) {
                 config.voteCallback(powerupName);
             }
         };
@@ -39,9 +39,10 @@ var PowerupElectionRenderer = function (config) {
 
     /**
      *
-     * @param {Object<string,number>} tally
+     * @param {Object<string,number>} tally - the number of votes for each powerup
+     * @param {bool} countVotes - whether or not to count the votes of the client
      */
-    var fillResults = function (tally) {
+    var fillResults = function (tally, countVotes) {
         scoreElements = {};
 
         Object.keys(tally).forEach(function (powerupName) {
@@ -54,14 +55,14 @@ var PowerupElectionRenderer = function (config) {
                     $('<td>').text(powerupName).attr('id', powerupName)
                 ).append(
                     powerupScoreElement
-                ).click(closedVoteCallback(powerupName))
+                ).addClass('powerupRow').click(closedVoteCallback(powerupName, countVotes))
             );
         });
     };
 
     /**
      *
-     * @param {Object<string,number>} tally
+     * @param {Object<string,number>} tally - the number of votes for each powerup
      */
     var updateResults = function (tally) {
         Object.keys(tally).forEach(function (powerupName) {
@@ -87,15 +88,23 @@ var PowerupElectionRenderer = function (config) {
             return;
         }
 
+        var countVotes = !model.hasPlayer(model.getLocalClientID());
+
         // on new election, clear the table and refill the rows
         if (currentElectionID !== election.id) {
             resultsBody.empty();
-            fillResults(election.getTally());
+            fillResults(election.getTally(), countVotes);
             mainElement.show();
 
             currentElectionID = election.id;
         } else {
             updateResults(election.getTally());
+        }
+
+        if (countVotes) {
+            $('.voteMessage').show();
+        } else {
+            $('.voteMessage').hide();
         }
     };
     
