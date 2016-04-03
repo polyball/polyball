@@ -9,13 +9,11 @@ var Util = require('polyball/shared/Util');
 /**
  * Elects a powerup to be spawned in the arena.
  * @param {Object} config
- * @param {Object[]} config.powerups - The powerup configs for initializing powerups
+ * @param {String[]} config.powerups - The powerup configs for initializing powerups
  * @param {Object[]} config.votes - The vote configs for initializing votes
  * @constructor
  */
 function PowerupElection(config) {
-    //TODO expand powerups from powerup configs array
-    //TODO also update toConfig()
     this.powerups = config.powerups;
     this.votes = [];
 
@@ -63,6 +61,52 @@ PowerupElection.prototype.getPlayerVoteIndex = function (spectatorID) {
 };
 
 /**
+ * Returns the current tally for the vote of the form
+ * {powerup: #votes}
+ * @returns {{}}
+ */
+PowerupElection.prototype.getTally = function(){
+    var tally = {};
+
+    this.votes.forEach(function(vote){
+        if (!tally[vote.powerup]){
+            tally[vote.powerup] = 1;
+        } else {
+            tally[vote.powerup] += 1;
+        }
+    });
+
+    return tally;
+};
+
+/**
+ * @return {String} winning powerup name
+ */
+PowerupElection.prototype.getWinner = function (){
+    var tally = {};
+    var maxVotes = 0;
+    var powerup = null;
+
+    this.votes.forEach(function(vote){
+        if (!tally[vote.powerup]){
+            tally[vote.powerup] = 1;
+        } else {
+            tally[vote.powerup] += 1;
+        }
+
+        if (tally[vote.powerup] > maxVotes){
+            powerup = vote.powerup;
+        }
+    });
+
+    if (powerup != null){
+        return powerup;
+    } else {
+        return this.powerups[Math.floor(Math.random()*this.powerups.length)];
+    }
+};
+
+/**
  * Converts this PowerupElection object into it's config (serializable) form
  * @return {Object}
  */
@@ -73,9 +117,8 @@ PowerupElection.prototype.toConfig = function (){
     });
 
     return {
-        votes: voteConfigs,
+        votes: Util.arrayToConfig(this.votes),
         powerups: this.powerups
-        //TODO Add powerups
     };
 };
 

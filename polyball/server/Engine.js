@@ -361,6 +361,7 @@ var Engine = function (config) {
 
     // - Need to pub sub "Add Player to queue"
     comms.on(CommsEvents.ServerToServer.newPlayerQueued, this.handleAddPlayerToQueue);
+    comms.on(CommsEvents.ServerToServer.newVote, this.handleAddVote);
     // - Need to pub sub "Add Vote"
     //comms.on(CommsEvents.ServerToServer.playerCommandsReceived, this.handlePlayerCommandReceived);
 
