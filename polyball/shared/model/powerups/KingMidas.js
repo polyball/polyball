@@ -49,12 +49,16 @@ KingMidas.prototype.deactivate = function(model){
         model.getWorld().off(Events.ballGoalCollision, this.handleGoal, this);
         this.active = false;
     }
+
+    if (typeof this.deactivateRender === 'function') {
+        this.deactivateRender();
+    }
 };
 
 KingMidas.prototype.render = function(renderer) {
+    var self = this;
 
     if (this.active) {
-        var self = this;
         var emitter;
         var emitters = renderer.getEmitters();
 
@@ -98,6 +102,28 @@ KingMidas.prototype.render = function(renderer) {
             });
         });
     }
+
+    if (!this.renderedAtLeastOnce) {
+        this.deactivateRender = function () {
+
+            var emitters = renderer.getEmitters();
+            var balls = self.model.getBalls(function (ball) {
+                return ball.lastTouchedID === self.owner;
+            });
+
+            balls.forEach(function (ball) {
+                var foundEmitters = emitters.filter(function (emitter) {
+                    return emitter.ball === ball;
+                });
+
+                foundEmitters.forEach(function(emitter) {
+                    renderer.removeEmitter(emitter);
+                });
+            });
+        };
+    }
+
+    this.renderedAtLeastOnce = true;
 };
 
 KingMidas.prototype.toConfig = function (){
