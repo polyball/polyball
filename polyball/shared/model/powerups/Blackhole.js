@@ -14,6 +14,7 @@ var _ = require('lodash');
 var twistUp;
 var twistFilter;
 var bhContainer;
+var gameRenderer;
 var Pixi;
 
 /**
@@ -57,10 +58,18 @@ var renderActivate = function(renderer) {
  * @param renderer: Physics.Renderer
  */
 var renderDeactivate = function(renderer) {
+    var newFilters = [];
     for (var i = 0; i < renderer.stage.filters.length; i++) {
-        if (renderer.stage.filters[i] === twistFilter) {
-            renderer.stage.filters.splice(i, 1);
+        if (renderer.stage.filters[i] !== twistFilter) {
+            newFilters.push(renderer.stage.filters);
         }
+    }
+
+    if (newFilters.length > 0) {
+        renderer.stage.filters = newFilters;
+    }
+    else {
+        renderer.stage.filters = undefined;
     }
 
     renderer.stage.removeChild(bhContainer);
@@ -139,12 +148,20 @@ Blackhole.prototype.deactivate = function (model){
     if (this.active){
         model.getWorld().remove(this.attractor);
         this.active = false;
+
+        // This is a bit weird here, but it works.
+        if (gameRenderer !== undefined) {
+            renderDeactivate(gameRenderer);
+        }
     }
 };
 
 Blackhole.prototype.render = function(renderer) {
     if (Pixi === undefined) {
         Pixi = renderer.Pixi;
+    }
+    if (gameRenderer === undefined) {
+        gameRenderer = renderer;
     }
 
     // Activate black hole
@@ -155,10 +172,6 @@ Blackhole.prototype.render = function(renderer) {
         // Activate black hole
         if (renderer.stage.filters.length === 0 && this.active) {
             renderActivate(renderer);
-        }
-        // Deactivate black hole
-        else if (renderer.stage.filters.length > 0 && !this.active) {
-            renderDeactivate(renderer);
         }
         // Transform the black hole
         else if (renderer.stage.filters.length > 0 && this.active) {
