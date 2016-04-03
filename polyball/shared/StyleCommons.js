@@ -10,6 +10,8 @@ var fuchsia = '0xC00029'; //jshint ignore:line
 
 var blueText = '#3b4c60';
 
+var midasParticleColor = 'ffff1a';
+
 var ballStyle = {
     fillStyle: orange
 };
@@ -65,5 +67,6 @@ exports.bumperStyle = bumperStyle;
 exports.paddleStyle = paddleStyle;
 exports.blackholeStyle = blackholeStyle;
 exports.kingMidasStyle = kingMidasStyle;
+exports.midasParticleColor = midasParticleColor;
 exports.fontStyle = fontStyle;
 exports.titleFontStyle = titleFontStyle;

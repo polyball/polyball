@@ -6,6 +6,7 @@ var Powerup = require('polyball/shared/model/powerups/Powerup');
 var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
+var Util = require('polyball/shared/Util');
 
 /**
  * This powerup makes balls worth an additional point
@@ -17,6 +18,7 @@ var KingMidas = function (config){
 
     Powerup.call(this, config);
     this.name = KingMidas.Name;
+    this.renderer = config.renderer;
 };
 
 inherits(KingMidas, Powerup);
@@ -50,12 +52,110 @@ KingMidas.prototype.deactivate = function(model){
     }
 };
 
+KingMidas.prototype.render = function(renderer) {
+
+    if (this.active) {
+        var self = this;
+        var emitter;
+        var emitters = renderer.getEmitters();
+
+        var balls = this.model.getBalls(function(ball) {
+            return ball.lastTouchedID === self.owner;
+        });
+
+        balls.forEach(function(ball) {
+            // Find the emitter for this ball
+            var foundEmitters = emitters.filter(function(emitter) {
+                return emitter.ball === ball;
+            });
+
+            if (foundEmitters.length === 0) { // Create a new emitter
+                var radius = ball.body.geometry.radius;
+
+                kingMidasParticleStyle.pos.x += Util.getRandomArbitrary(-radius, radius);
+                kingMidasParticleStyle.pos.y += Util.getRandomArbitrary(-radius, radius);
+                emitter = renderer.addEmitter(['res/particle.png'], kingMidasParticleStyle);
+                emitter.ball = ball;
+            }
+            else if (foundEmitters.length === 1) { // Update emitter location
+                emitter = foundEmitters[0];
+                var point = {
+                    x: ball.body.state.pos.x,
+                    y: ball.body.state.pos.y
+                };
+
+                renderer.moveEmitter(emitter, point);
+            }
+        });
+
+        // Remove any emitters if they hit an opposing players paddle.
+        balls = this.model.getBalls(function(ball) {
+            return ball.lastTouchedID !== self.owner;
+        });
+
+        balls.forEach(function(ball) {
+            var foundEmitters = emitters.filter(function(emitter) {
+                return emitter.ball === ball;
+            });
+
+            foundEmitters.forEach(function(emitter) {
+                renderer.removeEmitter(emitter);
+            });
+        });
+    }
+};
+
 KingMidas.prototype.toConfig = function (){
     var config = { name: this.name};
     _.assign(config, KingMidas.super_.prototype.toConfig.call(this));
     return config;
 };
 
+var kingMidasParticleStyle = {
+    "alpha": {
+        "start": 1,
+        "end": 0
+    },
+    "scale": {
+        "start": 0.1,
+        "end": 0.2
+    },
+    "color": {
+        "start": StyleCommons.midasParticleColor,
+        "end": StyleCommons.midasParticleColor
+    },
+    "speed": {
+        "start": 0,
+        "end": 0
+    },
+    "startRotation": {
+        "min": 0,
+        "max": 0
+    },
+    "rotationSpeed": {
+        "min": 0,
+        "max": 0
+    },
+    "lifetime": {
+        "min": 1,
+        "max": 1
+    },
+    "blendMode": "normal",
+    "frequency": 0.15,
+    "emitterLifetime": this.duration,
+    "maxParticles": 200,
+    "pos": {
+        "x": 0,
+        "y": 0
+    },
+    "addAtBack": false,
+    "spawnType": "circle",
+    "spawnCircle": {
+        "x": 0,
+        "y": 0,
+        "r": 0
+    }
+};
 
 KingMidas.Name = "KingMidas";
 
