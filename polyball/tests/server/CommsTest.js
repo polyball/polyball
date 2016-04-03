@@ -10,7 +10,6 @@ var http = require('http');
 var Comms = require('polyball/server/Comms');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var Model = require('polyball/shared/Model');
-var Vote = require('polyball/shared/model/Vote');
 var Logger = require('polyball/shared/Logger');
 
 
@@ -139,15 +138,10 @@ describe('Server Comms', function() {
                 }, 3000);
             });
 
-            var clientVote = new Vote({
-                spectatorID: 12,
-                powerup: 'dummy'
-            });
-            client1.emit(CommsEvents.ClientToServer.vote, clientVote.toConfig());
+            client1.emit(CommsEvents.ClientToServer.vote, 'dummy');
 
             return eventDetected.should.be.fulfilled()
                 .then(function (voteConfig) {
-                    voteConfig.should.have.property('spectatorID', 12);
                     voteConfig.should.have.property('powerup', 'dummy');
                 });
         });

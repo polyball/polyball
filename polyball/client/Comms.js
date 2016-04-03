@@ -114,6 +114,12 @@ var Comms = function (config) {
         
         socket.emit(CommsEvents.ClientToServer.newCommandAggregate, commandAggregate);
     };
+    
+    this.voteForPowerup = function (powerupName) {
+        Logger.debug('Voting for ' + powerupName);
+        
+        socket.emit(CommsEvents.ClientToServer.vote, powerupName);
+    };
 };
 
 

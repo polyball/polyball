@@ -112,9 +112,13 @@ var Comms = function (config) {
             pubsub.fireEvent(CommsEvents.ServerToServer.newPlayerQueued, {spectatorID: spectatorID});
         });
 
-        clientSocket.on(CommsEvents.ClientToServer.vote, function (voteConfig) {
+        clientSocket.on(CommsEvents.ClientToServer.vote, function (powerupName) {
             var spectatorID = getPlayerOrSpectatorID(clientSocket);
 
+            var voteConfig = {
+                spectatorID: spectatorID,
+                powerup: powerupName
+            };
             Logger.info("Spectator " + spectatorID + " casts powerup vote.");
             pubsub.fireEvent(CommsEvents.ServerToServer.newVote, voteConfig);
         });

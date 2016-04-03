@@ -13,6 +13,7 @@ var RoundEvents = require('polyball/shared/RoundEvents');
 var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
 var PowerupBehavior = require('polyball/shared/model/behaviors/PowerupBehavior');
 var PowerupFactory = require('polyball/shared/PowerupFactory');
+var Vote = require('polyball/shared/model/Vote');
 
 /**
  * Initializes the engine
@@ -364,10 +365,11 @@ var Engine = function (config) {
 
     /**
      * Handles the comms event to add a spectator to the model
-     * @param {{vote: Vote}} data
+     * @param {object} voteConfig
      */
-    this.handleAddVote = function (data){
-        model.getPowerupElection().addVote(data.vote);
+    this.handleAddVote = function (voteConfig){
+        var vote = new Vote(voteConfig);
+        model.getPowerupElection().addVote(vote);
     };
 
     /**

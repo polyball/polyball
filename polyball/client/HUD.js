@@ -62,7 +62,10 @@ var HUD = function (config) {
         synchronizer: config.synchronizer
     }).listenElement(document);
     
-    var powerupElectionRenderer = new PowerupElectionRenderer({appendTo: '#hudColumn'});
+    var powerupElectionRenderer = new PowerupElectionRenderer({
+        appendTo: '#hudColumn',
+        voteCallback: comms.voteForPowerup
+    });
     
     var appendNameToList = function (listElement) {
         

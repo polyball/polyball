@@ -5,17 +5,12 @@
 var $ = require('jquery');
 var Logger = require('polyball/shared/Logger');
 
-var closedVoteCallback = function (powerupName) {
-    return function () {
-        console.log(powerupName);
-    };
-};
-
 
 /**
  * 
  * @param {Object} config
  * @property {string} config.appendTo - the css selector of the element(s) to append the renderer to.
+ * @property {function) config.voteCallback - the function to call with a vote name when one is cast.
  * @constructor
  */
 var PowerupElectionRenderer = function (config) {
@@ -33,6 +28,14 @@ var PowerupElectionRenderer = function (config) {
         mainElement = $('.powerupElection');
         resultsBody = mainElement.find('tbody');
     });
+
+    var closedVoteCallback = function (powerupName) {
+        return function () {
+            if (typeof config.voteCallback === 'function') {
+                config.voteCallback(powerupName);
+            }
+        };
+    };
 
     /**
      *
