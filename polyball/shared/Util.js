@@ -94,7 +94,7 @@ var adjectives = [
     "boring",
     "aware",
     "obvious",
-    "sexual",
+    "sexy",
     "civil",
     "suitable"
 ];
