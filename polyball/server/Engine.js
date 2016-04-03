@@ -231,6 +231,7 @@ var Engine = function (config) {
      */
     var addAllPaddles = function () {
         var players = model.getPlayers();
+        var paddleRadius = config.configuration.paddleRadius / players.length;
         for(var i=0; i < players.length; i++){
             var leftBound = model.getArena().getPaddleLeftBound(i);
             var rightBound = model.getArena().getPaddleRightBound(i);
@@ -240,7 +241,7 @@ var Engine = function (config) {
 
             var paddleConfig = {
                 maxVelocity: config.configuration.paddleMaximumVelocity,
-                radius: config.configuration.paddleRadius,
+                radius: paddleRadius>= 30 ? paddleRadius : 30,
                 leftBound: {
                     x: leftBound.x,
                     y: leftBound.y
