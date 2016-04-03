@@ -176,8 +176,10 @@ var Engine = function (config) {
     };
 
     var startPoweupVote = function (){
-        model.setPowerupElection({powerups: PowerupFactory.getAllPowerupNames()});
-        setTimeout(endPowerupVote, config.configuration.powerupVoteDuration);
+        if (model.gameStatus === EngineStatus.gameRunning) {
+            model.setPowerupElection({powerups: PowerupFactory.getAllPowerupNames()});
+            setTimeout(endPowerupVote, config.configuration.powerupVoteDuration);
+        }
     };
 
     var endPowerupVote = function (){
@@ -384,6 +386,7 @@ var Engine = function (config) {
             roundEngine.kill();
         }
         clearInterval(backgroundSnapshotInterval);
+        clearInterval(powerupVoteInterval);
     };
 
     // ========================== Engine Construction =============================
