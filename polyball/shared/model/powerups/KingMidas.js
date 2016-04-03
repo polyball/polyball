@@ -62,6 +62,23 @@ KingMidas.prototype.render = function(renderer) {
         var emitter;
         var emitters = renderer.getEmitters();
 
+        // add paddle emitter
+        var paddleEmitters = emitters.filter(function (emitter) {
+            return self.owner === emitter.owner;
+        });
+
+        var ownerPaddle = self.model.getPlayer(self.owner).paddle;
+        if (paddleEmitters.length === 0) {
+            kingMidasPaddleParticleStyle.angleStart = ownerPaddle.body.state.angular.pos * 57.2958;
+            paddleEmitters.push(renderer.addEmitter(['res/particle.png'], kingMidasPaddleParticleStyle));
+            paddleEmitters[0].owner = self.owner;
+        }
+        renderer.moveEmitter(
+            paddleEmitters[0],
+            {x: ownerPaddle.body.state.pos.x, y: ownerPaddle.body.state.pos.y}
+        );
+
+        // add ball emmitters
         var balls = this.model.getBalls(function(ball) {
             return ball.lastTouchedID === self.owner;
         });
@@ -73,7 +90,7 @@ KingMidas.prototype.render = function(renderer) {
             });
 
             if (foundEmitters.length === 0) { // Create a new emitter
-                emitter = renderer.addEmitter(['res/particle.png'], kingMidasParticleStyle);
+                emitter = renderer.addEmitter(['res/particle.png'], kingMidasBallParticleStyle);
                 emitter.ball = ball;
             }
             else if (foundEmitters.length === 1) { // Update emitter location
@@ -113,7 +130,7 @@ KingMidas.prototype.render = function(renderer) {
 
             balls.forEach(function (ball) {
                 var foundEmitters = emitters.filter(function (emitter) {
-                    return emitter.ball === ball;
+                    return emitter.ball === ball || emitter.owner === self.owner;
                 });
 
                 foundEmitters.forEach(function(emitter) {
@@ -132,7 +149,7 @@ KingMidas.prototype.toConfig = function (){
     return config;
 };
 
-var kingMidasParticleStyle = {
+var kingMidasBallParticleStyle = {
     "alpha": {
         "start": 1,
         "end": 0
@@ -163,7 +180,7 @@ var kingMidasParticleStyle = {
     },
     "blendMode": "normal",
     "frequency": 0.005,
-    "emitterLifetime": this.duration,
+    "emitterLifetime": -1,
     "maxParticles": 500,
     "pos": {
         "x": 0,
@@ -176,6 +193,55 @@ var kingMidasParticleStyle = {
         "y": 0,
         "r": 6
     }
+};
+
+var kingMidasPaddleParticleStyle = {
+    "alpha": {
+        "start": 0,
+        "end": 0.22
+    },
+    "scale": {
+        "start": 0.8,
+        "end": 0.18,
+        "minimumScaleMultiplier": 1
+    },
+    "color": {
+        "start": "#ffcc00",
+        "end": "#ffcc00"
+    },
+    "speed": {
+        "start": 60,
+        "end": 0
+    },
+    "acceleration": {
+        "x": 0,
+        "y": 0
+    },
+    "startRotation": {
+        "min": 0,
+        "max": 0
+    },
+    "rotationSpeed": {
+        "min": 0,
+        "max": 0
+    },
+    "lifetime": {
+        "min": 0.4,
+        "max": 0.4
+    },
+    "blendMode": "add",
+    "frequency": 0.01,
+    "emitterLifetime": -1,
+    "maxParticles": 500,
+    "pos": {
+        "x": 0,
+        "y": 0
+    },
+    "addAtBack": true,
+    "spawnType": "burst",
+    "particlesPerWave": 8,
+    "particleSpacing": 45,
+    "angleStart": 45
 };
 
 KingMidas.Name = "KingMidas";
