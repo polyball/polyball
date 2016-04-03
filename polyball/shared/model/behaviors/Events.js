@@ -4,5 +4,6 @@
 module.exports={
     paddleBallCollision: 'paddle-ball-collision',
     ballGoalCollision: 'ball-goal-collision',
-    ballPowerupCollision: 'ball-powerup-collision'
+    ballPowerupCollision: 'ball-powerup-collision',
+    nonImpulsiveCollision: 'nonimpulseCollisions:detected'
 };

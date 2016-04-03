@@ -7,6 +7,7 @@ var CommsEvents = require('polyball/shared/CommsEvents');
 var Logger = require('polyball/shared/Logger');
 var Blackhole = require('polyball/shared/model/powerups/Blackhole'); //jshint ignore:line
 var KingMidas = require('polyball/shared/model/powerups/KingMidas'); //jshint ignore:line
+var BulletTime = require('polyball/shared/model/powerups/BulletTime'); //jshint ignore:line
 var RoundEngine = require('polyball/shared/RoundEngine');
 var RoundEvents = require('polyball/shared/RoundEvents');
 var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
@@ -97,11 +98,21 @@ var Engine = function (config) {
         model.gameStatus = EngineStatus.gameRunning;
 
         //Add the balls to the game
-        _.times(model.playerCount(), function(x){
-            setTimeout(addBall, x * 500);
-        });
+        //_.times(model.playerCount(), function(x){
+        //    setTimeout(addBall, x * 500);
+        //});
+        addBall();
+        //TEST Bullet Time
+        setTimeout(function(){
+            var bodyConfig = generatePowerupBody();
+            model.addPowerup({
+                name: BulletTime.Name,
+                body: bodyConfig,
+                duration: config.configuration.powerupDuration,
+                maxBallVelocity: config.configuration.ballMaxVelocity
+            });
+        }, 5000);
 
-        //TEST BLACKHOLE
         //setTimeout(function(){
         //    var bodyConfig = generatePowerupBody();
         //    model.addPowerup({
@@ -112,14 +123,14 @@ var Engine = function (config) {
         //}, 5000);
 
         //TEST KINGMIDAS
-        setTimeout(function(){
-            var bodyConfig = generatePowerupBody();
-            model.addPowerup({
-                name: KingMidas.Name,
-                body: bodyConfig,
-                duration: config.configuration.powerupDuration
-            });
-        }, 5000);
+        //setTimeout(function(){
+        //    var bodyConfig = generatePowerupBody();
+        //    model.addPowerup({
+        //        name: KingMidas.Name,
+        //        body: bodyConfig,
+        //        duration: config.configuration.powerupDuration
+        //    });
+        //}, 5000);
 
         roundEngine.start();
 
