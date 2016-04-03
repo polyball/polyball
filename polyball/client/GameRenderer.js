@@ -6,7 +6,6 @@
 var Pixi = require('pixi.js');
 var PixiParticles = require('pixi-particles'); // jshint ignore:line
 var Physics = require('physicsjs');
-var Util = require('polyball/shared/Util');
 var Blackhole = require('polyball/shared/model/powerups/Blackhole');
 var StyleCommons = require('polyball/shared/StyleCommons');
 var Logger = require('polyball/shared/Logger');
@@ -165,8 +164,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         createView: function (geometry, styles) {
 
             var view = parent.createView.call(this, geometry, styles);
-
-            styles = styles || this.options.styles.circle || {};
 
             // Handle view layers.
             if (styles.layer) {
@@ -336,6 +333,11 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 this.addText('polyball', style, center, 0, titleID);
             }
 
+            // Render powerups
+            model.getPowerups().forEach(function(powerup) {
+                powerup.render(self);
+            });
+
             var blackholes = model.getPowerups(function(x) {
                 return x.name === Blackhole.Name;
             });
@@ -372,17 +374,68 @@ Physics.renderer('polyball', 'pixi', function (parent) {
          * @param imageArray An array of different Pixi images to use as particles.
          * @param config The PixiParticles config object to use.
          */
-        addEmitter: function(imageArray, config) {
+        addEmitter: function(imageArray, config, container) {
+            container = container || emitterContainer;
+
+            var newImageArray = [];
+
+            imageArray.forEach(function(image) {
+                if (typeof image === 'string') {
+                    newImageArray.push(Pixi.Texture.fromImage(image));
+                }
+                else {
+                    newImageArray.push(image);
+                }
+            });
+
             var emitter = new window.cloudkid.Emitter(
-                emitterContainer,
-                imageArray,
+                container,
+                newImageArray,
                 config
             );
             emitters.push(emitter);
+
+            return emitter;
         },
 
-        addTestEmitter: function() {
-            this.addEmitter([Pixi.Texture.fromImage('res/Sparks.png')],
+        /**
+         * Searches for and removes any emitter in both emitters and emitterContainer
+         * @param emitter: cloudkid.Emitter
+         */
+        removeEmitter: function(emitter) {
+            for (var i = 0; i < emitters.length; i++) {
+                if (emitters[i] === emitter) {
+                    emitters[i].cleanup();
+                    emitters.splice(i, 1);
+                }
+            }
+        },
+
+        /**
+         * Attempts to move the specified emitter to location.
+         * @param emitter: cloudkid.Emitter
+         * @param location: Point
+         */
+        moveEmitter: function(emitter, location) {
+            var foundEmitters = emitters.filter(function(inEmitter) {
+                return inEmitter === emitter;
+            });
+
+            if (foundEmitters.length > 0) {
+                foundEmitters[0].updateOwnerPos(location.x, location.y);
+            }
+        },
+
+        /**
+         * Gets the array of emitters
+         * @returns {array of cloudkid.Emitter}
+         */
+        getEmitters: function() {
+            return emitters;
+        },
+
+        addTestEmitter: function(container) {
+            return this.addEmitter([Pixi.Texture.fromImage('res/Sparks.png')],
                 {
                     "alpha": {
                         "start": 1,
@@ -415,10 +468,10 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     "blendMode": "normal",
                     "frequency": 0.001,
                     "emitterLifetime": 100,
-                    "maxParticles": 1000,
+                    "maxParticles": 100,
                     "pos": {
-                        "x": Util.getRandomInt(0, 600),
-                        "y": Util.getRandomInt(0, 600)
+                        "x": 0,
+                        "y": 0
                     },
                     "addAtBack": false,
                     "spawnType": "circle",
@@ -427,7 +480,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                         "y": 0,
                         "r": 0
                     }
-                }
+                },
+                container
             );
         },
 
@@ -471,11 +525,13 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             var offset = this.stage.position;
             var center = model.getArena().getCenter();
 
-            point.rotate(rotation, center);
-            point.x = point.x + offset.x - center.x;
-            point.y = point.y + offset.y - center.y;
+            var newPoint = Physics.vector(point.x, point.y);
 
-            return point;
+            newPoint.rotate(rotation, center);
+            newPoint.x = newPoint.x + offset.x - center.x;
+            newPoint.y = newPoint.y + offset.y - center.y;
+
+            return newPoint;
         },
 
         unrotate: function(point) {
