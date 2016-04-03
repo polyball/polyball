@@ -10,7 +10,7 @@ var Player = require('polyball/shared/model/Player');
 var Util = require('polyball/shared/Util');
 var PowerupFactory = require('polyball/shared/PowerupFactory'); // jshint ignore:line
 var EngineStatus = require('polyball/shared/EngineStatus.js');
-
+var PowerupElection = require('polyball/shared/model/PowerupElection');
 
 /**
  * Holds all data for client and server game instances.  Exposes CRUD operations for data.
@@ -722,8 +722,8 @@ var Model = function () {
      * Sets the internal instance of Powerup Election
      * @param {PowerupElection} election
      */
-    this.setPowerupElection = function(election){
-        powerupElection = election;
+    this.setPowerupElection = function(config){
+        powerupElection = new PowerupElection(config);
     };
 
 

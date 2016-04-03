@@ -63,4 +63,21 @@ describe('Powerup Election', function() {
             pe.votes.length.should.equal(0);
         });
     });
+    describe('#getWinner()', function() {
+        it('should return the powerup with the most votes ', function() {
+            var pe = new PowerupElection({powerups: [1,2,3]});
+            pe.addVote(new Vote({spectatorID: 1, powerup:1}));
+            pe.addVote(new Vote({spectatorID: 2, powerup:2}));
+            pe.addVote(new Vote({spectatorID: 3, powerup:2}));
+
+            pe.getWinner().should.equal(2);
+        });
+        it('should decrease the size of the votes array by 1 for each additional call', function() {
+            var pe = new PowerupElection({powerups: [1,2,3]});
+            var winner = pe.getWinner();
+            (winner != null).should.be.ok; //jshint ignore:line
+            [1,2,3].should.containEql(winner);
+
+        });
+    });
 });
