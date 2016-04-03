@@ -205,7 +205,7 @@ var Comms = function (config) {
      *                                          same time all clients are instructed to start.
      */
     this.broadcastSynchronizedStart = function (newRoundData, delayedStartCallback) {
-        Logger .info("Comms broadcasting new round.");
+        Logger.info("Comms broadcasting new round.");
 
         //TODO compute this for each client depending on latency with snapshot packets.
         var clientDelay = newRoundData.minimumDelay;
@@ -215,6 +215,16 @@ var Comms = function (config) {
         });
 
         setTimeout(delayedStartCallback, newRoundData.minimumDelay);
+    };
+
+    /**
+     * Tell all clients that the round has stopped.
+     * @param {Object} roundEndData
+     */
+    this.broadcastRoundEnded = function (roundEndData) {
+        Logger.info("Comms broadcasting round end.");
+        
+        io.sockets.emit(CommsEvents.ServerToClient.endRound, roundEndData);
     };
 
 

@@ -165,6 +165,7 @@ var Engine = function (config) {
         resetPowerups();
         resetPlayScores();
         clearPowerupVote();
+        comms.broadcastRoundEnded({whateverData: 'everybody wins'});
         setTimeout(initializeGame, config.configuration.roundIntermission);
     };
 
