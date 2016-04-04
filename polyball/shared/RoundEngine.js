@@ -24,6 +24,8 @@ var BodyCollider = require('polyball/shared/model/BodyCollider');
  * @property
  * @constructor
  */
+// SRS Requirement - 3.2.1.8 Game Model Simulation
+// This class handles the game model simulation on the server
 var RoundEngine = function(config){
     var model = config.model;
     var gameStartTime;

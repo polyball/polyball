@@ -7,6 +7,8 @@ var Physics = require('physicsjs');
  * @property {Model} config.model
  * @constructor
  */
+// SRS Requirement - 3.2.1.11 Player Client Input
+// This class handles inserting client inputs into the game state
 var PaddleBehavior = function (config) {
 
 

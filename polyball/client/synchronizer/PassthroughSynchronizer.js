@@ -117,6 +117,7 @@ function syncDiscreteBallState(balls, model) {
             }
 
             ball.lastTouchedID = snapshotBall.lastTouchedID;
+            ball.body.treatment = snapshotBall.body.treatment ? snapshotBall.body.treatment : 'dynamic';
         });
     }
 }

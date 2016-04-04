@@ -13,6 +13,8 @@ var DefaultConfig = require('polyball/server/configuration/DefaultConfiguration'
  * @param {{configPath: String}} config
  * @constructor
  */
+    // SRS Requirement - 3.2.1.1 Configure Server
+    // This class handles server configuration
 var Configuration = function (config){
     var defaults = new DefaultConfig();
     var values = new DefaultConfig();
@@ -53,6 +55,8 @@ var Configuration = function (config){
         }
     };
 
+    // SRS Requirement - 3.1.1 Configuration file
+    // This code reads in a configuration file at a specified path
     if (config != null) {
         var customComfig = JSON.parse(fs.readFileSync(config.configPath, 'utf8'));
         _.assign(values, customComfig);
@@ -71,6 +75,7 @@ var Configuration = function (config){
     checkUpperBound('powerupDuration', defaults.roundLength);
     checkLowerBound('powerupVoteDuration', 1);
     checkLowerBound('powerupVoteFrequency', values.powerupVoteDuration);
+    checkLowerBound('powerupVoteDuration', values.powerupDuration);
     this.values = values;
 
     Object.freeze(this.values);
