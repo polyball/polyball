@@ -14,6 +14,8 @@ var http = require('http');
  * @param {{staticDir: string, indexFile: string}} spec
  * @constructor
  */
+// SRS Requirement - 3.2.1.5 Client Application Service
+// This class handles serving all static files to clients who connect.
 function FileServer(spec) {
     var app = express();
     app.use(log4js.connectLogger(log4js.getDefaultLogger()));

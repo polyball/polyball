@@ -2,6 +2,9 @@
  * Created by ryan on 19/03/16.
  */
 
+// SRS Requirement - 3.1.1.1 Configurable Parameters
+// This file outlines the default configuration parameters as well as acts like a template
+// for an administrator to create their own configuration file
 var DefaultConfiguration=function () {
     return {
         // Player Config

@@ -18,6 +18,8 @@ var PubSub = require('polyball/shared/PubSub');
  * }} config
  * @constructor
  */
+// SRS Requirement - 3.2.1.6 Bidirectional, Real-Time Client Communication
+// This class handles bidirectional communication between server and client
 var Comms = function (config) {
 
     //
@@ -66,6 +68,8 @@ var Comms = function (config) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
+    // SRS Requirement - 3.2.1.7 Client Identification
+    // This function handles identifying clients uniquely as they connect
     io.on(CommsEvents.ClientToServer.connection, function (clientSocket) {
         Logger.info('New client connected.');
 
@@ -105,6 +109,8 @@ var Comms = function (config) {
 
         // TODO how do I document these callback parameters??
 
+        // SRS Requirement - 3.2.1.13 Player Queue
+        // This function receives requests from clients who wish to add themselves to the player queue
         clientSocket.on(CommsEvents.ClientToServer.queueToPlay, function () {
             var spectatorID = getPlayerOrSpectatorID(clientSocket);
             
@@ -122,7 +128,10 @@ var Comms = function (config) {
             Logger.info("Spectator " + spectatorID + " casts powerup vote.");
             pubsub.fireEvent(CommsEvents.ServerToServer.newVote, voteConfig);
         });
-        
+
+        // SRS Requirement - 3.2.1.11 Player Client Input
+        // This function receives client inputs and emits an event to let interested parties know
+        // There are new inputs to be processed
         clientSocket.on(CommsEvents.ClientToServer.newCommandAggregate, function (newCommandAggregate) {
             var playerID = getPlayerOrSpectatorID(clientSocket);
 
@@ -186,7 +195,11 @@ var Comms = function (config) {
     //
     ///////////////////////////////////////////////////////////////////////////
 
-
+    // SRS Requirement - 3.2.1.9 Game Model Snapshot
+    // This method handles the actual sending of snapshots to clients
+    // SRS Requirement - 3.2.1.12 Spectator Client Broadcast
+    // Spectator client broad casts are handled exactly the same as player broadcasts
+    // Both players and spectators have a "client" which is used for this kind of communication
     this.broadcastSnapshot = function (snapshot) {
         Logger.debug("Comms broadcasting snapshot.");
         io.sockets.emit(CommsEvents.ServerToClient.newSnapshot, snapshot);
@@ -204,6 +217,8 @@ var Comms = function (config) {
      * @param {Function} delayedStartCallback - a callback that will be called after a delay.  Ideally called at the
      *                                          same time all clients are instructed to start.
      */
+    // SRS Requirement - 3.2.1.4 Game Clock Synchronization
+    // This function handles starting a synchronized round with server and all clients
     this.broadcastSynchronizedStart = function (newRoundData, delayedStartCallback) {
         Logger.info("Comms broadcasting new round.");
 

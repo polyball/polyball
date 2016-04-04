@@ -1,3 +1,7 @@
+// SRS Requirement - 3.2.1.2 Start Server
+// An administrator runs `node polyball/Server.js` to start the server
+// This script is the entry point to start the server
+
 var Logger = require('polyball/shared/Logger');
 var FileServer = require('polyball/server/FileServer');
 var Model = require('polyball/shared/Model');

@@ -53,6 +53,8 @@ var Engine = function (config) {
      *  - Checks to see if we have enough players to start
      *  - Broadcasts the start time to clients
      */
+    // SRS Requirement - 3.2.1.10 Game Rounds
+    // This method handles the initialization of a round
     var initializeGame = function(){
         model.gameStatus = EngineStatus.gameInitializing;
         Logger.info('Initializing game');
@@ -85,7 +87,10 @@ var Engine = function (config) {
                 maxBallVelocity: config.configuration.ballMaxVelocity
             });
 
+            // SRS Requirement - 3.2.1.9 Game Model Snapshot
+            // This method sends a snapshot to clients at a regular interval
             roundEngine.on(RoundEvents.simulationStepped, broadcastModel);
+
             roundEngine.on(RoundEvents.gameEnded, endGame);
 
             comms.broadcastSynchronizedStart({
@@ -106,6 +111,8 @@ var Engine = function (config) {
      * Starts the engine:
      *  - Schedules the main loop
      */
+    // SRS Requirement - 3.2.1.10 Game Rounds
+    // This method handles the statring a round
     var startGame = function(){
         model.gameStatus = EngineStatus.gameRunning;
 
@@ -154,6 +161,8 @@ var Engine = function (config) {
     /**
      * Handles all the logic to end the game
      */
+    // SRS Requirement - 3.2.1.10 Game Rounds
+    // This method handles the finishing a round, also triggers the initialization of a new round
     var endGame = function(){
         model.gameStatus = EngineStatus.gameFinishing;
         // TODO tell all clients to show top 3 players for 5 seconds
