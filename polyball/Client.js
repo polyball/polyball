@@ -24,6 +24,7 @@ $(document).ready(function() {
 
         var gameRenderer = GameRenderer.createNew({
             model: model,
+            autoResize: false,
             el: 'viewport'
         });
 
@@ -35,7 +36,6 @@ $(document).ready(function() {
 
         gameRenderer.resize(width - 8, height - 8);
         gameRenderer.forceFontLoad();
-        gameRenderer.renderParticles();
 
         window.onresize = function () {
             dim = Math.min(window.innerHeight, window.innerWidth);
