@@ -444,6 +444,8 @@ var Model = function () {
         removeByID(spectators, id);
     };
 
+    //SRS Requirement - 3.2.1.13 Player Queue
+    // The next 7 functions handle all of the CRUD operations for the player queue on the server side
     /**
      * Add a spectator to the end of the player queue
      *
@@ -761,6 +763,8 @@ var Model = function () {
      * Converts this Model object into it's config (serializable) form
      * @return {Object}
      */
+        // SRS Requirement - 3.2.1.9 Game Model Snapshot
+        // This function serializing the entire game state snapshot
     this.getSnapshot = function() {
 
         var toConfig = function(variable) {

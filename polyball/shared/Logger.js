@@ -13,6 +13,8 @@
  * Log level is read from environment PBALL_LOGLEVEL.
  */
 
+// SRS Requirement - 3.2.1.3 Server Log
+// This class handles all of the logging for polyball
 var log4js = require('log4js');
 log4js.setGlobalLogLevel();
 

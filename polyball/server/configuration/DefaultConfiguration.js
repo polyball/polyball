@@ -2,6 +2,9 @@
  * Created by ryan on 19/03/16.
  */
 
+// SRS Requirement - 3.1.1.1 Configurable Parameters
+// This file outlines the default configuration parameters as well as acts like a template
+// for an administrator to create their own configuration file
 var DefaultConfiguration=function () {
     return {
         // Player Config
@@ -19,8 +22,8 @@ var DefaultConfiguration=function () {
         //Powerup Config
         powerupRadius: 30,          // The radius for "Powerup Balls"
         powerupDuration: 20000,     // Time the powerups should last (milliseconds)
-        powerupVoteDuration: 10000, // The ammount of time a powerup election should last
-        powerupVoteFrequency: 15000, // How often a powerup vote should be triggered
+        powerupVoteDuration: 21000, // The ammount of time a powerup election should last
+        powerupVoteFrequency: 25000, // How often a powerup vote should be triggered
 
         // Server Config
         serverTick: 30,             // What interval the server should progress the simulation (milliseconds)

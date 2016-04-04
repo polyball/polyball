@@ -8,12 +8,12 @@ var Powerup = require('polyball/shared/model/powerups/Powerup');
 var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 
-
 // ================================= Private  =================================
 // ============================================================================
 var twistUp;
 var twistFilter;
 var bhContainer;
+var gameRenderer;
 var Pixi;
 
 /**
@@ -22,6 +22,8 @@ var Pixi;
  */
 var renderActivate = function(renderer) {
     var center = renderer.getWorldCenter();
+    var clientCenter = renderer.getClientCenter();
+    var relCenter = renderer.getRelativePoint(clientCenter);
 
     var bhSprite = Pixi.Sprite.fromImage('res/blackhole.png');
     bhSprite.anchor.set(0.5, 0.5);
@@ -30,13 +32,11 @@ var renderActivate = function(renderer) {
     bhContainer = new Pixi.Container();
     bhContainer.layer = 11;
     bhContainer.addChild(bhSprite);
-    bhContainer.pivot.set(center.x, center.y);
-    bhContainer.position.set(center.x, center.y);
 
     twistFilter = new Pixi.filters.TwistFilter();
     twistFilter.radius = 0.08;
-    twistFilter.offset.x = 0.5;
-    twistFilter.offset.y = 0.5;
+    twistFilter.offset.x = relCenter.x;
+    twistFilter.offset.y = relCenter.y;
     twistFilter.angle = 0;
 
     twistUp = true;
@@ -57,10 +57,18 @@ var renderActivate = function(renderer) {
  * @param renderer: Physics.Renderer
  */
 var renderDeactivate = function(renderer) {
+    var newFilters = [];
     for (var i = 0; i < renderer.stage.filters.length; i++) {
-        if (renderer.stage.filters[i] === twistFilter) {
-            renderer.stage.filters.splice(i, 1);
+        if (renderer.stage.filters[i] !== twistFilter) {
+            newFilters.push(renderer.stage.filters);
         }
+    }
+
+    if (newFilters.length > 0) {
+        renderer.stage.filters = newFilters;
+    }
+    else {
+        renderer.stage.filters = undefined;
     }
 
     renderer.stage.removeChild(bhContainer);
@@ -68,8 +76,14 @@ var renderDeactivate = function(renderer) {
 
 /**
  * Animate the black hole so it looks interesting.
+ * @param renderer: Physics.Renderer
  */
-var renderTransform = function() {
+var renderTransform = function(renderer) {
+    var clientCenter = renderer.getClientCenter();
+    var relCenter = renderer.getRelativePoint(clientCenter);
+    twistFilter.offset.x = relCenter.x;
+    twistFilter.offset.y = relCenter.y;
+
     var twistMax = 23;
     var twistMin = 7;
     var twistChange = 0.3;
@@ -139,12 +153,20 @@ Blackhole.prototype.deactivate = function (model){
     if (this.active){
         model.getWorld().remove(this.attractor);
         this.active = false;
+
+        // This is a bit weird here, but it works.
+        if (gameRenderer !== undefined) {
+            renderDeactivate(gameRenderer);
+        }
     }
 };
 
 Blackhole.prototype.render = function(renderer) {
     if (Pixi === undefined) {
         Pixi = renderer.Pixi;
+    }
+    if (gameRenderer === undefined) {
+        gameRenderer = renderer;
     }
 
     // Activate black hole
@@ -156,13 +178,9 @@ Blackhole.prototype.render = function(renderer) {
         if (renderer.stage.filters.length === 0 && this.active) {
             renderActivate(renderer);
         }
-        // Deactivate black hole
-        else if (renderer.stage.filters.length > 0 && !this.active) {
-            renderDeactivate(renderer);
-        }
         // Transform the black hole
         else if (renderer.stage.filters.length > 0 && this.active) {
-            renderTransform();
+            renderTransform(renderer);
         }
     }
 
