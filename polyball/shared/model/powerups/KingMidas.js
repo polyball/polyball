@@ -73,12 +73,15 @@ KingMidas.prototype.render = function(renderer) {
             paddleEmitters.push(renderer.addEmitter(['res/particle.png'], kingMidasPaddleParticleStyle));
             paddleEmitters[0].owner = self.owner;
         }
+
         renderer.moveEmitter(
-            paddleEmitters[0],
-            {x: ownerPaddle.body.state.pos.x, y: ownerPaddle.body.state.pos.y}
+            paddleEmitters[0], {
+                x: ownerPaddle.body.state.pos.x,
+                y: ownerPaddle.body.state.pos.y
+            }
         );
 
-        // add ball emmitters
+        // add ball emitters
         var balls = this.model.getBalls(function(ball) {
             return ball.lastTouchedID === self.owner;
         });
@@ -94,12 +97,12 @@ KingMidas.prototype.render = function(renderer) {
                 emitter.ball = ball;
             }
             else if (foundEmitters.length === 1) { // Update emitter location
-                emitter = foundEmitters[0];
                 var point = {
                     x: ball.body.state.pos.x,
                     y: ball.body.state.pos.y
                 };
 
+                emitter = foundEmitters[0];
                 renderer.moveEmitter(emitter, point);
             }
         });

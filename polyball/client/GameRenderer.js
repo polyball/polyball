@@ -34,13 +34,10 @@ Physics.renderer('polyball', 'pixi', function (parent) {
     var titleID;
     var self;
 
-
     /**
      * Updates the particle rendering.
      */
     var update = function() {
-        requestAnimationFrame(update);
-
         var now = Date.now();
 
         for (var i = 0; i < emitters.length; i++) {
@@ -185,6 +182,11 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             var center;
             var rotation;
 
+            this.stage._bounds.x = 0;
+            this.stage._bounds.y = 0;
+            this.stage._bounds.width = this.width;
+            this.stage._bounds.height = this.height;
+
             if (model.getArena() !== undefined) {
                 // Remove the title
                 var textObjects = textContainer.children.filter(function(textChild) {
@@ -272,9 +274,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         renderGame: function () {
             // Assumes that world.add(this) has been done.  See createNew() function at the bottom of this file.
             model.getWorld().render();
-        },
-
-        renderParticles: function() {
             update();
         },
 
@@ -428,6 +427,19 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         },
 
         /**
+         * This converts a client point into a relative version
+         * of that point.
+         * @param point: Point
+         * @returns {{x: number, y: number}}
+         */
+        getRelativePoint: function(point) {
+            return {
+                x: point.x / this.width,
+                y: point.y / this.height
+            };
+        },
+
+        /**
          * Converts from world (arena) coordinates to client
          * (drawing_ coordinates. Takes into account client offset
          * and rotation.
@@ -450,11 +462,13 @@ Physics.renderer('polyball', 'pixi', function (parent) {
 
         /**
          * Gets the client side center point for drawing.
-         * @returns {Physics.vector}
+         * @returns {{x: number, y: number}}
          */
         getClientCenter: function() {
-            var point = model.getArena().getCenter();
-            return this.worldToClient(point);
+            return {
+                x: this.width / 2,
+                y: this.height / 2
+            };
         },
 
         /**
