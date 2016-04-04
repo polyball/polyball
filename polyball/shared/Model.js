@@ -701,6 +701,8 @@ var Model = function () {
     this.deletePowerup = function (id) {
         var pu = removeByID(powerups, id);
         if (pu != null) {
+            Logger.info('Model deactivating powerup.');
+
             pu.deactivate(this);
             world.removeBody(pu.body);
         }

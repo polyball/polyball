@@ -4,6 +4,7 @@
 
 var _ = require('lodash');
 var Logger = require('polyball/shared/Logger');
+var EngineStatus = require('polyball/shared/EngineStatus');
 
 function syncArenaExistence(arena, model) {
     if (arena != null && !model.hasArena(arena.id)) {
@@ -132,9 +133,14 @@ function syncDiscretePowerupState(powerups, model) {
             }
 
             if (snapshotPowerup.active) {
+                Logger.info("PassthroughSync activating powerup");
                 powerup.activate(model);
+
                 // NOTE: activate() automatically sets below state
                 // powerup.active = snapshotPowerup.active;
+            } else if (powerup.active && !snapshotPowerup.active) {
+                Logger.info('PassthroughSync deactivating powerup');
+                powerup.deactivate(model);
             }
 
             powerup.owner = snapshotPowerup.owner;
@@ -177,6 +183,11 @@ PassthroughSynchronizer.sync = function (snapshot, model) {
     model.setPlayerQueue(snapshot.playerQueue);
     model.setRoundLength(snapshot.roundLength);
     model.gameStatus = snapshot.gameStatus;
+
+    if (snapshot.gameStatus !== EngineStatus.gameRunning) {
+        model.clearPowerups();
+        model.clearPowerupElection();
+    }
 };
 
 module.exports = PassthroughSynchronizer;
