@@ -115,6 +115,7 @@ var Engine = function (config) {
         });
 
         setupPowerupVote();
+        //startPoweupVote();
 
         //TEST Bullet Time
         //setTimeout(function(){
@@ -178,7 +179,9 @@ var Engine = function (config) {
     };
 
     var startPoweupVote = function (){
-        if (model.gameStatus === EngineStatus.gameRunning) {
+        if (model.gameStatus === EngineStatus.gameRunning &&
+            model.getPowerupElection() == null &&
+            model.getPowerups().length === 0) {
             model.setPowerupElection({powerups: PowerupFactory.getAllPowerupNames()});
             setTimeout(endPowerupVote, config.configuration.powerupVoteDuration);
         }
@@ -340,7 +343,7 @@ var Engine = function (config) {
     };
 
     var setupPowerupVote = function(){
-        powerupVoteInterval = setInterval(startPoweupVote, config.configuration.powerupVoteFrequency);
+        powerupVoteInterval = setInterval(startPoweupVote, 10000);
     };
 
     var clearPowerupVote = function(){
@@ -357,7 +360,9 @@ var Engine = function (config) {
         });
         var winners = [];
         _.times(3, function(i){
-            winners.push({name: players[i].client.name, score: players[i].score});
+            if (players[i] != null) {
+                winners.push({name: players[i].client.name, score: players[i].score});
+            }
         });
         return winners;
     };

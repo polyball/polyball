@@ -19,8 +19,8 @@ var DefaultConfiguration=function () {
         //Powerup Config
         powerupRadius: 30,          // The radius for "Powerup Balls"
         powerupDuration: 20000,     // Time the powerups should last (milliseconds)
-        powerupVoteDuration: 10000, // The ammount of time a powerup election should last
-        powerupVoteFrequency: 15000, // How often a powerup vote should be triggered
+        powerupVoteDuration: 21000, // The ammount of time a powerup election should last
+        powerupVoteFrequency: 25000, // How often a powerup vote should be triggered
 
         // Server Config
         serverTick: 30,             // What interval the server should progress the simulation (milliseconds)
