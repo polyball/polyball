@@ -8,6 +8,31 @@ var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
 
+// ================================= Private  =================================
+// ============================================================================
+var gameRenderer;
+var self;
+
+var renderDeactivate = function(renderer) {
+    var emitters = renderer.getEmitters();
+    var balls = self.model.getBalls(function (ball) {
+        return ball.lastTouchedID === self.owner && ball.body.treatment === 'static';
+    });
+
+    balls.forEach(function (ball) {
+        var foundEmitters = emitters.filter(function (emitter) {
+            return emitter.ball === ball;
+        });
+
+        foundEmitters.forEach(function(emitter) {
+            renderer.removeEmitter(emitter);
+        });
+    });
+};
+
+// ================================= Public ===================================
+// ============================================================================
+
 /**
  * This powerup slows balls down in a certain area around the owners goal
  * @param config - See powerup Constructor
@@ -83,13 +108,44 @@ BulletTime.prototype.deactivate = function (model){
             model.getWorld().off(Events.nonImpulsiveCollision, this.handleCollisions, this);
         }
 
+        if (gameRenderer !== undefined) {
+            renderDeactivate(gameRenderer);
+        }
+
         model.getWorld().removeBody(this.zone);
         this.fireBalls(model);
     }
 };
 
-BulletTime.prototype.render = function(renderer) { //jshint ignore:line
+BulletTime.prototype.render = function(renderer, model) { //jshint ignore:line
+    self = this;
+    if (gameRenderer === undefined) {
+        gameRenderer = renderer;
+    }
 
+    if (this.active) {
+        var emitter;
+        var emitters = renderer.getEmitters();
+        var balls = model.getBalls(function(ball) {
+            return ball.body.treatment === 'static' && ball.lastTouchedID === self.owner;
+        });
+        balls.forEach(function(ball) {
+            var foundEmitters = emitters.filter(function(emitter) {
+                return emitter.ball === ball;
+            });
+            if (foundEmitters.length === 0) {
+                emitter = renderer.addEmitter(['res/particle.png'], bulletTimeEmitterStyle);
+                emitter.ball = ball;
+            }
+            var point = {
+                x: ball.body.state.pos.x,
+                y: ball.body.state.pos.y
+            };
+
+            emitter = foundEmitters[0];
+            renderer.moveEmitter(emitter, point);
+        });
+    }
 };
 
 BulletTime.prototype.toConfig = function (){
@@ -115,7 +171,7 @@ BulletTime.prototype.handleCollisions = function (event){
             clearTimeout(this.deleteTimeout);
             this.deleteTimeout = setTimeout(function(){
                 self.model.deletePowerup(self.id);
-            }, 2000);
+            }, 10000);
         }
     }
 };
@@ -147,6 +203,54 @@ BulletTime.prototype.fireBalls = function (model){
     this.affectedBalls = {};
 };
 
+var bulletTimeEmitterStyle = {
+    "alpha": {
+        "start": 1,
+        "end": 1
+    },
+    "scale": {
+        "start": 0.1,
+        "end": 0.01,
+        "minimumScaleMultiplier": 1
+    },
+    "color": {
+        "start": "#5264eb",
+        "end": "#ff573d"
+    },
+    "speed": {
+        "start": 200,
+        "end": 50
+    },
+    "acceleration": {
+        "x": 0,
+        "y": 0
+    },
+    "startRotation": {
+        "min": 0,
+        "max": 360
+    },
+    "rotationSpeed": {
+        "min": 0,
+        "max": 0
+    },
+    "lifetime": {
+        "min": 0.6,
+        "max": 0.6
+    },
+    "blendMode": "normal",
+    "frequency": 0.001,
+    "emitterLifetime": -1,
+    "maxParticles": 300,
+    "pos": {
+        "x": 0,
+        "y": 0
+    },
+    "addAtBack": false,
+    "spawnType": "burst",
+    "particlesPerWave": 300,
+    "particleSpacing": 2,
+    "angleStart": 3
+};
 
 BulletTime.Name = 'BulletTime';
 

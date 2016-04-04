@@ -55,7 +55,7 @@ KingMidas.prototype.deactivate = function(model){
     }
 };
 
-KingMidas.prototype.render = function(renderer) {
+KingMidas.prototype.render = function(renderer, model) {
     var self = this;
 
     if (this.active) {
@@ -67,7 +67,7 @@ KingMidas.prototype.render = function(renderer) {
             return self.owner === emitter.owner;
         });
 
-        var ownerPaddle = self.model.getPlayer(self.owner).paddle;
+        var ownerPaddle = model.getPlayer(self.owner).paddle;
         if (paddleEmitters.length === 0) {
             kingMidasPaddleParticleStyle.angleStart = ownerPaddle.body.state.angular.pos * 57.2958;
             paddleEmitters.push(renderer.addEmitter(['res/particle.png'], kingMidasPaddleParticleStyle));
@@ -82,14 +82,12 @@ KingMidas.prototype.render = function(renderer) {
         );
 
         // add ball emitters
-        var balls = this.model.getBalls(function(ball) {
-            return ball.lastTouchedID === self.owner;
-        });
+        var balls = model.getBalls();
 
         balls.forEach(function(ball) {
             // Find the emitter for this ball
             var foundEmitters = emitters.filter(function(emitter) {
-                return emitter.ball === ball;
+                return emitter.ball === ball && ball.lastTouchedID === self.owner;
             });
 
             if (foundEmitters.length === 0) { // Create a new emitter
@@ -108,7 +106,7 @@ KingMidas.prototype.render = function(renderer) {
         });
 
         // Remove any emitters if they hit an opposing players paddle.
-        balls = this.model.getBalls(function(ball) {
+        balls = model.getBalls(function(ball) {
             return ball.lastTouchedID !== self.owner;
         });
 
@@ -127,7 +125,7 @@ KingMidas.prototype.render = function(renderer) {
         this.deactivateRender = function () {
 
             var emitters = renderer.getEmitters();
-            var balls = self.model.getBalls(function (ball) {
+            var balls = model.getBalls(function (ball) {
                 return ball.lastTouchedID === self.owner;
             });
 

@@ -161,7 +161,7 @@ Blackhole.prototype.deactivate = function (model){
     }
 };
 
-Blackhole.prototype.render = function(renderer) {
+Blackhole.prototype.render = function(renderer, model) { //jshint ignore:line
     if (Pixi === undefined) {
         Pixi = renderer.Pixi;
     }
