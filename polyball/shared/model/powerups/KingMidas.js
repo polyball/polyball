@@ -93,16 +93,16 @@ KingMidas.prototype.render = function(renderer, model) {
             if (foundEmitters.length === 0) { // Create a new emitter
                 emitter = renderer.addEmitter(['res/particle.png'], kingMidasBallParticleStyle);
                 emitter.ball = ball;
+                foundEmitters.push(emitter);
             }
-            else if (foundEmitters.length === 1) { // Update emitter location
-                var point = {
-                    x: ball.body.state.pos.x,
-                    y: ball.body.state.pos.y
-                };
+            // Update emitter location
+            var point = {
+                x: ball.body.state.pos.x,
+                y: ball.body.state.pos.y
+            };
 
-                emitter = foundEmitters[0];
-                renderer.moveEmitter(emitter, point);
-            }
+            emitter = foundEmitters[0];
+            renderer.moveEmitter(emitter, point);
         });
 
         // Remove any emitters if they hit an opposing players paddle.

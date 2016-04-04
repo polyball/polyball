@@ -136,6 +136,7 @@ BulletTime.prototype.render = function(renderer, model) { //jshint ignore:line
             if (foundEmitters.length === 0) {
                 emitter = renderer.addEmitter(['res/particle.png'], bulletTimeEmitterStyle);
                 emitter.ball = ball;
+                foundEmitters.push(emitter);
             }
             var point = {
                 x: ball.body.state.pos.x,

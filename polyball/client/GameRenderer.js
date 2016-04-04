@@ -330,6 +330,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             });
 
             if (foundEmitters.length > 0) {
+                foundEmitters[0].updateSpawnPos(0, 0);
                 foundEmitters[0].updateOwnerPos(location.x, location.y);
             }
         },
