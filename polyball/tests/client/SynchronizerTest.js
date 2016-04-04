@@ -245,7 +245,6 @@ describe('Synchronizer', function () {
             model.getBall(1).lastTouchedID.should.equal(11);
             model.getBall(2).body.geometry.radius.should.equal(20);
             model.getBall(3).body.state.vel.x.should.equal(21);
-            var ball = model.getBall(3);
             model.getBall(3).body.treatment.should.equal('dynamic');
         });
 
