@@ -177,6 +177,7 @@ describe('Synchronizer', function () {
                         id: 3,
                         lastTouchedID: 22,
                         body: {
+                            treatment: 'static',  // <-- update is here from implicit 'dynamic'
                             radius: 20,
                             state: {
                                 pos: {x: 20, y: 60},
@@ -212,7 +213,7 @@ describe('Synchronizer', function () {
                             radius: 20,
                             state: {
                                 pos: {x: 20, y: 40},
-                                vel: {x: 41, y: 81},  // <-- update is here from 21, 41
+                                vel: {x: 41, y: 81},
                                 acc: {x: 22, y: 42},
                                 angular: {
                                     pos: 2,
@@ -244,6 +245,8 @@ describe('Synchronizer', function () {
             model.getBall(1).lastTouchedID.should.equal(11);
             model.getBall(2).body.geometry.radius.should.equal(20);
             model.getBall(3).body.state.vel.x.should.equal(21);
+            var ball = model.getBall(3);
+            model.getBall(3).body.treatment.should.equal('dynamic');
         });
 
         it('should update balls in the model', function () {
@@ -259,6 +262,7 @@ describe('Synchronizer', function () {
             model.getBall(2).body.state.vel.x.should.be.greaterThan(21);
             model.getBall(2).body.state.vel.y.should.be.greaterThan(41);
             model.getBall(3).body.state.old.angular.vel.should.be.lessThan(3);
+            model.getBall(3).body.treatment.should.equal('static');
         });
 
         it('should delete balls from the model', function () {

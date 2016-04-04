@@ -63,7 +63,8 @@ var Ball = function(config) {
                 radius: this.body.geometry.radius,
                 mass: this.body.mass,
                 restitution: this.body.restitution,
-                styles: this.body.styles
+                styles: this.body.styles,
+                treatment: this.body.treatment
             }
         };
     };
