@@ -128,9 +128,17 @@ KingMidas.prototype.render = function(renderer) {
                 return ball.lastTouchedID === self.owner;
             });
 
+            var foundEmitters = emitters.filter(function (emitter) {
+                return emitter.owner === self.owner;
+            });
+
+            foundEmitters.forEach(function(emitter) {
+                renderer.removeEmitter(emitter);
+            });
+
             balls.forEach(function (ball) {
                 var foundEmitters = emitters.filter(function (emitter) {
-                    return emitter.ball === ball || emitter.owner === self.owner;
+                    return emitter.ball === ball;
                 });
 
                 foundEmitters.forEach(function(emitter) {
