@@ -93,6 +93,7 @@ KingMidas.prototype.render = function(renderer, model) {
             if (foundEmitters.length === 0) { // Create a new emitter
                 emitter = renderer.addEmitter(['res/particle.png'], kingMidasBallParticleStyle);
                 emitter.ball = ball;
+                emitter.owner = self;
                 foundEmitters.push(emitter);
             }
             // Update emitter location
@@ -125,26 +126,13 @@ KingMidas.prototype.render = function(renderer, model) {
         this.deactivateRender = function () {
 
             var emitters = renderer.getEmitters();
-            var balls = model.getBalls(function (ball) {
-                return ball.lastTouchedID === self.owner;
-            });
 
             var foundEmitters = emitters.filter(function (emitter) {
-                return emitter.owner === self.owner;
+                return emitter.owner === self.owner || emitter.owner === self;
             });
 
             foundEmitters.forEach(function(emitter) {
                 renderer.removeEmitter(emitter);
-            });
-
-            balls.forEach(function (ball) {
-                var foundEmitters = emitters.filter(function (emitter) {
-                    return emitter.ball === ball;
-                });
-
-                foundEmitters.forEach(function(emitter) {
-                    renderer.removeEmitter(emitter);
-                });
             });
         };
     }

@@ -311,6 +311,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
          * @param emitter: cloudkid.Emitter
          */
         removeEmitter: function(emitter) {
+            Logger.info('Remove emitter.');
             for (var i = 0; i < emitters.length; i++) {
                 if (emitters[i] === emitter) {
                     emitters[i].cleanup();

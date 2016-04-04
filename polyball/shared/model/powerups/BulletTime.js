@@ -15,18 +15,12 @@ var self;
 
 var renderDeactivate = function(renderer) {
     var emitters = renderer.getEmitters();
-    var balls = self.model.getBalls(function (ball) {
-        return ball.lastTouchedID === self.owner && ball.body.treatment === 'static';
+    var foundEmitters = emitters.filter(function (emitter) {
+        return emitter.owner === self;
     });
 
-    balls.forEach(function (ball) {
-        var foundEmitters = emitters.filter(function (emitter) {
-            return emitter.ball === ball;
-        });
-
-        foundEmitters.forEach(function(emitter) {
-            renderer.removeEmitter(emitter);
-        });
+    foundEmitters.forEach(function(emitter) {
+        renderer.removeEmitter(emitter);
     });
 };
 
@@ -136,6 +130,7 @@ BulletTime.prototype.render = function(renderer, model) { //jshint ignore:line
             if (foundEmitters.length === 0) {
                 emitter = renderer.addEmitter(['res/particle.png'], bulletTimeEmitterStyle);
                 emitter.ball = ball;
+                emitter.owner = self;
                 foundEmitters.push(emitter);
             }
             var point = {
