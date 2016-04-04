@@ -76,6 +76,15 @@ var Comms = function (config) {
         pubsub.fireEvent(CommsEvents.ClientToClient.snapshotReceived, snapshot);
     });
 
+    /**
+     * Tell subscribers that the round has ended.
+     */
+    socket.on(CommsEvents.ServerToClient.endRound, function (roundEndData) {
+        Logger.info("Comms received round end event");
+
+        pubsub.fireEvent(CommsEvents.ClientToClient.roundEnded, roundEndData);
+    });
+
 
     //
     //    ########  ##     ## ########  ##       ####  ######
@@ -113,6 +122,12 @@ var Comms = function (config) {
         Logger.debug('Comms sending command aggregate');
         
         socket.emit(CommsEvents.ClientToServer.newCommandAggregate, commandAggregate);
+    };
+    
+    this.voteForPowerup = function (powerupName) {
+        Logger.debug('Voting for ' + powerupName);
+        
+        socket.emit(CommsEvents.ClientToServer.vote, powerupName);
     };
 };
 

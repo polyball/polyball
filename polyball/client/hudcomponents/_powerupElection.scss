@@ -1,0 +1,52 @@
+@import 'constants';
+
+.powerupElection {
+  margin-top: 3em;
+  margin-right: $hudMargin;
+  padding: 1em 1em 1em  1em;
+  border-radius: 1em;
+  background: $darkGrayTransparent;
+}
+
+.powerupElectionResults {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.powerupElectionResults th, td {
+  padding: 0.5rem;
+}
+
+.powerupElectionResults tr {
+  margin: 10px;
+}
+
+.powerupRow {
+  border-bottom: 1px solid $lightGray;
+}
+
+.voteButton:hover {
+  background-color: rgba(0,0,0,0.4);
+  color: #e7e7e7;
+  cursor: pointer;
+}
+
+.votedButton {
+  background-color: rgba(0,0,0,0.4);
+  color: #e7e7e7;
+  cursor: default !important;
+}
+
+
+
+.voteScore {
+  text-align: right;
+}
+
+.voteMessage {
+  font-size: 2em;
+  font-weight: bold;
+  padding: 1rem;
+  margin: 1rem;
+}

@@ -731,10 +731,17 @@ var Model = function () {
 
     /**
      * Sets the internal instance of Powerup Election
-     * @param {PowerupElection} election
+     * @param {PowerupElection} config
      */
     this.setPowerupElection = function(config){
-        powerupElection = new PowerupElection(config);
+
+        var newConfig = {
+            id: config.id ? config.id : nextID()
+        };
+
+        _.assign(newConfig, config);
+
+        powerupElection = new PowerupElection(newConfig);
     };
 
     /**

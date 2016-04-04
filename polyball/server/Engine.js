@@ -13,6 +13,7 @@ var RoundEvents = require('polyball/shared/RoundEvents');
 var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
 var PowerupBehavior = require('polyball/shared/model/behaviors/PowerupBehavior');
 var PowerupFactory = require('polyball/shared/PowerupFactory');
+var Vote = require('polyball/shared/model/Vote');
 
 /**
  * Initializes the engine
@@ -159,6 +160,7 @@ var Engine = function (config) {
         //   round intermission (pending #214) with the model.gameStatus === gameFinishing.  during that time,
         //   a round intermission message will be displayed.  put a gameResult field on the model with the scores,
         //   and the client will just display it alongside the intermission message.
+        comms.broadcastRoundEnded({winners: getWinners()});
         model.reset();
         removeBehaviors();
         resetPowerups();
@@ -230,6 +232,7 @@ var Engine = function (config) {
      */
     var addAllPaddles = function () {
         var players = model.getPlayers();
+        var paddleRadius = config.configuration.paddleRadius / players.length;
         for(var i=0; i < players.length; i++){
             var leftBound = model.getArena().getPaddleLeftBound(i);
             var rightBound = model.getArena().getPaddleRightBound(i);
@@ -239,7 +242,7 @@ var Engine = function (config) {
 
             var paddleConfig = {
                 maxVelocity: config.configuration.paddleMaximumVelocity,
-                radius: config.configuration.paddleRadius,
+                radius: paddleRadius>= 30 ? paddleRadius : 30,
                 leftBound: {
                     x: leftBound.x,
                     y: leftBound.y
@@ -344,7 +347,20 @@ var Engine = function (config) {
         clearInterval(powerupVoteInterval);
     };
 
-
+    /**
+     * Gets the top 3 players for the round
+     * @returns {Array}
+     */
+    var getWinners = function(){
+        var players = model.getPlayers().sort(function(a,b){
+            return b.score - a.score;
+        });
+        var winners = [];
+        _.times(3, function(i){
+            winners.push({name: players[i].client.name, score: players[i].score});
+        });
+        return winners;
+    };
 
     // ============================= Public Methods ===============================
     // ============================================================================
@@ -364,10 +380,11 @@ var Engine = function (config) {
 
     /**
      * Handles the comms event to add a spectator to the model
-     * @param {{vote: Vote}} data
+     * @param {object} voteConfig
      */
-    this.handleAddVote = function (data){
-        model.getPowerupElection().addVote(data.vote);
+    this.handleAddVote = function (voteConfig){
+        var vote = new Vote(voteConfig);
+        model.getPowerupElection().addVote(vote);
     };
 
     /**

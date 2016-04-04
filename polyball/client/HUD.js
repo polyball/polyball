@@ -4,9 +4,11 @@
 
 var $ = require('jquery');
 var PointerListener = require('polyball/client/hudbehaviors/PointerListener');
+var PowerupElectionRenderer = require('polyball/client/hudbehaviors/PowerupElectionRenderer');
 var Logger = require('polyball/shared/Logger');
 var EngineStatus = require('polyball/shared/EngineStatus');
 var Util = require('polyball/shared/Util');
+var CommsEvents = require('polyball/shared/CommsEvents');
 
 /**
  * @param config
@@ -20,11 +22,6 @@ var HUD = function (config) {
     
     var comms = config.comms;
     var model = config.model;  // jshint ignore: line
-
-    new PointerListener({
-        accumulationInterval: config.accumulationInterval,
-        synchronizer: config.synchronizer
-    }).listenElement(document);
 
     $.get('hudcomponents/roundTimer.html', function (data) {
         Logger.debug('Injecting round timer.');
@@ -54,16 +51,21 @@ var HUD = function (config) {
         $('#hudColumn').append(data);
     });
 
-    $.get('hudcomponents/powerupElection.html', function (data) {
-        Logger.debug('Injecting powerup election.');
-
-        $('#hudColumn').append(data);
-    });
-
     $.get('hudcomponents/waitingForPlayers.html', function (data) {
         Logger.debug('Injecting powerup election.');
 
         $('#hudColumn').append(data);
+    });
+    
+
+    new PointerListener({
+        accumulationInterval: config.accumulationInterval,
+        synchronizer: config.synchronizer
+    }).listenElement(document);
+    
+    var powerupElectionRenderer = new PowerupElectionRenderer({
+        appendTo: '#hudColumn',
+        voteCallback: comms.voteForPowerup
     });
     
     var appendNameToList = function (listElement) {
@@ -81,6 +83,24 @@ var HUD = function (config) {
             }
             listElement.append(listItem);
         };
+    };
+
+    var renderWinnersCircle = function(roundEndData){
+        $.get('hudcomponents/winnersCircle.html', function (data) {
+            Logger.debug('Injecting Winners Circle.');
+
+            $('body').append(data);
+            roundEndData.winners.forEach(function(winner){
+                $('#winners-list').append("<li>" + winner.name +  " : " + winner.score + "</li>");
+            });
+        });
+    };
+
+    var hideWinnersCircle = function(){
+        var winnersCircle = $('.winners-circle');
+        if (winnersCircle != null){
+            winnersCircle.remove();
+        }
     };
 
     this.render = function () {
@@ -111,19 +131,28 @@ var HUD = function (config) {
             $('#addToQueueButton').css('visibility', 'hidden');
         }
         
-
-        var powerupElection = $('.powerupElection');
-        powerupElection.hide();
-        if (model.getPowerupElection() != null) {
-            powerupElection.show();
-        }
-
-
+        
+        powerupElectionRenderer.render(model);
         $('.statusMessage').hide();
         if (model.gameStatus === EngineStatus.gameInitializing) {
             $('.waitingForPlayers').show();
         }
     };
+
+    /**
+     * Use this function to do anything that should be done on round end.
+     * @param roundEndData
+     */
+    var handleRoundEnded = function(roundEndData){
+        renderWinnersCircle(roundEndData);
+    };
+
+    var handleRoundStarted = function(roundStartData){ //jshint ignore:line
+        hideWinnersCircle();
+    };
+
+    comms.on(CommsEvents.ClientToClient.roundEnded, handleRoundEnded);
+    comms.on(CommsEvents.ClientToClient.newRound, handleRoundStarted);
 };
 
 

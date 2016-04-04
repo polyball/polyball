@@ -4,10 +4,12 @@
 @import "addToQueueButton";
 @import "hudList";
 @import "statusMessages";
+@import "powerupElection";
+@import "winnersCircle";
 @import url(https://fonts.googleapis.com/css?family=Cabin);
 
 body {
-  background: #eae1cc; /* fallback for old browsers */
+  background: $background; /* fallback for old browsers */
 }
 
 s

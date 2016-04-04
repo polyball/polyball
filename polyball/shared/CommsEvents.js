@@ -11,14 +11,16 @@ var ServerToServer = {
 
 var ClientToClient = {
     snapshotReceived: 'snapshotReceived',
-    newRound: 'newRoundData'
+    newRound: 'newRoundData',
+    roundEnded: 'roundEnded'
 };
 
 var ServerToClient = {
     setLogLevel: "setLogLevel",
     idAssigned: "idAssigned",
     startNewRound: "startNewRound",
-    newSnapshot: 'newSnapshot'
+    newSnapshot: 'newSnapshot',
+    endRound: "endRound"
 };
 
 var ClientToServer = {

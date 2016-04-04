@@ -9,7 +9,7 @@ var DefaultConfiguration=function () {
         maximumPlayers: 15,         // Maximum number of players for each round
 
         // Paddle Config
-        paddleRadius: 50,           // The radius of the paddle
+        paddleRadius: 150,           // The radius of the paddle
         paddlePadding: 10,          // The distance between back of paddle and goal
         paddleMaximumVelocity: 100,       // The maximum speed the paddle can have when contacting balls (does not effect movement speed)
 
