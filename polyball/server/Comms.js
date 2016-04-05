@@ -96,7 +96,7 @@ var Comms = function (config) {
 
             callback(globalConfig);
         });
-
+        // SRS Requirement - 3.2.2.13 Player Disconnect
         clientSocket.on(CommsEvents.ClientToServer.disconnect, function () {
             Logger.info('Client disconnected');
 

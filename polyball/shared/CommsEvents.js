@@ -26,6 +26,7 @@ var ServerToClient = {
 var ClientToServer = {
     configRequest: 'configRequest',
     connection: 'connection',  // socket.io builtin - do not change!
+    // SRS Requirement - 3.2.2.13 Player Disconnect
     disconnect: 'disconnect',  // socket.io builtin - do not change!
     queueToPlay: 'queueToPlay',
     newCommandAggregate: 'newCommandAggregate',

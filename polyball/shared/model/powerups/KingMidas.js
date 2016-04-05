@@ -35,6 +35,8 @@ KingMidas.prototype.handleGoal = function(event){
     }
 };
 
+// SRS Requirement - 3.2.2.15 Powerup Activated
+// SRS Requirement - 3.2.2.15.2 King Midas Powerup
 KingMidas.prototype.activate = function(model){
     if (!this.active){
         this.model = model;
@@ -90,6 +92,7 @@ KingMidas.prototype.render = function(renderer, model) {
                 return emitter.ball === ball && ball.lastTouchedID === self.owner;
             });
 
+            // SRS Requirement - 3.2.2.18.6 King Midas Sparkle
             if (foundEmitters.length === 0) { // Create a new emitter
                 emitter = renderer.addEmitter(['res/particle.png'], kingMidasBallParticleStyle);
                 emitter.ball = ball;

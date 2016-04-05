@@ -30,6 +30,7 @@ var HUD = function (config) {
     });
 
     // Inject and listen to queue-to-play button
+    // SRS Requirement - 3.2.2.3 Join Player Queue
     $.get('hudcomponents/addToQueueButton.html', function(data) {
         Logger.debug('Injecting add to queue button.');
 
@@ -85,6 +86,7 @@ var HUD = function (config) {
         };
     };
 
+    // SRS Requirement - 3.2.2.12 Ending Game
     var renderWinnersCircle = function(roundEndData){
         $.get('hudcomponents/winnersCircle.html', function (data) {
             Logger.debug('Injecting Winners Circle.');

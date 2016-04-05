@@ -38,6 +38,7 @@ var Powerup = function(config){
  * Intended for override.  Child implementation should be idempotent.  Call parent activate() in child implementation.
  * @param {Model} model - The model to mutate with powerup goodies.
  */
+// SRS Requirement - 3.2.2.15 Powerup Activated
 Powerup.prototype.activate = function(model){
     model.getWorld().removeBody(this.body);
     var self = this;

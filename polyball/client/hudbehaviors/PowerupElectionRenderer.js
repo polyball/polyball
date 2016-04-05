@@ -13,6 +13,7 @@ var Logger = require('polyball/shared/Logger');
  * @property {function) config.voteCallback - the function to call with a vote name when one is cast.
  * @constructor
  */
+// SRS Requirement - 3.2.2.16 Powerup Vote
 var PowerupElectionRenderer = function (config) {
     
     var mainElement;

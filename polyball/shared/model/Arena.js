@@ -264,7 +264,7 @@ var Arena = function(config) {
     };
 
     // Constructor
-
+    // SRS Requirement - 3.2.2.5 Arena Setup
 
     this.id = config.id;
     this.numberPlayers = config.numberPlayers;

@@ -594,6 +594,7 @@ var Model = function () {
 
     /**
      * This adds a paddle to the player given by id
+     * SRS Requirement - 3.2.2.6 Paddle Setup
      * @param {Object} config
      * @property {number} config.playerID
      * @property {Object} config.paddleConfig

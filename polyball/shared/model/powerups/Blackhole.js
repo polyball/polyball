@@ -33,6 +33,7 @@ var renderActivate = function(renderer) {
     bhContainer.layer = 11;
     bhContainer.addChild(bhSprite);
 
+    // SRS Requirement - 3.2.2.18.7 Black Hole Swell
     twistFilter = new Pixi.filters.TwistFilter();
     twistFilter.radius = 0.08;
     twistFilter.offset.x = relCenter.x;
@@ -129,6 +130,8 @@ inherits(Blackhole, Powerup);
  * This holds all the logic to activate a blackhole
  * @param {Model} model
  */
+// SRS Requirement - 3.2.2.15 Powerup Activated
+// SRS Requirement - 3.2.2.15.3 Blackhole Powerup
 Blackhole.prototype.activate = function(model){
     if (!this.active) {
         Blackhole.super_.prototype.activate.call(this, model);

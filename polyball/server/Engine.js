@@ -54,6 +54,7 @@ var Engine = function (config) {
      *  - Broadcasts the start time to clients
      */
     // SRS Requirement - 3.2.1.10 Game Rounds
+    // SRS Requirement - 3.2.2.7 Game Start
     // This method handles the initialization of a round
     var initializeGame = function(){
         model.gameStatus = EngineStatus.gameInitializing;
@@ -112,11 +113,13 @@ var Engine = function (config) {
      *  - Schedules the main loop
      */
     // SRS Requirement - 3.2.1.10 Game Rounds
-    // This method handles the statring a round
+    // SRS Requirement - 3.2.2.7 Game Start
+    // This method handles starting a round
     var startGame = function(){
         model.gameStatus = EngineStatus.gameRunning;
 
         //Add the balls to the game
+        // SRS Requirement - 3.2.2.8 Ball Introduction
         _.times(model.playerCount(), function(x){
             setTimeout(addBall, x * 500);
         });
@@ -143,8 +146,7 @@ var Engine = function (config) {
         //        duration: config.configuration.powerupDuration
         //    });
         //}, 5000);
-
-        //TEST KINGMIDAS
+        //
         //setTimeout(function(){
         //    var bodyConfig = generatePowerupBody();
         //    model.addPowerup({
@@ -162,6 +164,7 @@ var Engine = function (config) {
      * Handles all the logic to end the game
      */
     // SRS Requirement - 3.2.1.10 Game Rounds
+    // SRS Requirement - 3.2.2.12 Ending Game
     // This method handles the finishing a round, also triggers the initialization of a new round
     var endGame = function(){
         model.gameStatus = EngineStatus.gameFinishing;
@@ -176,6 +179,7 @@ var Engine = function (config) {
         resetPowerups();
         resetPlayScores();
         clearPowerupVote();
+        // SRS Requirement - 3.2.2.14 Round Intermission
         setTimeout(initializeGame, config.configuration.roundIntermission);
     };
 
@@ -196,6 +200,7 @@ var Engine = function (config) {
         }
     };
 
+    // SRS Requirement - 3.2.2.17 Powerup Spawn
     var endPowerupVote = function (){
         var winner = model.getPowerupElection().getWinner();
         model.clearPowerupElection();
@@ -213,6 +218,7 @@ var Engine = function (config) {
     // ============================================================================
     /**
      * Handles moving spectators who are in the playerQueue into the players list
+     * SRS Requirement - 3.2.2.4 Join Game
      */
     var setupPlayers = function (){
         while(model.playerCount() < config.configuration.maximumPlayers && model.numberOfQueuedPlayers() > 0){

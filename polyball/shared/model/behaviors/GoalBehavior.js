@@ -9,6 +9,7 @@ var Events = require('polyball/shared/model/behaviors/Events');
  * @property {model} config.model
  * @constructor
  */
+// SRS Requirement - 3.2.2.10 Goal Scoring
 var GoalBehavior = function(config){
 
     var handleCollision = function(event){

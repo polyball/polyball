@@ -74,6 +74,8 @@ BulletTime.prototype.createBulletTimeBody = function(model){
  * This holds all the logic to activate a blackhole
  * @param {Model} model
  */
+// SRS Requirement - 3.2.2.15 Powerup Activated
+// SRS Requirement - 3.2.2.15.1 Bullet Time Powerup
 BulletTime.prototype.activate = function(model){
     if (!this.active) {
         this.zone = this.createBulletTimeBody(model);
@@ -167,7 +169,7 @@ BulletTime.prototype.handleCollisions = function (event){
             clearTimeout(this.deleteTimeout);
             this.deleteTimeout = setTimeout(function(){
                 self.model.deletePowerup(self.id);
-            }, 10000);
+            }, 5000);
         }
     }
 };

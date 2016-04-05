@@ -1,6 +1,7 @@
 /**
  * Created by thornhil on 3/7/16.
  */
+// SRS Requirement - 3.2.2.16 Powerup Vote
 
 'use strict';
 var Vote = require('polyball/shared/model/Vote');
