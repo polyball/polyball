@@ -11,6 +11,12 @@ var Events = require('polyball/shared/model/behaviors/Events');
 // ================================= Private  =================================
 // ============================================================================
 var gameRenderer;
+var bulletTimeout;
+var zoomPivot;
+var xStep;
+var yStep;
+var scaleGoal;
+var scaleStep;
 var self;
 
 var renderDeactivate = function(renderer) {
@@ -22,6 +28,9 @@ var renderDeactivate = function(renderer) {
     foundEmitters.forEach(function(emitter) {
         renderer.removeEmitter(emitter);
     });
+
+    renderer.stage.scale.x = 1;
+    renderer.stage.scale.y = 1;
 };
 
 // ================================= Public ===================================
@@ -44,6 +53,9 @@ var BulletTime = function(config){
     this.velVect = new Physics.vector(0,0);
     this.maxBallVelocity = config.maxBallVelocity || 3;
     this.model = null;
+
+    bulletTimeout = 5000;
+    scaleGoal = 1.1;
 };
 
 inherits(BulletTime, Powerup);
@@ -141,6 +153,30 @@ BulletTime.prototype.render = function(renderer, model) { //jshint ignore:line
             emitter = foundEmitters[0];
             renderer.moveEmitter(emitter, point);
         });
+
+        // Handle the subtle zoom.
+        if (model.getArena() !== undefined) {
+            var player = model.getPlayer(this.owner);
+            var pos = model.getArena().getGoal(player.arenaPosition).state.pos;
+            var pivot = renderer.stage.pivot;
+
+            if(zoomPivot === undefined) {
+                zoomPivot = {x: pivot.x, y: pivot.y};
+            }
+
+            xStep = (pos.x - zoomPivot.x) / 200;
+            yStep = (pos.y - zoomPivot.y) / 200;
+            scaleStep = (scaleGoal - renderer.stage.scale.x) / 200;
+
+            zoomPivot.x += xStep;
+            zoomPivot.y += yStep;
+
+            renderer.stage.pivot.set(zoomPivot.x, zoomPivot.y);
+            renderer.stage.scale.x += scaleStep;
+            renderer.stage.scale.y += scaleStep;
+
+
+        }
     }
 };
 
@@ -167,7 +203,7 @@ BulletTime.prototype.handleCollisions = function (event){
             clearTimeout(this.deleteTimeout);
             this.deleteTimeout = setTimeout(function(){
                 self.model.deletePowerup(self.id);
-            }, 10000);
+            }, bulletTimeout);
         }
     }
 };
