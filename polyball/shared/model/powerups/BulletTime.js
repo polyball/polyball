@@ -169,7 +169,7 @@ BulletTime.prototype.handleCollisions = function (event){
             clearTimeout(this.deleteTimeout);
             this.deleteTimeout = setTimeout(function(){
                 self.model.deletePowerup(self.id);
-            }, 5000);
+            }, 2000);
         }
     }
 };

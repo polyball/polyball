@@ -47,6 +47,27 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         elapsed = now;
     };
 
+    /**
+     * Rotate each players name.
+     * @param players {Array of Player}
+     */
+    var rotatePlayerText = function (players) {
+        players.forEach(function(player) {
+            var worldPos = model.getArena().getScorePosition(player.arenaPosition);
+            var localPos = self.worldToClient(worldPos);
+            var rotation = (model.getArena().getGoalRotation(player.arenaPosition) + self.stage.rotation);
+
+            if (rotation < -Math.PI / 2 && rotation > -(3/2) * Math.PI) {
+                rotation = rotation - Math.PI;
+            }
+            else if (rotation > Math.PI / 2 && rotation < (3/2) * Math.PI) {
+                rotation = rotation - Math.PI;
+            }
+
+            self.addText(player.client.name + ': ' + player.score, StyleCommons.fontStyle, localPos, rotation, 'player' + player.id);
+        });
+    };
+
     //
     //    ########  ##     ## ########  ##       ####  ######
     //    ##     ## ##     ## ##     ## ##        ##  ##    ##
@@ -153,7 +174,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             var textObjects = textContainer.children.filter(function(textChild) {
                 return textChild.polyID === id;
             });
-
+            //Logger.info("Text Objs: ")
             if (textObjects.length > 1) {
                 Logger.error('Found multiple Text objects with id: ' + id + ' in addText');
             }
@@ -164,6 +185,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 textObject.anchor.set(0.5, 0.5);
                 textObject.position = offset;
                 textObject.rotation = rotation;
+                textObject.polyID = id;
             }
             else {
                 textObject = new Pixi.Text(text, style);
@@ -182,11 +204,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             var center;
             var rotation;
 
-            this.stage._bounds.x = 0;
-            this.stage._bounds.y = 0;
-            this.stage._bounds.width = this.width;
-            this.stage._bounds.height = this.height;
-
             if (model.getArena() !== undefined) {
                 // Remove the title
                 var textObjects = textContainer.children.filter(function(textChild) {
@@ -204,40 +221,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 textContainer.position.set(center.x, center.y);
 
                 var players = model.getPlayers();
-
-                var oldPlayersText = textContainer.children.filter(function(textChild) {
-                    if (textChild.polyID.indexOf('player') !== -1) {
-                        var discoveries = players.filter(function(player) {
-                            return textChild.polyID === 'player' + player.id;
-                        });
-
-                        if (discoveries.length === 0) {
-                            return textChild;
-                        }
-                    }
-                    return [];
-                });
-
-                oldPlayersText.forEach(function(player) {
-                    textContainer.removeChild(player);
-                });
-
-                // Player name rotation
-                for (var i = 0; i < players.length; i++) {
-                    var player = players[i];
-                    var worldPos = model.getArena().getScorePosition(player.arenaPosition);
-                    var localPos = this.worldToClient(worldPos);
-                    rotation = (model.getArena().getGoalRotation(player.arenaPosition) + this.stage.rotation);
-
-                    if (rotation < -Math.PI / 2 && rotation > -(3/2) * Math.PI) {
-                        rotation = rotation - Math.PI;
-                    }
-                    else if (rotation > Math.PI / 2 && rotation < (3/2) * Math.PI) {
-                        rotation = rotation - Math.PI;
-                    }
-
-                    this.addText(player.client.name + ': ' + player.score, StyleCommons.fontStyle, localPos, rotation, 'player' + player.id);
-                }
+                rotatePlayerText(players);
 
                 var localPlayer = model.getPlayer(model.getLocalClientID());
                 if (model.playerCount() > 0 && localPlayer !== undefined) {
@@ -311,7 +295,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
          * @param emitter: cloudkid.Emitter
          */
         removeEmitter: function(emitter) {
-            Logger.info('Remove emitter.');
             for (var i = 0; i < emitters.length; i++) {
                 if (emitters[i] === emitter) {
                     emitters[i].cleanup();
@@ -342,57 +325,6 @@ Physics.renderer('polyball', 'pixi', function (parent) {
          */
         getEmitters: function() {
             return emitters;
-        },
-
-        addTestEmitter: function(container) {
-            return this.addEmitter([Pixi.Texture.fromImage('res/Sparks.png')],
-                {
-                    "alpha": {
-                        "start": 1,
-                        "end": 0.31
-                    },
-                    "scale": {
-                        "start": 0.5,
-                        "end": 1
-                    },
-                    "color": {
-                        "start": "ffffff",
-                        "end": "9ff3ff"
-                    },
-                    "speed": {
-                        "start": 100,
-                        "end": 200
-                    },
-                    "startRotation": {
-                        "min": 225,
-                        "max": 320
-                    },
-                    "rotationSpeed": {
-                        "min": 0,
-                        "max": 20
-                    },
-                    "lifetime": {
-                        "min": 0.25,
-                        "max": 0.5
-                    },
-                    "blendMode": "normal",
-                    "frequency": 0.001,
-                    "emitterLifetime": 100,
-                    "maxParticles": 100,
-                    "pos": {
-                        "x": 0,
-                        "y": 0
-                    },
-                    "addAtBack": false,
-                    "spawnType": "circle",
-                    "spawnCircle": {
-                        "x": 0,
-                        "y": 0,
-                        "r": 0
-                    }
-                },
-                container
-            );
         },
 
         /**
@@ -426,6 +358,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
 
             parent.resize.call(this, width, height);
             this.renderer.resize(width, height);
+            //this.stage.width = width;
+            //this.stage.height = height;
         },
 
         /**
