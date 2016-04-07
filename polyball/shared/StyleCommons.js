@@ -17,6 +17,10 @@ var ballStyle = {
     fillStyle: orange
 };
 
+var localBallStyle = {
+    fillStyle: red
+};
+
 var goalStyle = {
     fillStyle: blue,
 
@@ -72,6 +76,7 @@ var titleFontStyle = {
 };
 
 exports.ballStyle = ballStyle;
+exports.localBallStyle = localBallStyle;
 exports.goalStyle = goalStyle;
 exports.bumperStyle = bumperStyle;
 exports.paddleStyle = paddleStyle;
