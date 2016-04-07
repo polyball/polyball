@@ -20,9 +20,9 @@ describe('Configuration', function () {
             Util.deleteJSONConfigFile(path);
         });
         it('should overwrite default values', function(){
-            var path = Util.createJSONConfigFile({minimumPlayers: 10, serverTick: 1});
+            var path = Util.createJSONConfigFile({minimumPlayers: 6, serverTick: 1});
             var config = new Configuration({configPath: path});
-            config.values.minimumPlayers.should.equal(10);
+            config.values.minimumPlayers.should.equal(6);
             config.values.serverTick.should.equal(1);
             Util.deleteJSONConfigFile(path);
         });
