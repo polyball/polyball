@@ -220,6 +220,21 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 textContainer.pivot.set(center.x, center.y);
                 textContainer.position.set(center.x, center.y);
 
+                // Get all text objects that start with player
+                textObjects = textContainer.children.filter(function(textChild) {
+                    return textChild.polyID.lastIndexOf('player', 0) === 0;
+                });
+
+                // Remove the ones that aren't in players
+                textObjects.forEach(function(text) {
+                    var idStr = text.polyID.substring(6, text.polyID.length);
+                    var playerID = parseInt(idStr);
+                    if (!model.hasPlayer(playerID)) {
+                        Logger.info('Removing child: ' + text.text);
+                        textContainer.removeChild(text);
+                    }
+                });
+
                 var players = model.getPlayers();
                 rotatePlayerText(players);
 
