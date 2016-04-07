@@ -22,7 +22,7 @@ $transparentGreyWhite: rgba(224,224,224,0.9);
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
+  width: 60%; /* Could be more or less, depending on screen size */
   -webkit-text-stroke-width: 2px;
   text-align: center;
   list-style-position: inside;
@@ -34,7 +34,7 @@ $transparentGreyWhite: rgba(224,224,224,0.9);
   animation-duration: 1.5s;
 
   .winners-title {
-    font-size: 700%;
+    font-size: 500%;
     font-family: $gameFont;
   }
 
@@ -46,15 +46,15 @@ $transparentGreyWhite: rgba(224,224,224,0.9);
     }
 
     &:nth-of-type(1){
-      font-size: 600%;
-    }
-
-    &:nth-of-type(2){
       font-size: 450%;
     }
 
-    &:nth-of-type(3){
+    &:nth-of-type(2){
       font-size: 300%;
+    }
+
+    &:nth-of-type(3){
+      font-size: 250%;
     }
   }
 }
