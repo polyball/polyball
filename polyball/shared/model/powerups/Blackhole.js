@@ -138,7 +138,7 @@ Blackhole.prototype.activate = function(model){
         var arenaCenter = model.getArena().getCenter();
         this.attractor = Physics.behavior('attractor', {
             order: 0,
-            strength: 0.003,
+            strength: 0.01,
             pos: arenaCenter
         });
 
