@@ -18,6 +18,7 @@ var DefaultConfig = require('polyball/server/configuration/DefaultConfiguration'
 var Configuration = function (config){
     var defaults = new DefaultConfig();
     var values = new DefaultConfig();
+    var self = this;
 
     /**
      * Checks that a property is not greater than some bound
@@ -55,6 +56,16 @@ var Configuration = function (config){
         }
     };
 
+    var printConfig = function(){
+        Logger.info("======= Configuration ======= ");
+        for (var key in self.values){
+            if (self.values.hasOwnProperty(key)){
+                Logger.info ("\t" + key + ": " + self.values[key]);
+            }
+        }
+        Logger.info("======= End Configuration ======= ");
+    };
+
     // SRS Requirement - 3.1.1 Configuration file
     // This code reads in a configuration file at a specified path
     if (config != null) {
@@ -79,6 +90,7 @@ var Configuration = function (config){
     this.values = values;
 
     Object.freeze(this.values);
+    printConfig();
 };
 
 module.exports = Configuration;
