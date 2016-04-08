@@ -32,6 +32,16 @@ Fast, multiplayer, physics-driven tennis in two dimensions.
         npm install --production
         bower install
 
+## test
+
+1. Navigate to the root directory of the project.
+
+2. Run our test suite.
+
+        gulp run-tests
+
+3. Enjoy Nyan Cat.
+
 ## run
 
 1. Follow setup instructions.
