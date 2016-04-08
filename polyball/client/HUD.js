@@ -6,6 +6,7 @@ var $ = require('jquery');
 var PointerListener = require('polyball/client/hudbehaviors/PointerListener');
 var PowerupElectionRenderer = require('polyball/client/hudbehaviors/PowerupElectionRenderer');
 var WinnersCircleRenderer = require('polyball/client/hudbehaviors/WinnersCircleRenderer');
+var UserListRenderers = require('polyball/client/hudbehaviors/UserListRenderers');
 var Logger = require('polyball/shared/Logger');
 var EngineStatus = require('polyball/shared/EngineStatus');
 var Util = require('polyball/shared/Util');
@@ -40,30 +41,26 @@ var HUD = function (config) {
             comms.queueToPlay();
         });
     });
-
-    $.get('hudcomponents/spectatorList.html', function (data) {
-        Logger.debug('Injecting spectator list.');
-
-        $('#hudColumn').append(data);
-    });
-
-    $.get('hudcomponents/playerQueue.html', function (data) {
-        Logger.debug('Injecting player queue.');
-
-        $('#hudColumn').append(data);
-    });
-
-    $.get('hudcomponents/waitingForPlayers.html', function (data) {
-        Logger.debug('Injecting powerup election.');
-
-        $('#hudColumn').append(data);
-    });
     
 
     new PointerListener({
         accumulationInterval: config.accumulationInterval,
         synchronizer: config.synchronizer
     }).listenElement(document);
+    
+    var spectatorListRenderer = new UserListRenderers.SpectatorListRenderer({
+        appendTo: '#hudColumn'
+    });
+    
+    var playerQueueRenderer = new UserListRenderers.PlayerQueueListRenderer({
+        appendTo: '#hudColumn'
+    });
+
+    $.get('hudcomponents/waitingForPlayers.html', function (data) {
+        Logger.debug('Injecting waiting for players.');
+
+        $('#hudColumn').append(data);
+    });
     
     var powerupElectionRenderer = new PowerupElectionRenderer({
         appendTo: '#hudColumn',
@@ -73,43 +70,13 @@ var HUD = function (config) {
     var winnersCircleRenderer = new WinnersCircleRenderer({
         appendTo: 'body'
     });
-
-
-    var appendNameToList = function (listElement) {
-
-        return function (spectatorOrPlayer) {
-            if (spectatorOrPlayer == null) {
-                return;
-            }
-
-            var listItem = $('<li>').text(spectatorOrPlayer.client.name);
-
-            if (spectatorOrPlayer.id === model.getLocalClientID()) {
-                var localElement = $('<span>').addClass('localClient').text('  (you)');
-                listItem.append(localElement);
-            }
-            listElement.append(listItem);
-        };
-    };
     
 
     this.render = function () {
         $('.roundTimer').text(Util.millisToCountDown(model.getRoundLength() - model.getCurrentRoundTime()));
 
-
-        var spectatorList = $('.spectatorList');
-        spectatorList.empty();
-        model.getSpectators().forEach(appendNameToList(spectatorList));
-
-
-        var playerQueueList = $('.playerQueue');
-        playerQueueList.empty();
-        if (model.getAllQueuedPlayers().length === 0) {
-            playerQueueList.append(
-                $('<li>').addClass('grayed').text('No players queued.')
-            );
-        }
-        model.getAllQueuedPlayers().forEach(appendNameToList(playerQueueList));
+        spectatorListRenderer.render(model.getSpectators(), model.getLocalClientID());
+        playerQueueRenderer.render(model.getAllQueuedPlayers(), model.getLocalClientID());
 
 
         var localQueued = model.hasQueuedPlayer(model.getLocalClientID());
@@ -123,7 +90,7 @@ var HUD = function (config) {
         
         
         powerupElectionRenderer.render(model);
-        $('.statusMessage').hide();
+        $('.waitingForPlayers').hide();
         if (model.gameStatus === EngineStatus.gameInitializing) {
             $('.waitingForPlayers').show();
         }
