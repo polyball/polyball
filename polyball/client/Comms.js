@@ -118,6 +118,12 @@ var Comms = function (config) {
         socket.emit(CommsEvents.ClientToServer.queueToPlay);
     };
     
+    this.requestClientName = function (name) {
+        Logger.info('Comms is requesting name ' + name);
+        
+        socket.emit(CommsEvents.ClientToServer.requestName, name);
+    };
+    
     this.sendCommandAggregate = function (commandAggregate) {
         Logger.debug('Comms sending command aggregate');
         

@@ -17,21 +17,53 @@ var throttle = require('physicsjs').util.throttle;
  */
 var LandingPageRenderer = function (config) {
 
+    var landingModal;
+    var self = this;
+
     $.get('hudcomponents/landingModal.html', function (data) {
         Logger.debug('Injecting Landing Modal.');
 
         $(config.prependTo).prepend(data);
 
-        $('.landingNameChooser input').keypress(throttle(function () {
+        landingModal = $('.landingModal');
+
+        var changeName = throttle(function () {
+            if (!config.onNameChange) {
+                Logger.warn("LandingPageRenderer: no onNameChange listener.");
+                return;
+            }
             config.onNameChange($('.landingNameChooser input').val());
-        }, 1000));
-        
-        $('.landingSpectateButton').click(config.onWatchClick);
-        $('.landingQueuebutton').click(config.onQueueClick);
+        }, 100);
+        $('.landingNameChooser input').keypress(changeName);
+        $('.landingNameChooser input').change(changeName);
+
+        $('.landingSpectateButton').click(function () {
+            if (config.onWatchClick) {
+                config.onWatchClick();
+            }
+            self.remove();
+        });
+        $('.landingQueueButton').click(function () {
+            if (config.onQueueClick) {
+                config.onQueueClick();
+            }
+            self.remove();
+        });
     });
     
     this.render = function (name) {
-        $('.localUsername').text(name);
+        if (landingModal != null) {
+            $('.localUsername').text(name);
+            if (!$('.landingNameChooser input').is(":focus")) {
+                $('.landingNameChooser input').val(name);
+            }
+        }
+    };
+
+    this.remove = function () {
+        if (landingModal != null) {
+            landingModal.remove();
+        }
     };
 };
 

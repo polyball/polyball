@@ -107,7 +107,15 @@ var Comms = function (config) {
             pubsub.fireEvent(CommsEvents.ServerToServer.clientDisconnected, {clientID: clientID});
         });
 
-        // TODO how do I document these callback parameters??
+        clientSocket.on(CommsEvents.ClientToServer.requestName, function (name) {
+            var clientID = getPlayerOrSpectatorID(clientSocket);
+            var user = model.getPlayer(clientID);
+            user = user || model.getSpectator(clientID);
+
+            if (name && typeof name === 'string' && name.length <= 20) {
+                user.client.name = name;
+            }
+        });
 
         // SRS Requirement - 3.2.1.13 Player Queue
         // This function receives requests from clients who wish to add themselves to the player queue

@@ -16,7 +16,7 @@
   margin: 10% auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 55%; /* Could be more or less, depending on screen size */
+  width: 65%; /* Could be more or less, depending on screen size */
   -webkit-text-stroke-width: 2px;
   text-align: center;
   list-style-position: inside;
@@ -30,8 +30,9 @@
 }
 
 .landingGreeting {
-  font-size: 300%;
+  font-size: 250%;
   margin-bottom: 2rem;
+  overflow-x: hidden;
 }
 
 .landingNameChooser input[type='text'] {

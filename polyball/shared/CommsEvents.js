@@ -30,7 +30,8 @@ var ClientToServer = {
     disconnect: 'disconnect',  // socket.io builtin - do not change!
     queueToPlay: 'queueToPlay',
     newCommandAggregate: 'newCommandAggregate',
-    vote: 'vote'
+    vote: 'vote',
+    requestName: 'requestName'
 };
 
 exports.ServerToServer = ServerToServer;

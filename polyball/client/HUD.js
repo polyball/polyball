@@ -34,7 +34,9 @@ var HUD = function (config) {
     }).listenElement(document);
 
     var landingPageRenderer = new LandingPageRenderer({
-        prependTo: 'body'
+        prependTo: 'body',
+        onNameChange: comms.requestClientName,
+        onQueueClick: comms.queueToPlay
     });
 
     var queueButtonRenderer = new QueueButtonRenderer({
