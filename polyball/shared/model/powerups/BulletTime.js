@@ -156,6 +156,7 @@ BulletTime.prototype.render = function(renderer, model) { //jshint ignore:line
             renderer.moveEmitter(emitter, point);
         });
 
+        // SRS Requirement - 3.2.2.18.5 Bullet Time Zoom
         // Handle the subtle zoom.
         if (model.getArena() !== undefined) {
             var player = model.getPlayer(this.owner);
