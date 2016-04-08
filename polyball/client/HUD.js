@@ -5,6 +5,7 @@
 var $ = require('jquery');
 var PointerListener = require('polyball/client/hudbehaviors/PointerListener');
 var PowerupElectionRenderer = require('polyball/client/hudbehaviors/PowerupElectionRenderer');
+var WinnersCircleRenderer = require('polyball/client/hudbehaviors/WinnersCircleRenderer');
 var Logger = require('polyball/shared/Logger');
 var EngineStatus = require('polyball/shared/EngineStatus');
 var Util = require('polyball/shared/Util');
@@ -69,15 +70,20 @@ var HUD = function (config) {
         voteCallback: comms.voteForPowerup
     });
     
+    var winnersCircleRenderer = new WinnersCircleRenderer({
+        appendTo: 'body'
+    });
+
+
     var appendNameToList = function (listElement) {
-        
+
         return function (spectatorOrPlayer) {
             if (spectatorOrPlayer == null) {
                 return;
             }
 
             var listItem = $('<li>').text(spectatorOrPlayer.client.name);
-    
+
             if (spectatorOrPlayer.id === model.getLocalClientID()) {
                 var localElement = $('<span>').addClass('localClient').text('  (you)');
                 listItem.append(localElement);
@@ -85,25 +91,7 @@ var HUD = function (config) {
             listElement.append(listItem);
         };
     };
-
-    // SRS Requirement - 3.2.2.12 Ending Game
-    var renderWinnersCircle = function(roundEndData){
-        $.get('hudcomponents/winnersCircle.html', function (data) {
-            Logger.debug('Injecting Winners Circle.');
-
-            $('body').append(data);
-            roundEndData.winners.forEach(function(winner){
-                $('#winners-list').append("<li>" + winner.name +  " : " + winner.score + "</li>");
-            });
-        });
-    };
-
-    var hideWinnersCircle = function(){
-        var winnersCircle = $('.winners-circle');
-        if (winnersCircle != null){
-            winnersCircle.remove();
-        }
-    };
+    
 
     this.render = function () {
         $('.roundTimer').text(Util.millisToCountDown(model.getRoundLength() - model.getCurrentRoundTime()));
@@ -146,11 +134,11 @@ var HUD = function (config) {
      * @param roundEndData
      */
     var handleRoundEnded = function(roundEndData){
-        renderWinnersCircle(roundEndData);
+        winnersCircleRenderer.renderWinnersCircle(roundEndData);
     };
 
     var handleRoundStarted = function(roundStartData){ //jshint ignore:line
-        hideWinnersCircle();
+        winnersCircleRenderer.hideWinnersCircle();
     };
 
     comms.on(CommsEvents.ClientToClient.roundEnded, handleRoundEnded);
