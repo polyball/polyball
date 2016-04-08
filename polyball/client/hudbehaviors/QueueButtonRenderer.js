@@ -3,7 +3,7 @@
  */
 
 var $ = require('jquery');
-var Logger = require('polyball/shared/logger');
+var Logger = require('polyball/shared/Logger');
 
 /**
  *
