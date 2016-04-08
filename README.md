@@ -34,6 +34,8 @@ Fast, multiplayer, physics-driven tennis in two dimensions.
 
 ## test
 
+See `./polyball/test/` for the test plan in pdf form.
+
 1. Navigate to the root directory of the project.
 
 2. Run our test suite.
