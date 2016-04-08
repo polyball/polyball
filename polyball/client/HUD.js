@@ -3,6 +3,7 @@
  */
 
 var PointerListener = require('polyball/client/hudbehaviors/PointerListener');
+var LandingPageRenderer = require('polyball/client/hudbehaviors/LandingPageRenderer');
 var RoundTimerRenderer = require('polyball/client/hudbehaviors/RoundTimerRenderer');
 var QueueButtonRenderer = require('polyball/client/hudbehaviors/QueueButtonRenderer');
 var PowerupElectionRenderer = require('polyball/client/hudbehaviors/PowerupElectionRenderer');
@@ -31,7 +32,11 @@ var HUD = function (config) {
         accumulationInterval: config.accumulationInterval,
         synchronizer: config.synchronizer
     }).listenElement(document);
-    
+
+    var landingPageRenderer = new LandingPageRenderer({
+        prependTo: 'body'
+    });
+
     var queueButtonRenderer = new QueueButtonRenderer({
         appendTo: '#hudColumn',
         onClick: comms.queueToPlay
@@ -75,6 +80,11 @@ var HUD = function (config) {
 
         powerupElectionRenderer.render(model);
         waitingForPlayersRenderer.render(model.gameStatus === EngineStatus.gameInitializing);
+
+        var localUser = model.getPlayer(model.getLocalClientID());
+        localUser = localUser || model.getSpectator(model.getLocalClientID());
+        var localName = localUser ? localUser.client.name : null;
+        landingPageRenderer.render(localName);
     };
 
     /**
