@@ -6,13 +6,14 @@
 @import "statusMessages";
 @import "powerupElection";
 @import "winnersCircle";
+@import "landingPage";
 @import url(https://fonts.googleapis.com/css?family=Cabin);
 
 body {
   background: $background; /* fallback for old browsers */
+  font-family: "Roboto", Arial, sans-serif;
 }
 
-s
 canvas{ position: absolute; z-index: $canvasZIndex }
 
 .hud{
