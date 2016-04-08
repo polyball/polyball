@@ -6,8 +6,6 @@ var $ = require('jquery');
 var Logger = require('polyball/shared/Logger');
 
 
-
-
 var appendNameToList = function (listElement, localID) {
 
     return function (spectatorOrPlayer) {

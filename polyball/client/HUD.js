@@ -2,14 +2,15 @@
  * Created by kdban on 3/20/2016.
  */
 
-var $ = require('jquery');
 var PointerListener = require('polyball/client/hudbehaviors/PointerListener');
+var RoundTimerRenderer = require('polyball/client/hudbehaviors/RoundTimerRenderer');
+var QueueButtonRenderer = require('polyball/client/hudbehaviors/QueueButtonRenderer');
 var PowerupElectionRenderer = require('polyball/client/hudbehaviors/PowerupElectionRenderer');
+var WaitingForPlayersRenderer = require('polyball/client/hudbehaviors/WaitingForPlayersRenderer');
 var WinnersCircleRenderer = require('polyball/client/hudbehaviors/WinnersCircleRenderer');
 var UserListRenderers = require('polyball/client/hudbehaviors/UserListRenderers');
 var Logger = require('polyball/shared/Logger');
 var EngineStatus = require('polyball/shared/EngineStatus');
-var Util = require('polyball/shared/Util');
 var CommsEvents = require('polyball/shared/CommsEvents');
 
 /**
@@ -23,30 +24,22 @@ var CommsEvents = require('polyball/shared/CommsEvents');
 var HUD = function (config) {
     
     var comms = config.comms;
-    var model = config.model;  // jshint ignore: line
-
-    $.get('hudcomponents/roundTimer.html', function (data) {
-        Logger.debug('Injecting round timer.');
-
-        $('#hudColumn').append(data);
-    });
-
-    // Inject and listen to queue-to-play button
-    // SRS Requirement - 3.2.2.3 Join Player Queue
-    $.get('hudcomponents/addToQueueButton.html', function(data) {
-        Logger.debug('Injecting add to queue button.');
-
-        $('#hudColumn').append(data);
-        $('#addToQueueButton').click(function (){
-            comms.queueToPlay();
-        });
-    });
+    var model = config.model;
     
-
+    Logger.info('HUD initializing compononts.');
     new PointerListener({
         accumulationInterval: config.accumulationInterval,
         synchronizer: config.synchronizer
     }).listenElement(document);
+    
+    var queueButtonRenderer = new QueueButtonRenderer({
+        appendTo: '#hudColumn',
+        onClick: comms.queueToPlay
+    });
+    
+    var roundTimerRenderer = new RoundTimerRenderer({
+        appendTo: '#hudColumn'
+    });
     
     var spectatorListRenderer = new UserListRenderers.SpectatorListRenderer({
         appendTo: '#hudColumn'
@@ -56,10 +49,8 @@ var HUD = function (config) {
         appendTo: '#hudColumn'
     });
 
-    $.get('hudcomponents/waitingForPlayers.html', function (data) {
-        Logger.debug('Injecting waiting for players.');
-
-        $('#hudColumn').append(data);
+    var waitingForPlayersRenderer = new WaitingForPlayersRenderer({
+        appendTo: '#hudColumn'
     });
     
     var powerupElectionRenderer = new PowerupElectionRenderer({
@@ -73,27 +64,17 @@ var HUD = function (config) {
     
 
     this.render = function () {
-        $('.roundTimer').text(Util.millisToCountDown(model.getRoundLength() - model.getCurrentRoundTime()));
+        roundTimerRenderer.render(model.getRoundLength() - model.getCurrentRoundTime());
 
         spectatorListRenderer.render(model.getSpectators(), model.getLocalClientID());
         playerQueueRenderer.render(model.getAllQueuedPlayers(), model.getLocalClientID());
 
-
         var localQueued = model.hasQueuedPlayer(model.getLocalClientID());
         var localPlaying = model.hasPlayer(model.getLocalClientID());
-        if (!localQueued && !localPlaying) {
-            $('#addToQueueButton').css('visibility', 'visible');
-        }
-        else if (localQueued || localPlaying) {
-            $('#addToQueueButton').css('visibility', 'hidden');
-        }
-        
-        
+        queueButtonRenderer.render(localQueued, localPlaying);
+
         powerupElectionRenderer.render(model);
-        $('.waitingForPlayers').hide();
-        if (model.gameStatus === EngineStatus.gameInitializing) {
-            $('.waitingForPlayers').show();
-        }
+        waitingForPlayersRenderer.render(model.gameStatus === EngineStatus.gameInitializing);
     };
 
     /**
