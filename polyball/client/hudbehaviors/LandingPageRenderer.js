@@ -22,9 +22,12 @@ var LandingPageRenderer = function (config) {
 
         $(config.prependTo).prepend(data);
 
-        $('.landingNameChooser input').change(throttle(function () {
+        $('.landingNameChooser input').keypress(throttle(function () {
             config.onNameChange($('.landingNameChooser input').val());
         }, 1000));
+        
+        $('.landingSpectateButton').click(config.onWatchClick);
+        $('.landingQueuebutton').click(config.onQueueClick);
     });
     
     this.render = function (name) {
