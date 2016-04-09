@@ -29,7 +29,7 @@ Fast, multiplayer, physics-driven tennis in two dimensions.
 
 4. Install dependencies.
 
-        npm install --production
+        npm install
         bower install
 
 ## test
