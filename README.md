@@ -1,52 +1,43 @@
-| Issues Ready | Issues In Progress | Build Status |
-|--------------|--------------------|--------------|
-| [![][READY_IMG]][READY_LINK] | [![][PROGRESS_IMG]][PROGRESS_LINK] | [![][TRAVIS_IMG]][TRAVIS_LINK] |
-
-[READY_IMG]:      https://badge.waffle.io/polyball/polyball.png?label=ready&title=Ready
-[READY_LINK]:     https://waffle.io/polyball/polyball
-[PROGRESS_IMG]:      https://badge.waffle.io/polyball/polyball.png?label=in+progress&title=In+Progress
-[PROGRESS_LINK]:     https://waffle.io/polyball/polyball
-[TRAVIS_IMG]:       https://travis-ci.org/polyball/polyball.svg?branch=master
-[TRAVIS_LINK]:      https://travis-ci.org/polyball/polyball
-
 # polyball
 
 Fast, multiplayer, physics-driven tennis in two dimensions.
 
-![A polyball arena mockup.](http://i.imgur.com/DZzRF3H.png)
 
 ## setup
 
 1. Install `node` & `npm`.
 
-2. Install `bower` globally.
+2. Install `bower` globally. (may need sudo)
     
-        npm install -g bower
-3. Install `gulp` globally
+        $ npm install -g bower
+        
+3. Install `gulp` globally. (may need sudo)
+    
+        $ npm install -g gulp
 
 4. Clone and enter the polyball repo.
 
-        git clone git@github.com:polyball/polyball.git
+        $ git clone git@github.com:polyball/polyball.git
 
 5. Install dependencies.
 
-        npm install
-        bower install
+        $ npm install
+        $ bower install
 
 6. Build the client bundle (from the polyball root directory)
-```    
-gulp
-```
+
+        $ gulp default
+       
 
 ## test
 
-See `./polyball/test/` for the test plan in pdf form.
+See `./polyball/test/TestPlan.pdf` for the test plan in pdf form.
 
 1. Navigate to the root directory of the project.
 
 2. Run our test suite.
 
-        gulp run-tests
+        $ gulp run-tests
 
 3. Enjoy Nyan Cat.
 
@@ -56,18 +47,19 @@ See `./polyball/test/` for the test plan in pdf form.
 2. Edit polyball config file, `polyball.json`.
 3. Run the server.
 
-        node polyball/Server.js
+        $ node polyball/Server.js
 
-## dev
+
+## develop
 
 1. Install `gulp` globally.
 
-        npm install -g gulp
+        $ npm install -g gulp
 
 2. Install dev dependencies.
 
-        cd polyball/
-        npm install
+        $ cd polyball/
+        $ npm install
 
 3. [WINDOWS ONLY] Replace the polyball module symlink for browserify with a windows symlink
 
