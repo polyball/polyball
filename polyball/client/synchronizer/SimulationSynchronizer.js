@@ -32,6 +32,8 @@ var SimulationSynchronizer = function (config) {
     };
 
     /**
+     *
+     *
      * Mutate the physics simulation of a model to converge upon a state predicted from the authoritative snapshot.
      * The balls and powerups (before activation) are the only things mutated, though other state is used to simulate.
      *
@@ -43,6 +45,10 @@ var SimulationSynchronizer = function (config) {
             return;
         }
 
+        // 3.3.1.1.2 Ball Prediction
+        // This code block assigns ball state based on the currently known true state
+        // as received from the server.
+        // NOT A FULL SIMULATION DELTA DECAY CONVERGENCE ALGORITHM
         if (authoritativeSnapshot.balls != null) {
             authoritativeSnapshot.balls.forEach(function (snapshotBall) {
                 var ball = model.getBall(snapshotBall.id);
@@ -56,6 +62,10 @@ var SimulationSynchronizer = function (config) {
             });
         }
 
+        // 3.3.1.1.3 Powerup Prediction
+        // This code block assigns powerup physics state based on the currently known
+        // true state as received from the server.
+        // NOT A FULL SIMULATION DELTA DECAY CONVERGENCE ALGORITHM
         if (authoritativeSnapshot.powerups != null) {
             authoritativeSnapshot.powerups.forEach(function (snapshotPowerup) {
                 var powerup  = model.getPowerup(snapshotPowerup.id);

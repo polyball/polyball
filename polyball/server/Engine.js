@@ -184,6 +184,9 @@ var Engine = function (config) {
     };
 
     /**
+     * Requirement 3.3.1.4.3 State Broadcasting
+     * This method calls on the comms module to broadcast the game state.
+     * 
      * Handles all the logic to interface with server comms and broadcast
      * the model
      */

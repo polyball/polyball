@@ -3,7 +3,11 @@
  */
 
 /**
- * 
+ * Requirement 3.3.1.1 Client State Prediction
+ *
+ * This class manages client paddle state prediction.
+ * THIS IS A NAIVE IMPLEMENTATION, NOT A FULL IMPLEMENTATION.
+ *
  * @param {Object} config
  * @property {Model} config.model
  * @constructor
@@ -47,6 +51,12 @@ var Reconciler = function (config) {
     };
 
     /**
+     * Requirement 3.3.1.3 Client State Reconciliation
+     *
+     * This method uses cached commands to reconcile server paddle state and client
+     * paddle state.
+     * THIS IS A NAIVE IMPLEMENTATION, NOT A FULL IMPLEMENTATION.
+     *
      * Use acknowledged sequence numbers and states to mutate the model.
      * @param players
      */

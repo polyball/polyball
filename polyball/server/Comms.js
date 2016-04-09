@@ -207,6 +207,8 @@ var Comms = function (config) {
     // This method handles the actual sending of snapshots to clients
     // SRS Requirement - 3.2.1.12 Spectator Client Broadcast
     // Spectator client broad casts are handled exactly the same as player broadcasts
+    // SRS Requirement - 3.3.1.4.3 State Broadcasting
+    // The comms performs the cocket commmunication here.
     // Both players and spectators have a "client" which is used for this kind of communication
     this.broadcastSnapshot = function (snapshot) {
         Logger.debug("Comms broadcasting snapshot.");
