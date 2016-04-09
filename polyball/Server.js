@@ -15,7 +15,7 @@ var server = new FileServer({
     indexPath: 'index.html'
 }).getHttpServer();
 
-var config = new Configuration({configPath: "./polyball.conf"});
+var config = new Configuration({configPath: "./polyball.json"});
 
 var model = new Model();
 
