@@ -11,7 +11,10 @@ var Reconciler = require('polyball/client/synchronizer/Reconciler');
 var Interpolator = require('polyball/client/synchronizer/Interpolator');
 
 /**
- *
+ * Requirement 3.3.1 Client-Server State Synchronization.
+ * 
+ * This class manages all forms of synchronization on the client side.
+ * 
  * @param {Object} config
  * @property {Number} commandAggregationInterval - The *minimum* time to wait between sending command aggregates.
  * @property {Comms} comms - The client communications module to send and receive from.
@@ -135,7 +138,9 @@ var Synchronizer = function (config) {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Aggregate the mouse move for send to server and mutate the model
+     * Requirement 3.3.1.1.1 Paddle Prediction
+     *
+     * Aggregate the mouse move for send to server and mutate the model in advance
      * @param delta
      */
     this.registerMouseMove = function (delta) {

@@ -71,6 +71,10 @@ var RoundEngine = function(config){
     var initializeGame = function(){
         model.collisionsPruner = new BodyCollider({world: model.getWorld(), model: model});
 
+        //
+        // SRS Requirement - 3.3.1.4.1 Input Aggregation
+        // This function explicitly handle client input aggregation by manipulating
+        // physics state based on client input aggregates.
         addPhysicsBehavior(PaddleBehavior, {paddleEventsPublisher: config.paddleEventsPublisher,
             paddleMoveEvent: config.paddleMoveEvent,
             model: model}).applyTo(model.getPlayers());
@@ -84,10 +88,17 @@ var RoundEngine = function(config){
     var startGame = function(){
         gameStartTime = Date.now();
         model.setCurrentRoundTime(0);
+
+        // SRS Requirement - 3.3.1.4.2 Game State Progression
+        // This sets the game state simulation update according to a globally configured
+        // tick rate.
         gameLoop = setInterval(update, config.tickRate);
         pubsub.fireEvent(RoundEvents.gameStarted);
     };
 
+
+    // SRS Requirement - 3.3.1.4.2 Game State Progression
+    // This updates the game simulation - a keystone in our game's procedures.
     var update = function(){
         var time = Date.now();
         model.getWorld().step();
