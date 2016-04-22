@@ -9,11 +9,11 @@
 [TRAVIS_IMG]:       https://travis-ci.org/polyball/polyball.svg?branch=master
 [TRAVIS_LINK]:      https://travis-ci.org/polyball/polyball
 
+<img align="right" src="logo.png">
+
 # polyball
 
 Fast, multiplayer, physics-driven tennis in two dimensions.
-
-![A polyball arena mockup.](http://i.imgur.com/DZzRF3H.png)
 
 ## setup
 
