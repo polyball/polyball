@@ -1,13 +1,3 @@
-| Issues Ready | Issues In Progress | Build Status |
-|--------------|--------------------|--------------|
-| [![][READY_IMG]][READY_LINK] | [![][PROGRESS_IMG]][PROGRESS_LINK] | [![][TRAVIS_IMG]][TRAVIS_LINK] |
-
-[READY_IMG]:      https://badge.waffle.io/polyball/polyball.png?label=ready&title=Ready
-[READY_LINK]:     https://waffle.io/polyball/polyball
-[PROGRESS_IMG]:      https://badge.waffle.io/polyball/polyball.png?label=in+progress&title=In+Progress
-[PROGRESS_LINK]:     https://waffle.io/polyball/polyball
-[TRAVIS_IMG]:       https://travis-ci.org/polyball/polyball.svg?branch=master
-[TRAVIS_LINK]:      https://travis-ci.org/polyball/polyball
 
 <img align="right" src="logo.png">
 
@@ -42,6 +32,10 @@ Fast, multiplayer, physics-driven tennis in two dimensions.
 
 ## dev
 
+| Issues Ready | Issues In Progress | Build Status |
+|--------------|--------------------|--------------|
+| [![][READY_IMG]][READY_LINK] | [![][PROGRESS_IMG]][PROGRESS_LINK] | [![][TRAVIS_IMG]][TRAVIS_LINK] |
+
 1. Install `gulp` globally.
 
         npm install -g gulp
@@ -69,3 +63,12 @@ Fast, multiplayer, physics-driven tennis in two dimensions.
         gulp watch-js
 
    from the project root.  The gulp process will persist and report builds and changes.
+   
+   
+
+[READY_IMG]:      https://badge.waffle.io/polyball/polyball.png?label=ready&title=Ready
+[READY_LINK]:     https://waffle.io/polyball/polyball
+[PROGRESS_IMG]:      https://badge.waffle.io/polyball/polyball.png?label=in+progress&title=In+Progress
+[PROGRESS_LINK]:     https://waffle.io/polyball/polyball
+[TRAVIS_IMG]:       https://travis-ci.org/polyball/polyball.svg?branch=master
+[TRAVIS_LINK]:      https://travis-ci.org/polyball/polyball
