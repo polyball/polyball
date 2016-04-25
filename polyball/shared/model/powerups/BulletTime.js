@@ -208,12 +208,12 @@ var bulletTimeEmitterStyle = {
     },
     "scale": {
         "start": 0.1,
-        "end": 0.01,
+        "end": 0.1,
         "minimumScaleMultiplier": 1
     },
     "color": {
         "start": "#5264eb",
-        "end": "#ff573d"
+        "end": "#5264eb"
     },
     "speed": {
         "start": 200,
@@ -232,21 +232,21 @@ var bulletTimeEmitterStyle = {
         "max": 0
     },
     "lifetime": {
-        "min": 0.6,
-        "max": 0.6
+        "min": 0.4,
+        "max": 0.4
     },
     "blendMode": "normal",
     "frequency": 0.001,
     "emitterLifetime": -1,
-    "maxParticles": 300,
+    "maxParticles": 100,
     "pos": {
         "x": 0,
         "y": 0
     },
     "addAtBack": false,
     "spawnType": "burst",
-    "particlesPerWave": 300,
-    "particleSpacing": 2,
+    "particlesPerWave": 100,
+    "particleSpacing": 3.75,
     "angleStart": 3
 };
 
