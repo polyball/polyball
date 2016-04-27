@@ -1,6 +1,6 @@
 {
   "name": "polyball",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Fast multiplayer tennis in two dimensions.",
   "main": "index.js",
   "scripts": {
