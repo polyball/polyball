@@ -193,8 +193,7 @@ var Engine = function (config) {
 
     var startPoweupVote = function (){
         if (model.gameStatus === EngineStatus.gameRunning &&
-            model.getPowerupElection() == null &&
-            model.getPowerups().length === 0) {
+            model.getPowerupElection() == null) {
             model.setPowerupElection({powerups: PowerupFactory.getAllPowerupNames()});
             setTimeout(endPowerupVote, config.configuration.powerupVoteDuration);
         }
