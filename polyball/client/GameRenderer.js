@@ -204,6 +204,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             var center;
             var rotation;
 
+            this.stage.filterArea = new Pixi.Rectangle(0, 0, this.width, this.height);
+
             if (model.getArena() !== undefined) {
                 // Remove the title
                 var textObjects = textContainer.children.filter(function(textChild) {
