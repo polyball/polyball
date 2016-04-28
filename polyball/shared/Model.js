@@ -442,6 +442,7 @@ var Model = function () {
      */
     this.deleteSpectator = function (id) {
         removeByID(spectators, id);
+        this.removeFromPlayerQueue(id);
     };
 
     //SRS Requirement - 3.2.1.13 Player Queue
