@@ -25,8 +25,9 @@ var Powerup = function(config){
         y: config.body.state.pos.y,
         vx: config.body.state.vel.x,
         vy: config.body.state.vel.y,
+        angularVelocity: config.body.state.angular.vel,
         radius: config.body.radius,
-        treatment: 'static',
+        treatment: 'dynamic',
         styles: config.body.styles
     };
 

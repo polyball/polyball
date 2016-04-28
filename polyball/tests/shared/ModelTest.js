@@ -613,6 +613,9 @@ describe('Model', function () {
                     vel: {
                         x: 0,
                         y: 0
+                    },
+                    angular: {
+                        vel: 1
                     }
                 },
                 radius: 50

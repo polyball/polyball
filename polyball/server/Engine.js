@@ -309,6 +309,9 @@ var Engine = function (config) {
                 vel: {
                     x: 0,
                     y: 0
+                },
+                angular: {
+                    vel: 0.01
                 }
             },
             radius: config.configuration.powerupRadius
