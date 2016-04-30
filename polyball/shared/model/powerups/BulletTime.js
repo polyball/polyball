@@ -155,31 +155,6 @@ BulletTime.prototype.render = function(renderer, model) { //jshint ignore:line
             emitter = foundEmitters[0];
             renderer.moveEmitter(emitter, point);
         });
-
-        // SRS Requirement - 3.2.2.18.5 Bullet Time Zoom
-        // Handle the subtle zoom.
-        if (model.getArena() !== undefined) {
-            var player = model.getPlayer(this.owner);
-            var pos = model.getArena().getGoal(player.arenaPosition).state.pos;
-            var pivot = renderer.stage.pivot;
-
-            if(zoomPivot === undefined) {
-                zoomPivot = {x: pivot.x, y: pivot.y};
-            }
-
-            xStep = (pos.x - zoomPivot.x) / 200;
-            yStep = (pos.y - zoomPivot.y) / 200;
-            scaleStep = (scaleGoal - renderer.stage.scale.x) / 200;
-
-            zoomPivot.x += xStep;
-            zoomPivot.y += yStep;
-
-            renderer.stage.pivot.set(zoomPivot.x, zoomPivot.y);
-            renderer.stage.scale.x += scaleStep;
-            renderer.stage.scale.y += scaleStep;
-
-
-        }
     }
 };
 
