@@ -7,6 +7,26 @@ var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
 
+// ================================= Private  =================================
+// ============================================================================
+var gameRenderer;
+var self;
+
+var renderDeactivate = function(renderer) {
+    var emitters = renderer.getEmitters();
+
+    var foundEmitters = emitters.filter(function (emitter) {
+        return emitter.owner === self.owner || emitter.owner === self;
+    });
+
+    foundEmitters.forEach(function(emitter) {
+        renderer.removeEmitter(emitter);
+    });
+};
+
+// ================================= Public ===================================
+// ============================================================================
+
 /**
  * This powerup makes balls worth an additional point
  * @param config - see powerup config
@@ -52,13 +72,16 @@ KingMidas.prototype.deactivate = function(model){
         this.active = false;
     }
 
-    if (typeof this.deactivateRender === 'function') {
-        this.deactivateRender();
+    if (gameRenderer !== undefined) {
+        renderDeactivate(gameRenderer);
     }
 };
 
 KingMidas.prototype.render = function(renderer, model) {
-    var self = this;
+    self = this;
+    if (gameRenderer === undefined) {
+        gameRenderer = renderer;
+    }
 
     if (this.active) {
         var emitter;
@@ -89,58 +112,33 @@ KingMidas.prototype.render = function(renderer, model) {
         balls.forEach(function(ball) {
             // Find the emitter for this ball
             var foundEmitters = emitters.filter(function(emitter) {
-                return emitter.ball === ball && ball.lastTouchedID === self.owner;
-            });
-
-            // SRS Requirement - 3.2.2.18.6 King Midas Sparkle
-            if (foundEmitters.length === 0) { // Create a new emitter
-                emitter = renderer.addEmitter(['res/particle.png'], kingMidasBallParticleStyle);
-                emitter.ball = ball;
-                emitter.owner = self;
-                foundEmitters.push(emitter);
-            }
-            // Update emitter location
-            var point = {
-                x: ball.body.state.pos.x,
-                y: ball.body.state.pos.y
-            };
-
-            emitter = foundEmitters[0];
-            renderer.moveEmitter(emitter, point);
-        });
-
-        // Remove any emitters if they hit an opposing players paddle.
-        balls = model.getBalls(function(ball) {
-            return ball.lastTouchedID !== self.owner;
-        });
-
-        balls.forEach(function(ball) {
-            var foundEmitters = emitters.filter(function(emitter) {
                 return emitter.ball === ball;
             });
 
-            foundEmitters.forEach(function(emitter) {
-                renderer.removeEmitter(emitter);
-            });
+            if (ball.lastTouchedID === self.owner) {
+                // SRS Requirement - 3.2.2.18.6 King Midas Sparkle
+                if (foundEmitters.length === 0) { // Create a new emitter
+                    emitter = renderer.addEmitter(['res/particle.png'], kingMidasBallParticleStyle);
+                    emitter.ball = ball;
+                    emitter.owner = self;
+                    foundEmitters.push(emitter);
+                }
+                // Update emitter location
+                var point = {
+                    x: ball.body.state.pos.x,
+                    y: ball.body.state.pos.y
+                };
+
+                emitter = foundEmitters[0];
+                renderer.moveEmitter(emitter, point);
+            }
+            else {
+                foundEmitters.forEach(function(emitter) {
+                    renderer.removeEmitter(emitter);
+                });
+            }
         });
     }
-
-    if (!this.renderedAtLeastOnce) {
-        this.deactivateRender = function () {
-
-            var emitters = renderer.getEmitters();
-
-            var foundEmitters = emitters.filter(function (emitter) {
-                return emitter.owner === self.owner || emitter.owner === self;
-            });
-
-            foundEmitters.forEach(function(emitter) {
-                renderer.removeEmitter(emitter);
-            });
-        };
-    }
-
-    this.renderedAtLeastOnce = true;
 };
 
 KingMidas.prototype.toConfig = function (){
