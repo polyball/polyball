@@ -12,11 +12,6 @@ var Events = require('polyball/shared/model/behaviors/Events');
 // ============================================================================
 var gameRenderer;
 var bulletTimeout;
-var zoomPivot;
-var xStep;
-var yStep;
-var scaleGoal;
-var scaleStep;
 var self;
 
 var renderDeactivate = function(renderer) {
@@ -28,9 +23,6 @@ var renderDeactivate = function(renderer) {
     foundEmitters.forEach(function(emitter) {
         renderer.removeEmitter(emitter);
     });
-
-    renderer.stage.scale.x = 1;
-    renderer.stage.scale.y = 1;
 };
 
 // ================================= Public ===================================
@@ -55,7 +47,6 @@ var BulletTime = function(config){
     this.model = null;
 
     bulletTimeout = 2000;
-    scaleGoal = 1.1;
 };
 
 inherits(BulletTime, Powerup);
