@@ -112,7 +112,7 @@ KingMidas.prototype.render = function(renderer, model) {
         balls.forEach(function(ball) {
             // Find the emitter for this ball
             var foundEmitters = emitters.filter(function(emitter) {
-                return emitter.ball === ball;
+                return emitter.ball === ball && emitter.owner === self;
             });
 
             if (ball.lastTouchedID === self.owner) {
