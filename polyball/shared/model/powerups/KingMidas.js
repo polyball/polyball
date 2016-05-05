@@ -6,17 +6,18 @@ var Powerup = require('polyball/shared/model/powerups/Powerup');
 var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
+var Logger = require('polyball/shared/Logger');
 
 // ================================= Private  =================================
 // ============================================================================
 var gameRenderer;
-var self;
 
-var renderDeactivate = function(renderer) {
+var renderDeactivate = function(self, renderer) {
+    Logger.info('Powerup ID: ' + self.id + ' render deactivate.');
     var emitters = renderer.getEmitters();
 
     var foundEmitters = emitters.filter(function (emitter) {
-        return emitter.owner === self.owner || emitter.owner === self;
+        return emitter.owner === self;
     });
 
     foundEmitters.forEach(function(emitter) {
@@ -62,6 +63,7 @@ KingMidas.prototype.activate = function(model){
         this.model = model;
         KingMidas.super_.prototype.activate.call(this, model);
         model.getWorld().on(Events.ballGoalCollision, this.handleGoal, this);
+        Logger.info('KM: ACTIVATE ID: ' + this.id);
         this.active = true;
     }
 };
@@ -69,34 +71,37 @@ KingMidas.prototype.activate = function(model){
 KingMidas.prototype.deactivate = function(model){
     if (this.active){
         model.getWorld().off(Events.ballGoalCollision, this.handleGoal, this);
+        Logger.info('KM: DEACTIVATE + ID: ' + this.id);
         this.active = false;
     }
 
     if (gameRenderer !== undefined) {
-        renderDeactivate(gameRenderer);
+        renderDeactivate(this, gameRenderer);
     }
 };
 
 KingMidas.prototype.render = function(renderer, model) {
-    self = this;
+    var self = this;
     if (gameRenderer === undefined) {
         gameRenderer = renderer;
     }
 
     if (this.active) {
+        Logger.info('Powerup ID: ' + this.id + ' rendered');
         var emitter;
         var emitters = renderer.getEmitters();
 
         // add paddle emitter
         var paddleEmitters = emitters.filter(function (emitter) {
-            return self.owner === emitter.owner;
+            return emitter.owner === self && emitter.player === self.owner;
         });
 
-        var ownerPaddle = model.getPlayer(self.owner).paddle;
+        var ownerPaddle = model.getPlayer(this.owner).paddle;
         if (paddleEmitters.length === 0) {
             kingMidasPaddleParticleStyle.angleStart = ownerPaddle.body.state.angular.pos * 57.2958;
             paddleEmitters.push(renderer.addEmitter(['res/particle.png'], kingMidasPaddleParticleStyle));
-            paddleEmitters[0].owner = self.owner;
+            paddleEmitters[0].owner = this;
+            paddleEmitters[0].player = this.owner;
         }
 
         renderer.moveEmitter(
