@@ -12,9 +12,8 @@ var Events = require('polyball/shared/model/behaviors/Events');
 // ============================================================================
 var gameRenderer;
 var bulletTimeout;
-var self;
 
-var renderDeactivate = function(renderer) {
+var renderDeactivate = function(self, renderer) {
     var emitters = renderer.getEmitters();
     var foundEmitters = emitters.filter(function (emitter) {
         return emitter.owner === self;
@@ -108,7 +107,7 @@ BulletTime.prototype.deactivate = function (model){
         }
 
         if (gameRenderer !== undefined) {
-            renderDeactivate(gameRenderer);
+            renderDeactivate(this, gameRenderer);
         }
 
         model.getWorld().removeBody(this.zone);
@@ -116,8 +115,8 @@ BulletTime.prototype.deactivate = function (model){
     }
 };
 
-BulletTime.prototype.render = function(renderer, model) { //jshint ignore:line
-    self = this;
+BulletTime.prototype.render = function(renderer, model) {
+    var self = this;
     if (gameRenderer === undefined) {
         gameRenderer = renderer;
     }
@@ -130,7 +129,7 @@ BulletTime.prototype.render = function(renderer, model) { //jshint ignore:line
         });
         balls.forEach(function(ball) {
             var foundEmitters = emitters.filter(function(emitter) {
-                return emitter.ball === ball;
+                return emitter.ball === ball && emitter.owner === self;
             });
             if (foundEmitters.length === 0) {
                 emitter = renderer.addEmitter(['res/particle.png'], bulletTimeEmitterStyle);
