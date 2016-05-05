@@ -33,6 +33,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
     var textContainer;
     var titleID;
     var self;
+    var baseDim;
 
     /**
      * Updates the particle rendering.
@@ -107,6 +108,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             emitters = [];
 
             elapsed = Date.now();
+
+            baseDim = 850;
         },
 
         /**
@@ -374,9 +377,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             }
 
             parent.resize.call(this, width, height);
-            this.renderer.resize(width, height);
-            //this.stage.width = width;
-            //this.stage.height = height;
+            this.stage.scale.x = width / baseDim;
+            this.stage.scale.y = height / baseDim;
         },
 
         /**
