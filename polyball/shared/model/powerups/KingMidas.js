@@ -6,14 +6,12 @@ var Powerup = require('polyball/shared/model/powerups/Powerup');
 var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
-var Logger = require('polyball/shared/Logger');
 
 // ================================= Private  =================================
 // ============================================================================
 var gameRenderer;
 
 var renderDeactivate = function(self, renderer) {
-    Logger.info('Powerup ID: ' + self.id + ' render deactivate.');
     var emitters = renderer.getEmitters();
 
     var foundEmitters = emitters.filter(function (emitter) {
@@ -63,7 +61,6 @@ KingMidas.prototype.activate = function(model){
         this.model = model;
         KingMidas.super_.prototype.activate.call(this, model);
         model.getWorld().on(Events.ballGoalCollision, this.handleGoal, this);
-        Logger.info('KM: ACTIVATE ID: ' + this.id);
         this.active = true;
     }
 };
@@ -71,7 +68,6 @@ KingMidas.prototype.activate = function(model){
 KingMidas.prototype.deactivate = function(model){
     if (this.active){
         model.getWorld().off(Events.ballGoalCollision, this.handleGoal, this);
-        Logger.info('KM: DEACTIVATE + ID: ' + this.id);
         this.active = false;
     }
 
@@ -87,7 +83,6 @@ KingMidas.prototype.render = function(renderer, model) {
     }
 
     if (this.active) {
-        Logger.info('Powerup ID: ' + this.id + ' rendered');
         var emitter;
         var emitters = renderer.getEmitters();
 
