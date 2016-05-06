@@ -22,23 +22,25 @@ $(document).ready(function() {
         Logger.info('Config received:');
         Logger.debug(config);
 
-        var gameRenderer = GameRenderer.createNew({
-            model: model,
-            autoResize: false,
-            el: 'viewport'
-        });
-
-        var dim = Math.min(window.innerHeight, window.innerWidth);
+        var dim = Math.min(window.innerHeight, window.innerWidth) / window.devicePixelRatio;
         var width = dim;
         var height = dim;
 
         Logger.info('Width: ' + width + ' Height: ' + height);
 
+        var gameRenderer = GameRenderer.createNew({
+            model: model,
+            autoResize: false,
+            el: 'viewport',
+            width: width,
+            height: height
+        });
+
         gameRenderer.resize(width - 8, height - 8);
         gameRenderer.forceFontLoad();
 
         window.onresize = function () {
-            dim = Math.min(window.innerHeight, window.innerWidth);
+            dim = Math.min(window.innerHeight, window.innerWidth) / window.devicePixelRatio;
             width = dim;
             height = dim;
 
