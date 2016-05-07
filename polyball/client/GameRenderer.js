@@ -257,10 +257,9 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 this.stage.position.set(desiredX, desiredY);
             }
             else {
-                center = {
-                    x : this.renderer.width / 2,
-                    y : this.renderer.height / 2
-                };
+                center = this.getClientCenter();
+                this.stage.pivot.set(center.x, center.y);
+                this.stage.position.set(center.x, center.y);
 
                 this.addText('polyball', StyleCommons.titleFontStyle, center, 0, titleID);
             }
