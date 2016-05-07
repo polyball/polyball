@@ -378,6 +378,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
             parent.resize.call(this, width, height);
             this.stage.scale.x = width / baseDim;
             this.stage.scale.y = height / baseDim;
+
         },
 
         /**

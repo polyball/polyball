@@ -22,6 +22,7 @@ $(document).ready(function() {
         Logger.info('Config received:');
         Logger.debug(config);
 
+
         var dim = Math.min(window.innerHeight, window.innerWidth) / window.devicePixelRatio;
         var width = dim;
         var height = dim;
@@ -31,9 +32,7 @@ $(document).ready(function() {
         var gameRenderer = GameRenderer.createNew({
             model: model,
             autoResize: false,
-            el: 'viewport',
-            width: width,
-            height: height
+            el: 'viewport'
         });
 
         gameRenderer.resize(width - 8, height - 8);
