@@ -251,8 +251,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     this.rotate(rotation);
                 }
 
-                var desiredX = this.renderer.view.width / 2;
-                var desiredY = this.renderer.view.height / 2;
+                var desiredX = this.renderer.view.width / (2 * window.devicePixelRatio);
+                var desiredY = this.renderer.view.height / (2 * window.devicePixelRatio);
 
                 this.stage.position.set(desiredX, desiredY);
             }
@@ -421,8 +421,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
          */
         getClientCenter: function() {
             return {
-                x: this.width / 2,
-                y: this.height / 2
+                x: this.width / (2 * window.devicePixelRatio),
+                y: this.height / (2 * window.devicePixelRatio)
             };
         },
 
