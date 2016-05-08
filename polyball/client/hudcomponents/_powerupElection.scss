@@ -48,3 +48,9 @@
   padding: 1rem;
   margin: 1rem;
 }
+
+@media only screen and (max-height: 380px){
+  .powerupElection {
+    display: none !important;
+  }
+}
