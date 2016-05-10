@@ -421,8 +421,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
          */
         getClientCenter: function() {
             return {
-                x: this.width / (2 * window.devicePixelRatio),
-                y: this.height / (2 * window.devicePixelRatio)
+                x: this.width / 2,
+                y: this.height / 2
             };
         },
 
