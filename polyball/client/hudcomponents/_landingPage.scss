@@ -1,16 +1,23 @@
 @import "constants";
 
+@mixin small-screens($fontSize) {
+  @media screen and (max-width: $screen-xs){
+    font-size: $fontSize;
+  }
+}
 
 .landingModalContent {
   background-color: $transparentGreyWhite;
   text-align: center;
   list-style-position: inside;
   font-size: 150%;
+  @include small-screens(100%);
 }
 
 .landingGreeting {
   font-size: 250%;
   overflow-x: hidden;
+  @include small-screens(150%)
 }
 
 .landingNameChooser input[type='text'] {
@@ -19,6 +26,7 @@
   margin: 1rem 1rem 2rem 1rem;
   border: 0;
   padding: 0.5rem;
+  @include small-screens(150%);
 }
 
 .landingButton {

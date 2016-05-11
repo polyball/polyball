@@ -38,7 +38,7 @@ canvas{
   width: 16em;
 }
 
-@media only screen and (max-width: 632px){
+@media only screen and (max-width: $screen-xs){
   #hudColumn {
     display: none;
   }
