@@ -29,6 +29,7 @@
     "socket.io-client": "^1.4.5"
   },
   "devDependencies": {
+    "bootstrap": "^3.3.6",
     "browserify": "^13.0.0",
     "browserify-shim": "^3.8.12",
     "gulp": "^3.9.1",
