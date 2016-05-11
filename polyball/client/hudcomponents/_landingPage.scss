@@ -3,11 +3,13 @@
 
 .landingModalContent {
   background-color: $transparentGreyWhite;
+  text-align: center;
+  list-style-position: inside;
+  font-size: 150%;
 }
 
 .landingGreeting {
   font-size: 250%;
-  margin-bottom: 2rem;
   overflow-x: hidden;
 }
 
@@ -33,15 +35,4 @@
     color: black;
     cursor: pointer;
   }
-}
-
-.modal-dialog {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.modal-content {
-  margin: 0 auto;
 }
