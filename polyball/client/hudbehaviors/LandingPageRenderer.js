@@ -51,6 +51,7 @@ var LandingPageRenderer = function (config) {
             }
             self.remove();
         });
+        $('#landingModal').modal();
     });
     
     this.render = function (name) {
