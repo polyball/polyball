@@ -1,0 +1,5 @@
+@mixin small-screens-fontSize($screenSize, $fontSize) {
+  @media screen and (max-width: $screenSize){
+    font-size: $fontSize;
+  }
+}
