@@ -3,8 +3,10 @@
  */
 
 var $ = require('jquery');
+global.jQuery = $;
 var Logger = require('polyball/shared/Logger');
 var throttle = require('physicsjs').util.throttle;
+require('bootstrap');
 
 /**
  *
