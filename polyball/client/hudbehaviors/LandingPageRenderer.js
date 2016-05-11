@@ -65,7 +65,7 @@ var LandingPageRenderer = function (config) {
 
     this.remove = function () {
         if (landingModal != null) {
-            landingModal.remove();
+            $('#landingModal').modal('hide');
         }
     };
 };
