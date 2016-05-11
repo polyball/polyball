@@ -3,7 +3,9 @@
  */
 
 var $ = require('jquery');
+global.jQuery = $;
 var Logger = require('polyball/shared/Logger');
+require('bootstrap');
 
 /**
  * 
@@ -22,13 +24,19 @@ var WinnersCircleRenderer = function (config) {
             roundEndData.winners.forEach(function (winner) {
                 $('#winners-list').append("<li>" + winner.name + " : " + winner.score + "</li>");
             });
+            $('#winners-circle').modal();
         });
     };
 
     this.hideWinnersCircle = function () {
-        var winnersCircle = $('.winners-circle');
-        if (winnersCircle != null) {
+        var winnersCircle = $('#winners-circle');
+
+        winnersCircle.on('hide.bs.modal', function (){
             winnersCircle.remove();
+        });
+
+        if (winnersCircle != null) {
+            $('#winners-circle').modal('hide');
         }
     };
 
