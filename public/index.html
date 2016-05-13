@@ -11,8 +11,12 @@
             <!-- This viewport div will have a canvas automatically injected by our renderer. -->
             <div id="viewport">
             </div>
-
-            <div id="hudColumn" class="pull-right"></div>
+            <p class="visible-xs hud pull-right-canvas">
+                <button class="btn btn-default" data-toggle="drawer">
+                    <span class="glyphicon glyphicon-menu-hamburger"></span>
+                </button>
+            </p>
+            <div id="hudColumn" class="pull-right drawer"></div>
         </div>
         <script src="bin/client-bundle.js"></script>
     </body>

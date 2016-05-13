@@ -1,0 +1,21 @@
+@import 'constants';
+
+@media screen and (max-width: $screen-xs) {
+  .drawer {
+    position: absolute;
+    top: 50px;
+    width: 0px;
+    overflow: hidden;
+    left:100%;
+    padding:0;
+  }
+
+  .drawer.active {
+    width: 16em !important;
+    left: 60%;
+    -webkit-transition: all 2s ease 0s;
+    -moz-transition: all 2s ease 0s;
+    -o-transition: all 2s ease 0s;
+    transition: all 2s ease 0s;
+  }
+}

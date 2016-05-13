@@ -7,6 +7,7 @@
 @import "powerupElection";
 @import "winnersCircle";
 @import "landingPage";
+@import "drawer";
 @import url(https://fonts.googleapis.com/css?family=Cabin);
 @import url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css);
 
@@ -36,10 +37,7 @@ canvas{
 
 #hudColumn {
   width: 16em;
-}
-
-@media only screen and (max-width: $screen-xs){
-  #hudColumn {
-    display: none;
+  @media screen and (max-width: $screen-xs){
+    width: 0px;
   }
 }

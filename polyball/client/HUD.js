@@ -13,6 +13,7 @@ var UserListRenderers = require('polyball/client/hudbehaviors/UserListRenderers'
 var Logger = require('polyball/shared/Logger');
 var EngineStatus = require('polyball/shared/EngineStatus');
 var CommsEvents = require('polyball/shared/CommsEvents');
+var $ = require('jquery');
 
 /**
  * @param config
@@ -68,7 +69,6 @@ var HUD = function (config) {
     var winnersCircleRenderer = new WinnersCircleRenderer({
         appendTo: 'body'
     });
-    
 
     this.render = function () {
         roundTimerRenderer.render(model.getRoundLength() - model.getCurrentRoundTime());
@@ -89,6 +89,14 @@ var HUD = function (config) {
         landingPageRenderer.render(localName);
     };
 
+    var setupHUD = function (){
+        $(document).ready(function () {
+            $('[data-toggle="drawer"]').click(function () {
+                $('.drawer').toggleClass('active');
+            });
+        });
+    };
+
     /**
      * Use this function to do anything that should be done on round end.
      * @param roundEndData
@@ -103,6 +111,7 @@ var HUD = function (config) {
 
     comms.on(CommsEvents.ClientToClient.roundEnded, handleRoundEnded);
     comms.on(CommsEvents.ClientToClient.newRound, handleRoundStarted);
+    setupHUD();
 };
 
 
