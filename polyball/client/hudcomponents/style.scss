@@ -27,6 +27,10 @@ canvas{
   z-index: $hudZIndex;
 }
 
+.hud-overlay {
+  z-index: $hudOverlay;
+}
+
 .hud .localClient {
   color: $veryLightGray;
 }
@@ -37,7 +41,14 @@ canvas{
 
 #hudColumn {
   width: 16em;
+
+
   @media screen and (max-width: $screen-xs){
     width: 0px;
+    & * {
+      margin-left: 1em;
+      margin-right: 1em;
+    }
+
   }
 }
