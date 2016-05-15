@@ -3,20 +3,18 @@
 @media screen and (max-width: $screen-xs) {
   .drawer {
     position: absolute;
-    //top: 50px;
-    width: 0px;
+    right: 0;
+    width: 0;
     overflow: hidden;
-    left:100%;
     padding:0;
     background: $transparentGreyWhite;
     border-radius: 10px;
-  }
-
-  .drawer.active {
-    width: 18em !important;
-    left: initial;
-    right: 0px;
     height: 100%;
+
+    &.active {
+      width: 18em !important;
+    }
+
     -webkit-transition: width 2s ease 0s;
     -moz-transition: width 2s ease 0s;
     -o-transition: width 2s ease 0s;
