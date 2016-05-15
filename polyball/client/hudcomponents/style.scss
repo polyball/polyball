@@ -45,7 +45,7 @@ canvas{
 
   @media screen and (max-width: $screen-xs){
     width: 0px;
-    & * {
+    & > * {
       margin-left: 1em;
       margin-right: 1em;
     }
