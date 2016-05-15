@@ -42,9 +42,8 @@ canvas{
 #hudColumn {
   width: 16em;
 
-
   @media screen and (max-width: $screen-xs){
-    width: 0px;
+    width: 18em;
     & > * {
       margin-left: 1em;
       margin-right: 1em;

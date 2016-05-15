@@ -1,9 +1,18 @@
 @import 'constants';
 
 @media screen and (max-width: $screen-xs) {
-  .drawer {
+  .drawer-container{
     position: absolute;
     right: 0;
+    width: 18em !important;
+    overflow: hidden;
+    padding:0;
+    height: 100%
+  }
+
+  .drawer {
+    position: absolute;
+    right: -18em;
     width: 0;
     overflow: hidden;
     padding:0;
@@ -12,12 +21,12 @@
     height: 100%;
 
     &.active {
-      width: 18em !important;
+      right: 0;
     }
 
-    -webkit-transition: width 2s ease 0s;
-    -moz-transition: width 2s ease 0s;
-    -o-transition: width 2s ease 0s;
-    transition: width 2s ease 0s;
+    -webkit-transition: right 2s ease 0s;
+    -moz-transition: right 2s ease 0s;
+    -o-transition: right 2s ease 0s;
+    transition: right 2s ease 0s;
   }
 }
