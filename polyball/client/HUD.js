@@ -41,7 +41,7 @@ var HUD = function (config) {
     });
 
     var queueButtonRenderer = new QueueButtonRenderer({
-        appendTo: '#hudColumn',
+        appendTo: 'body',
         onClick: comms.queueToPlay
     });
     
