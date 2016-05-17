@@ -1,7 +1,7 @@
 /**
  * Created by ryan on 27/03/16.
  */
-var Powerups = require('polyball/shared/model/powerups/Index');
+var Powerups = require('polyball/shared/powerups/Index');
 
 /**
  *
