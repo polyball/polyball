@@ -8,7 +8,7 @@ var Ball = require('polyball/shared/model/Ball');
 var Spectator = require('polyball/shared/model/Spectator');
 var Player = require('polyball/shared/model/Player');
 var Util = require('polyball/shared/Util');
-var PowerupFactory = require('polyball/shared/PowerupFactory'); // jshint ignore:line
+var PowerupFactory = require('polyball/shared/powerups/PowerupFactory'); // jshint ignore:line
 var EngineStatus = require('polyball/shared/EngineStatus.js');
 var PowerupElection = require('polyball/shared/model/PowerupElection');
 

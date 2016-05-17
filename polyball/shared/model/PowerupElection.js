@@ -6,7 +6,7 @@
 'use strict';
 var Vote = require('polyball/shared/model/Vote');
 var Util = require('polyball/shared/Util');
-var PowerupFactory = require('polyball/shared/PowerupFactory');
+var PowerupFactory = require('polyball/shared/powerups/PowerupFactory');
 
 /**
  * Elects a powerup to be spawned in the arena.

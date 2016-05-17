@@ -12,7 +12,7 @@ var RoundEngine = require('polyball/shared/RoundEngine');
 var RoundEvents = require('polyball/shared/RoundEvents');
 var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
 var PowerupBehavior = require('polyball/shared/model/behaviors/PowerupBehavior');
-var PowerupFactory = require('polyball/shared/PowerupFactory');
+var PowerupFactory = require('polyball/shared/powerups/PowerupFactory');
 var Vote = require('polyball/shared/model/Vote');
 
 /**
