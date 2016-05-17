@@ -15,6 +15,7 @@ var ArenaContainer = function(config) {
     var IdGen = new IdGenerator();
     var model = config.model;
     var world = config.world;
+    var arena = null;
 
     /**
      * If there is not yet an arena in the model, add one according to the config.
@@ -31,25 +32,25 @@ var ArenaContainer = function(config) {
 
         _.assign(newConfig, config);
 
-        if (model.arena != null) {
+        if (arena != null) {
             // clear out old arena
-            world.remove(model.arena.getBumpers());
-            world.remove(model.arena.getGoals());
+            world.remove(arena.getBumpers());
+            world.remove(arena.getGoals());
         }
 
-        model.arena = new Arena(newConfig);
+        arena = new Arena(newConfig);
 
-        world.add(model.arena.getGoals());
-        world.add(model.arena.getBumpers());
+        world.add(arena.getGoals());
+        world.add(arena.getBumpers());
 
-        return model.arena;
+        return arena;
     };
 
     /**
      * @return {Arena} The current arena.
      */
     this.getArena = function () {
-        return model.arena;
+        return arena;
     };
 
     /**
@@ -58,7 +59,7 @@ var ArenaContainer = function(config) {
      * @returns {boolean}
      */
     this.hasArena = function (id) {
-        if (model.arena == null) {
+        if (arena == null) {
             return false;
         }
 
@@ -67,7 +68,7 @@ var ArenaContainer = function(config) {
             return true;
         } else {
             // arena and id exists, hasArena(id) true if IDs are equal.
-            return model.arena.getID() === id;
+            return arena.getID() === id;
         }
     };
 };
