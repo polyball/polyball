@@ -8,7 +8,7 @@ var _ = require('lodash');
 var Logger = require('polyball/shared/Logger');
 var Vote = require('polyball/shared/model/Vote');
 var PowerupElection = require('polyball/shared/powerups/PowerupElection.js');
-var Blackhole = require('polyball/shared/model/powerups/Blackhole');
+var Blackhole = require('polyball/shared/powerups/Blackhole');
 
 describe('Model', function () {
    'use strict';

@@ -2,7 +2,7 @@
  * Created by ryan on 01/04/16.
  */
 var inherits = require('inherits');
-var Powerup = require('polyball/shared/model/powerups/Powerup');
+var Powerup = require('polyball/shared/powerups/Powerup');
 var StyleCommons = require('polyball/shared/StyleCommons');
 var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
