@@ -10,7 +10,7 @@ var Player = require('polyball/shared/model/Player');
 var Util = require('polyball/shared/Util');
 var PowerupFactory = require('polyball/shared/powerups/PowerupFactory'); // jshint ignore:line
 var EngineStatus = require('polyball/shared/EngineStatus.js');
-var PowerupElection = require('polyball/shared/model/PowerupElection');
+var PowerupElection = require('polyball/shared/powerups/PowerupElection');
 
 /**
  * Holds all data for client and server game instances.  Exposes CRUD operations for data.

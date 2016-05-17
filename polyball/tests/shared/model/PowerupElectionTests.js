@@ -1,6 +1,6 @@
 // Include assertion library "Should"
 var should = require('should'); // jshint ignore:line
-var PowerupElection = require('polyball/shared/model/PowerupElection.js');
+var PowerupElection = require('polyball/shared/powerups/PowerupElection.js');
 var Vote = require('polyball/shared/model/Vote.js');
 
 // An example test that runs using Mocha and uses "Should" for assertion testing
