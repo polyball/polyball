@@ -2,23 +2,22 @@
  * Created by ryan on 16/05/16.
  */
 var PowerupFactory = require('polyball/shared/powerups/PowerupFactory');
-var PowerupElection = require('polyball/shared/powerups/PowerupElection');
 var Logger = require('polyball/shared/Logger');
 var _ = require('lodash');
 var ArrayHelper = require('polyball/shared/utilities/ArrayHelper');
 var IdGenerator = require('polyball/shared/utilities/IdGenerator');
 
 /**
- * Initializes the PowerupManager
+ * Initializes the PowerupContainer
  * @property {Powerup[]} config.powerups
  * @property {world} Physics.world
  * @constructor
  */
-var PowerupManager = function (config) {
+var PowerupContainer = function (config) {
     var powerups = config.powerups;
     var world = config.world;
     var IdGen = new IdGenerator();
-    
+
     /**
      * Add a powerup to the model.
      *
@@ -100,6 +99,8 @@ var PowerupManager = function (config) {
             me.deletePowerup(id);
         });
     };
+
+
 };
 
-module.exports = PowerupManager;
+module.exports = PowerupContainer;

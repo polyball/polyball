@@ -82,7 +82,7 @@ var Model = function () {
     /**
      * @type PowerupElection
      */
-    var powerupElection;
+    this.powerupElection;
 
     /**
      * IGNORED BY SERVER.
@@ -90,82 +90,6 @@ var Model = function () {
      * @type Number
      */
     var localClientID;
-
-
-    //
-    //             PRIVATE METHODS
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
-    var nextID = (function () {
-        var nextID = 1;
-
-        return function () {
-
-            if (typeof window !== 'undefined') {
-                throw new Error("Client Model must not create its own IDs!");
-            }
-
-            return nextID++;
-        };
-    }());
-
-    /**
-     * Search an array for an element by its id.
-     * @template T
-     * @param {T[]} array The array to search
-     * @param {Number} id The id of the desired element (in field `element.id`)
-     * @returns {T} The identified array element (or undefined).
-     */
-    var findByID = function (array, id) {
-        return _.find(array, function (element) { return element.id === id; });
-    };
-
-    /**
-     * Search an array for an element by its id or by an arbitrary callback.
-     * @template T
-     * @param {T[]} array The array to search
-     * @param {Number|Predicate} id The id or a callback identifying the desired element.
-     * @returns {T} The identified array element (or undefined).
-     */
-    var findSingle = function (array, id) {
-        if (typeof id === 'number') {
-            return findByID(array, id);
-        } else {
-            return _.find(array, id);
-        }
-    };
-
-    /**
-     * Search an array and get all elements by a given predicate.
-     * @template T
-     * @param {T[]} array The array to search
-     * @param {Predicate} [predicate] The boolean-returning predicate callback to filter by.
-     * @returns {T[]} All elements of the array matching the predicate
-     */
-    var findAll = function (array, predicate) {
-        if (predicate == null) {
-            return Array.apply(undefined, array);
-        }
-        return _.filter(array, predicate);
-    };
-
-    /**
-     * Remove element from array by its id.
-     * @template T
-     * @param {Array} array The array to search
-     * @param {Number} id The id of the desired element (in field `element.id`)
-     * @return {T} The removed object, null if not found.
-     */
-    var removeByID = function (array, id) {
-        var removed = _.remove(array, function (element) { return element.id === id; });
-        if (removed.length > 1) {
-            Logger.error("More than one object of id " + id + " found in array " + array);
-        }
-
-        return removed[0];
-    };
-
 
     //
     //    ########  ##     ## ########  ##       ####  ######
@@ -180,60 +104,7 @@ var Model = function () {
     this.gameStatus = EngineStatus.gameInitializing;
     this.collisionsPruner = null;
 
-    /**
-     * If there is not yet an arena in the model, add one according to the config.
-     * If there is an arena in the model, replace it with a new one from the config.
-     * @param {Object} config (See Arena constructor.)
-     * @property {Number} [config.id] - Optional.  Should not be passed on the server, should always be passed on the client.
-     * @return {Arena} The new arena
-     */
-    this.addOrResetArena = function (config) {
 
-        var newConfig = {
-            id: config.id ? config.id : nextID()
-        };
-
-        _.assign(newConfig, config);
-
-        if (arena != null) {
-            // clear out old arena
-            world.remove(arena.getBumpers());
-            world.remove(arena.getGoals());
-        }
-
-        arena = new Arena(newConfig);
-
-        world.add(arena.getGoals());
-        world.add(arena.getBumpers());
-
-        return arena;
-    };
-
-    /**
-     * @return {Arena} The current arena.
-     */
-    this.getArena = function () {
-        return arena;
-    };
-
-    /**
-     * True if there is an Arena in the model.
-     * @param {Number} [id] - Optional. If present, hasArena() is true if the arena has the passed ID.
-     * @returns {boolean}
-     */
-    this.hasArena = function (id) {
-        if (arena == null) {
-            return false;
-        }
-
-        if (id == null) {
-            // arena known to exist, hasArena() is true
-            return true;
-        } else {
-            // arena and id exists, hasArena(id) true if IDs are equal.
-            return arena.getID() === id;
-        }
-    };
 
     /**
      * @returns {World}
@@ -636,93 +507,6 @@ var Model = function () {
     };
 
     //
-    //             Powerups
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Add a powerup to the model.
-     *
-     * @param {Object} config - see powerup Constructor
-     * @property {string} config.name - Name of the powerup to be instantiated
-     * @property {Number} [config.id] - Optional.  Should not be passed on the server, should always be passed on the client.
-     * @return {Ball} The new Ball.
-     */
-    this.addPowerup  = function (config) {
-
-        var newConfig = {
-            id: config.id ? config.id : nextID()
-        };
-
-        _.assign(newConfig, config);
-
-        var powerup = PowerupFactory.buildPowerup(config.name, newConfig);
-        powerups.push(powerup);
-        world.addBody(powerup.body);
-
-        return powerup;
-    };
-
-    /**
-     * @param {Number|Predicate} id - Either the ID of the Powerup, or a boolean returning callback that takes a Powerup.
-     * @return {Object} Powerup identified by id.
-     */
-    this.getPowerup = function (id) {
-        return findSingle(powerups, id);
-    };
-
-    /**
-     * Get all powerups satisfying the predicate callback.
-     * @param {Predicate} [predicate]  Callback to evaluate for each powerup. (matches all if null.)
-     * @returns {Object[]} All powerups matching the predicate. (may be empty.)
-     */
-    this.getPowerups = function (predicate) {
-        return findAll(powerups, predicate);
-    };
-
-    /**
-     * @param {Number|Predicate} id - Either the ID of the Powerup, or a boolean returning callback that takes a Powerup.
-     * @returns {boolean} True iff the model has the powerup identified by id.
-     */
-    this.hasPowerup = function (id) {
-        return this.getPowerup(id) != null;
-    };
-
-    /**
-     * @returns {Number} The number of powerups in the model.
-     */
-    this.powerupCount = function () {
-        return powerups.length;
-    };
-
-    /**
-     * Delete the identified powerup from the model.
-     *
-     * @param {Number} id
-     */
-    this.deletePowerup = function (id) {
-        var pu = removeByID(powerups, id);
-        if (pu != null) {
-            Logger.info('Model deactivating powerup.');
-
-            pu.deactivate(this);
-            world.removeBody(pu.body);
-        }
-    };
-
-    /**
-     * Delete all powerups from the model.
-     */
-    this.clearPowerups = function () {
-        var powerupIDs = _.map(powerups, function (powerup) { return powerup.id; });
-
-        var me = this;
-        powerupIDs.forEach(function (id) {
-            me.deletePowerup(id);
-        });
-    };
-
-    //
     //             Powerup Election
     //
     ///////////////////////////////////////////////////////////////////////////
@@ -732,7 +516,7 @@ var Model = function () {
      * @Returns {PowerupElection}
      */
     this.getPowerupElection = function (){
-        return powerupElection;
+        return this.powerupElection;
     };
 
     /**
@@ -747,14 +531,14 @@ var Model = function () {
 
         _.assign(newConfig, config);
 
-        powerupElection = new PowerupElection(newConfig);
+        this.powerupElection = new PowerupElection(newConfig);
     };
 
     /**
      * Stops the current powerup election
      */
     this.clearPowerupElection = function(){
-        powerupElection = null;
+        this.powerupElection = null;
     };
 
 
