@@ -8,7 +8,7 @@ var IdGenerator = require('polyball/shared/utilities/IdGenerator');
 var Ball = require('polyball/shared/model/Ball');
 
 /**
- * Initializes the PowerupContainer
+ * Initializes the BallContainer
  * @property {world} Physics.world
  * @constructor
  */
