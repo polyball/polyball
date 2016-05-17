@@ -5,7 +5,7 @@
 
 'use strict';
 var Vote = require('polyball/shared/model/Vote');
-var Util = require('polyball/shared/Util');
+var Util = require('polyball/shared/utilities/Util');
 var PowerupFactory = require('polyball/shared/powerups/PowerupFactory');
 
 /**

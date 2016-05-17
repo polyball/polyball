@@ -4,7 +4,7 @@
 
 var $ = require('jquery');
 var Logger = require('polyball/shared/Logger');
-var Util = require('polyball/shared/Util');
+var Util = require('polyball/shared/utilities/Util');
 
 /**
  *

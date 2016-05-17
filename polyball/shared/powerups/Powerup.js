@@ -3,7 +3,7 @@
  */
 
 var Physics = require('physicsjs');
-var Util = require('polyball/shared/Util');
+var Util = require('polyball/shared/utilities/Util');
 /**
  * @property {number} config.body.state.pos.x
  * @property {number} config.body.state.pos.y

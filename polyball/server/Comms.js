@@ -4,7 +4,7 @@
 
 var Logger = require('polyball/shared/Logger');
 var Server = require('socket.io');
-var Util = require('polyball/shared/Util');
+var Util = require('polyball/shared/utilities/Util');
 var CommsEvents = require('polyball/shared/CommsEvents');
 var PubSub = require('polyball/shared/PubSub');
 

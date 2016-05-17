@@ -6,7 +6,7 @@ var Logger = require('polyball/shared/Logger');
 var FileServer = require('polyball/server/FileServer');
 var Model = require('polyball/shared/Model');
 var Comms = require('polyball/server/Comms');
-var Util = require('polyball/shared/Util'); //jshint ignore:line
+var Util = require('polyball/shared/utilities/Util'); //jshint ignore:line
 var Engine = require('polyball/server/Engine');
 var Configuration = require('polyball/server/configuration/Configuration');
 

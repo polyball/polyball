@@ -4,7 +4,7 @@
 "use strict";
 
 var Physics = require("physicsjs");
-var Util = require('polyball/shared/Util');
+var Util = require('polyball/shared/utilities/Util');
 var StyleCommons = require('polyball/shared/StyleCommons');
 
 /**

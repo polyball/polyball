@@ -2,7 +2,7 @@
  * Created by kdban on 3/22/2016.
  */
 
-var Util = require('polyball/shared/Util');
+var Util = require('polyball/shared/utilities/Util');
 var Logger = require('polyball/shared/Logger');
 
 /**

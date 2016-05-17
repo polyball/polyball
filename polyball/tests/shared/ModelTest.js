@@ -2,7 +2,7 @@
  * Created by kdban on 3/10/2016.
  */
 var should = require('should');
-var Util = require('polyball/shared/Util');
+var Util = require('polyball/shared/utilities/Util');
 var Model = require('polyball/shared/Model');
 var _ = require('lodash');
 var Logger = require('polyball/shared/Logger');

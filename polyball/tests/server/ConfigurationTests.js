@@ -3,7 +3,7 @@
  */
 var Configuration = require('polyball/server/configuration/Configuration');
 var should = require('should');
-var Util = require('polyball/shared/Util');
+var Util = require('polyball/shared/utilities/Util');
 var Logger = require('polyball/shared/Logger');
 var DefaultConfiguration = require('polyball/server/configuration/DefaultConfiguration');
 
