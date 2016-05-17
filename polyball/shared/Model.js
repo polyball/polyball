@@ -51,11 +51,6 @@ var Model = function () {
     var currentRoundTime;
 
     /**
-     * @type {Arena}
-     */
-    var arena;
-
-    /**
      * @type {Player[]}
      */
     var players = [];
@@ -73,11 +68,6 @@ var Model = function () {
      * @type {Number[]}
      */
     var playerQueue = [];
-
-    /**
-     * @type {Object[]}
-     */
-    var powerups = [];
 
     /**
      * @type PowerupElection

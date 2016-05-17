@@ -9,12 +9,11 @@ var IdGenerator = require('polyball/shared/utilities/IdGenerator');
 
 /**
  * Initializes the PowerupContainer
- * @property {Powerup[]} config.powerups
  * @property {world} Physics.world
  * @constructor
  */
 var PowerupContainer = function (config) {
-    var powerups = config.powerups;
+    var powerups = [];
     var world = config.world;
     var IdGen = new IdGenerator();
 
