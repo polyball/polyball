@@ -267,7 +267,7 @@ var Engine = function (config) {
     };
 
     var addBall = function (){
-        model.addBall({
+        model.ballsContainer.addBall({
             body: {
                 radius: 10,
                 cof: 0,

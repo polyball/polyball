@@ -60,7 +60,7 @@ describe('Model', function () {
         describe("#addBall", function () {
             it('should add a queryable ball to the model.', function () {
                 model = new Model();
-                model.ballCount().should.equal(0);
+                model.ballsContainer.ballCount().should.equal(0);
 
                 arena = model.arenaContainer.addOrResetArena({
                     numberPlayers: 9,
@@ -70,34 +70,34 @@ describe('Model', function () {
                     marginY: 0
                 });
 
-                ball = model.addBall(BALL_CONF);
+                ball = model.ballsContainer.addBall(BALL_CONF);
 
-                model.ballCount().should.equal(1);
-                model.hasBall(ball.id).should.be.true; // jshint ignore:line
+                model.ballsContainer.ballCount().should.equal(1);
+                model.ballsContainer.hasBall(ball.id).should.be.true; // jshint ignore:line
             });
 
             it('should add a second, distinct queryable ball to the model.', function () {
-                ball2 = model.addBall(BALL_CONF);
+                ball2 = model.ballsContainer.addBall(BALL_CONF);
 
-                model.ballCount().should.equal(2);
+                model.ballsContainer.ballCount().should.equal(2);
 
                 ball.should.not.equal(ball2);
 
-                model.hasBall(ball.id).should.be.true; // jshint ignore:line
-                model.hasBall(ball2.id).should.be.true; // jshint ignore:line
+                model.ballsContainer.hasBall(ball.id).should.be.true; // jshint ignore:line
+                model.ballsContainer.hasBall(ball2.id).should.be.true; // jshint ignore:line
             });
         });
 
         describe('#getBall', function () {
             it('should get a ball by its id', function () {
-                var tmpBall = model.getBall(ball.id);
+                var tmpBall = model.ballsContainer.getBall(ball.id);
 
                 tmpBall.should.equal(ball);
             });
 
             it('should get a ball by any predicate', function () {
                 ball2.body.state.pos.x = 987;
-                var tmpBall = model.getBall(function (ball) {
+                var tmpBall = model.ballsContainer.getBall(function (ball) {
                     return ball.body.state.pos.x === ball2.body.state.pos.x;
                 });
 
@@ -107,11 +107,11 @@ describe('Model', function () {
 
         describe('#getBalls', function () {
             it('should get all balls when passed nothing or null', function () {
-                model.getBalls().length.should.equal(2);
+                model.ballsContainer.getBalls().length.should.equal(2);
             });
 
             it('should get only a ball specified by a predicate', function () {
-                var balls = model.getBalls(function (ball) { return ball.id === ball2.id; });
+                var balls = model.ballsContainer.getBalls(function (ball) { return ball.id === ball2.id; });
                 balls.length.should.equal(1);
                 balls[0].should.equal(ball2);
             });
@@ -120,33 +120,33 @@ describe('Model', function () {
         describe("#deleteBall", function () {
             it('should delete a ball and only that ball.', function () {
 
-                model.deleteBall(ball.id);
+                model.ballsContainer.deleteBall(ball.id);
 
-                model.ballCount().should.equal(1);
-                model.hasBall(ball.id).should.be.false; // jshint ignore:line
-                model.hasBall(ball2.id).should.be.true; // jshint ignore:line
+                model.ballsContainer.ballCount().should.equal(1);
+                model.ballsContainer.hasBall(ball.id).should.be.false; // jshint ignore:line
+                model.ballsContainer.hasBall(ball2.id).should.be.true; // jshint ignore:line
             });
 
             it('should delete a second ball.', function () {
-                model.deleteBall(ball2.id);
+                model.ballsContainer.deleteBall(ball2.id);
 
-                model.ballCount().should.equal(0);
-                model.hasBall(ball.id).should.be.false; // jshint ignore:line
-                model.hasBall(ball2.id).should.be.false; // jshint ignore:line
+                model.ballsContainer.ballCount().should.equal(0);
+                model.ballsContainer.hasBall(ball.id).should.be.false; // jshint ignore:line
+                model.ballsContainer.hasBall(ball2.id).should.be.false; // jshint ignore:line
             });
         });
 
         describe("#clearBalls", function () {
             it('should delete all model balls.', function () {
-                model.addBall(BALL_CONF);
-                model.addBall(BALL_CONF);
-                model.addBall(BALL_CONF);
+                model.ballsContainer.addBall(BALL_CONF);
+                model.ballsContainer.addBall(BALL_CONF);
+                model.ballsContainer.addBall(BALL_CONF);
 
-                model.ballCount().should.equal(3);
+                model.ballsContainer.ballCount().should.equal(3);
 
-                model.clearBalls();
+                model.ballsContainer.clearBalls();
 
-                model.ballCount().should.equal(0);
+                model.ballsContainer.ballCount().should.equal(0);
             });
         });
     });

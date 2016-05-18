@@ -240,12 +240,12 @@ describe('Synchronizer', function () {
         it('should add balls to the model', function () {
             comms.fireEvent(CommsEvents.ClientToClient.snapshotReceived, addSnapshot);
 
-            model.ballCount().should.equal(3);
+            model.ballsContainer.ballCount().should.equal(3);
 
-            model.getBall(1).lastTouchedID.should.equal(11);
-            model.getBall(2).body.geometry.radius.should.equal(20);
-            model.getBall(3).body.state.vel.x.should.equal(21);
-            model.getBall(3).body.treatment.should.equal('dynamic');
+            model.ballsContainer.getBall(1).lastTouchedID.should.equal(11);
+            model.ballsContainer.getBall(2).body.geometry.radius.should.equal(20);
+            model.ballsContainer.getBall(3).body.state.vel.x.should.equal(21);
+            model.ballsContainer.getBall(3).body.treatment.should.equal('dynamic');
         });
 
         it('should update balls in the model', function () {
@@ -257,11 +257,11 @@ describe('Synchronizer', function () {
 
             synchronizer.tick(20);
             
-            model.getBall(1).lastTouchedID.should.equal(22);
-            model.getBall(2).body.state.vel.x.should.be.greaterThan(21);
-            model.getBall(2).body.state.vel.y.should.be.greaterThan(41);
-            model.getBall(3).body.state.old.angular.vel.should.be.lessThan(3);
-            model.getBall(3).body.treatment.should.equal('static');
+            model.ballsContainer.getBall(1).lastTouchedID.should.equal(22);
+            model.ballsContainer.getBall(2).body.state.vel.x.should.be.greaterThan(21);
+            model.ballsContainer.getBall(2).body.state.vel.y.should.be.greaterThan(41);
+            model.ballsContainer.getBall(3).body.state.old.angular.vel.should.be.lessThan(3);
+            model.ballsContainer.getBall(3).body.treatment.should.equal('static');
         });
 
         it('should delete balls from the model', function () {
@@ -269,7 +269,7 @@ describe('Synchronizer', function () {
             comms.fireEvent(CommsEvents.ClientToClient.snapshotReceived, updateSnapshot);
             comms.fireEvent(CommsEvents.ClientToClient.snapshotReceived, deleteSnapshot);
 
-            model.ballCount().should.equal(1);
+            model.ballsContainer.ballCount().should.equal(1);
         });
     });
 });

@@ -124,7 +124,7 @@ BulletTime.prototype.render = function(renderer, model) {
     if (this.active) {
         var emitter;
         var emitters = renderer.getEmitters();
-        var balls = model.getBalls(function(ball) {
+        var balls = model.ballsContainer.getBalls(function(ball) {
             return ball.body.treatment === 'static' && ball.lastTouchedID === self.owner;
         });
         balls.forEach(function(ball) {
@@ -167,7 +167,7 @@ BulletTime.prototype.handleCollisions = function (event){
         ball.body.state.vel.x = 0;
         ball.body.state.vel.y = 0;
 
-        if (Object.keys(this.affectedBalls).length === this.model.ballCount()){
+        if (Object.keys(this.affectedBalls).length === this.model.ballsContainer.ballCount()){
             clearTimeout(this.deleteTimeout);
             this.deleteTimeout = setTimeout(function(){
                 self.model.deletePowerup(self.id);

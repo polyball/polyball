@@ -57,8 +57,8 @@ function syncBallExistence(balls, model) {
     if (balls != null) {
         Logger.debug('synchronizing balls');
 
-        searchAndDelete(balls, model.getBalls, model.deleteBall, model);
-        searchAndCreate(balls, model.hasBall, model.addBall, model);
+        searchAndDelete(balls, model.ballsContainer.getBalls, model.ballsContainer.deleteBall, model);
+        searchAndCreate(balls, model.ballsContainer.hasBall, model.ballsContainer.addBall, model);
     }
 }
 
@@ -111,7 +111,7 @@ function syncDiscretePlayerState(players, model) {
 function syncDiscreteBallState(balls, model) {
     if (balls != null) {
         balls.forEach(function (snapshotBall) {
-            var ball = model.getBall(snapshotBall.id);
+            var ball = model.ballsContainer.getBall(snapshotBall.id);
 
             if (ball == null) {
                 throw 'syncDiscreteBallState could not find ball that MUST exist by now.';

@@ -45,7 +45,7 @@ var SimulationSynchronizer = function (config) {
 
         if (authoritativeSnapshot.balls != null) {
             authoritativeSnapshot.balls.forEach(function (snapshotBall) {
-                var ball = model.getBall(snapshotBall.id);
+                var ball = model.ballsContainer.getBall(snapshotBall.id);
 
                 if (ball == null) {
                     Logger.warn('Snapshot ball not found in model!  Should not be possible.');

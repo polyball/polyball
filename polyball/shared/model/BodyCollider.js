@@ -96,9 +96,9 @@ var BodyCollider = function (config) {
 
     //================================== Setup Helpers =================================
     var setupBalls = function(){
-        if (ballsLength !== model.getBalls().length) {
+        if (ballsLength !== model.ballsContainer.getBalls().length) {
             balls = {};
-            config.model.getBalls().forEach(function (ball) {
+            config.model.ballsContainer.getBalls().forEach(function (ball) {
                 balls[ball.body.uid] = ball;
             });
             ballsLength = Object.keys(balls).length;

@@ -107,7 +107,7 @@ KingMidas.prototype.render = function(renderer, model) {
         );
 
         // add ball emitters
-        var balls = model.getBalls();
+        var balls = model.ballsContainer.getBalls();
 
         balls.forEach(function(ball) {
             // Find the emitter for this ball
