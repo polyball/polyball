@@ -7,6 +7,7 @@ var _ = require('lodash');
 var ArrayHelper = require('polyball/shared/utilities/ArrayHelper');
 var IdGenerator = require('polyball/shared/utilities/IdGenerator');
 var Player = require('polyball/shared/model/Player');
+var Util = require('polyball/shared/utilities/Util');
 
 /**
  * Initializes the PlayerContainer
@@ -131,6 +132,16 @@ var PlayerContainer = function (config) {
         }
 
         return player.paddle;
+    };
+
+    /**
+     * Gets the config object for the enclosed players collection
+     * @returns {Object}
+     */
+    this.playersConfig = function () {
+        if (players.length > 0){
+            return Util.arrayToConfig(players);
+        }
     };
 
 };

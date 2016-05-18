@@ -1,7 +1,6 @@
 "use strict";
 
 var Physics = require('physicsjs');
-var Util = require('polyball/shared/utilities/Util');
 var EngineStatus = require('polyball/shared/EngineStatus.js');
 var ArenaContainer = require('polyball/shared/model/containers/ArenaContainer');
 var BallsContainer = require('polyball/shared/model/containers/BallsContainer');
@@ -93,8 +92,8 @@ var Model = function () {
     /**
      * @type {RoundTimingContainer}
      */
-    this.RoundTimingContainer = new RoundTimeingContainer();
-    containers.push(this.RoundTimingContainer);
+    this.roundTimingContainer = new RoundTimeingContainer();
+    containers.push(this.roundTimingContainer);
 
     /**
      * @type {SpectatorsContainer}
@@ -136,24 +135,18 @@ var Model = function () {
      * Converts this Model object into it's config (serializable) form
      * @return {Object}
      */
-        // SRS Requirement - 3.2.1.9 Game Model Snapshot
-        // This function serializing the entire game state snapshot
     this.getSnapshot = function() {
 
-        var toConfig = function(variable) {
-            return variable != null ? variable.toConfig() : null;
-        };
-
         var snapshot = {
-            arena: toConfig(arena),
-            players: Util.arrayToConfig(players),
-            spectators: Util.arrayToConfig(spectators),
-            balls: Util.arrayToConfig(balls),
-            playerQueue: playerQueue,
-            powerups: Util.arrayToConfig(powerups),
-            powerupElection: toConfig(powerupElection),
-            roundLength: roundLength,
-            currentRoundTime: currentRoundTime,
+            arena: this.arenaContainer.arenaConfig(),
+            players: this.playersContainer.playersConfig(),
+            spectators: this.spectatorsContainer.spectatorsConfig(),
+            balls: this.ballsContainer.ballsConfig(),
+            playerQueue: this.spectatorsContainer.playerQueueConfig(),
+            powerups: this.powerupsContainer.powerupsConfig(),
+            powerupElection: this.powerupElectionContainer.powerupElectionConfig(),
+            roundLength: this.roundTimingContainer.getRoundLength(),
+            currentRoundTime: this.roundTimingContainer.getCurrentRoundTime(),
             gameStatus: this.gameStatus
         };
 

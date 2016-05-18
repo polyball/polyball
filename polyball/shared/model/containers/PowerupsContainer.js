@@ -99,6 +99,15 @@ var PowerupContainer = function (config) {
         });
     };
 
+    /**
+     * Gets the config object for the enclosed powerups collection
+     * @returns {Object}
+     */
+    this.powerupsConfig = function () {
+        if (powerups.length > 0){
+            return Util.arrayToConfig(powerups);
+        }
+    };
 
 };
 

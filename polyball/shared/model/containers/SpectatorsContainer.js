@@ -7,6 +7,7 @@ var ArrayHelper = require('polyball/shared/utilities/ArrayHelper');
 var IdGenerator = require('polyball/shared/utilities/IdGenerator');
 var Spectator = require('polyball/shared/model/Spectator');
 var Logger = require('polyball/shared/Logger');
+var Util = require('polyball/shared/utilities/Util');
 
 /**
  * Initializes the SpectatorsContainer
@@ -152,6 +153,34 @@ var SpectatorContainer = function (){
      */
     this.setPlayerQueue = function (newQueue) {
         playerQueue = newQueue;
+    };
+
+    /**
+     * Gets the config object for the enclosed spectators collection
+     * @returns {Object}
+     */
+    this.spectatorsConfig = function () {
+        if (spectators.length > 0){
+            return Util.arrayToConfig(spectators);
+        }
+    };
+
+    /**
+     * Gets the config object for the enclosed spectators collection
+     * @returns {Object}
+     */
+    this.spectatorsConfig = function () {
+        if (spectators.length > 0){
+            return Util.arrayToConfig(spectators);
+        }
+    };
+
+    /**
+     * Gets the config object for the enclosed player queue
+     * @returns {Object}
+     */
+    this.playerQueueConfig = function () {
+        return playerQueue.slice();
     };
 };
 

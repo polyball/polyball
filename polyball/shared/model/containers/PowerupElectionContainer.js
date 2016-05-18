@@ -41,6 +41,17 @@ var PowerupElectionContainer = function () {
     this.clearPowerupElection = function(){
         powerupElection = null;
     };
+
+    /**
+     * Gets the config for the enclosed Powerup Election object
+     * @returns {Object}
+     */
+    this.powerupElectionConfig = function () {
+        if (powerupElection != null){
+            return powerupElection.toConfig();
+        }
+    };
+
 };
 
 module.exports = PowerupElectionContainer;

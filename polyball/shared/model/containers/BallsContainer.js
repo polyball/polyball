@@ -6,6 +6,7 @@ var _ = require('lodash');
 var ArrayHelper = require('polyball/shared/utilities/ArrayHelper');
 var IdGenerator = require('polyball/shared/utilities/IdGenerator');
 var Ball = require('polyball/shared/model/Ball');
+var Util = require('polyball/shared/utilities/Util');
 
 /**
  * Initializes the BallContainer
@@ -100,6 +101,16 @@ var BallContainer = function (config) {
         ballIDs.forEach(function (id) {
             me.deleteBall(id);
         });
+    };
+
+    /**
+     * Gets the config object for the enclosed balls collection
+     * @returns {Object}
+     */
+    this.ballsConfig = function () {
+        if (balls.length > 0){
+            return Util.arrayToConfig(balls);
+        }
     };
 
 };

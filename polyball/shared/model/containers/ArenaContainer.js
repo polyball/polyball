@@ -69,6 +69,18 @@ var ArenaContainer = function(config) {
             return arena.getID() === id;
         }
     };
+
+    /**
+     * Gets the config for the enclosed Arena object
+     * @returns {Object}
+     */
+    this.arenaConfig = function () {
+        if (arena != null){
+            return arena.toConfig();
+        } else {
+            return null;
+        }
+    };
 };
 
 module.exports = ArenaContainer;
