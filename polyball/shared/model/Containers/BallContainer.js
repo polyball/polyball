@@ -13,7 +13,12 @@ var Ball = require('polyball/shared/model/Ball');
  * @constructor
  */
 var BallContainer = function (config) {
+
+    /**
+     * @type {Ball[]}
+     */
     var balls = [];
+
     var world = config.world;
     var IdGen = new IdGenerator();
 
