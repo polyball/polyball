@@ -58,7 +58,7 @@ var SimulationSynchronizer = function (config) {
 
         if (authoritativeSnapshot.powerups != null) {
             authoritativeSnapshot.powerups.forEach(function (snapshotPowerup) {
-                var powerup  = model.getPowerup(snapshotPowerup.id);
+                var powerup  = model.powerupsContainer.getPowerup(snapshotPowerup.id);
 
                 if (powerup == null) {
                     Logger.warn('Snapshot ball not found in model!  Should not be possible.');

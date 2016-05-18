@@ -591,7 +591,7 @@ describe('Model', function () {
                 marginY: 0
             });
 
-            var powerup = model.addPowerup({
+            var powerup = model.powerupsContainer.clearPowerupElection({
                 name: Blackhole.Name,
                 body: getPowerupBody()
             });
@@ -624,17 +624,17 @@ describe('Model', function () {
        describe('#addPowerup', function(){
            it('should add a queryable powerup', function(){
                var init = addPowerup();
-               init.model.powerupCount().should.equal(1);
+               init.model.powerupsContainer.powerupCount().should.equal(1);
            });
            it('should add a distinct powerup', function(){
                var init = addPowerup();
 
-               var bh2 = init.model.addPowerup({
+               var bh2 = init.model.powerupsContainer.clearPowerupElection({
                    name: Blackhole.Name,
                    body: getPowerupBody()
                });
 
-               init.model.powerupCount().should.equal(2);
+               init.model.powerupsContainer.powerupCount().should.equal(2);
                var ids = init.model.powerupsContainer.getPowerups().map(function(val, index, array){
                    return array[index].id;
                });
@@ -647,7 +647,7 @@ describe('Model', function () {
        describe('#getPowerup', function(){
            it('should get a powerup by its id', function(){
                 var init = addPowerup();
-                init.model.getPowerup(init.powerup.id).should.equal(init.powerup);
+                init.model.powerupsContainer.getPowerup(init.powerup.id).should.equal(init.powerup);
            });
        });
         describe('#getPowerups', function(){
@@ -655,7 +655,7 @@ describe('Model', function () {
                 var init = addPowerup();
                 init.model.powerupsContainer.getPowerups().length.should.equal(1);
 
-                init.model.addPowerup({
+                init.model.powerupsContainer.clearPowerupElection({
                    name: Blackhole.Name,
                    body: getPowerupBody()
                 });
@@ -669,7 +669,7 @@ describe('Model', function () {
                 init.model.getWorld().getBodies().should.containEql(init.powerup.body);
                 init.model.powerupsContainer.getPowerups().should.containEql(init.powerup);
 
-                init.model.deletePowerup(init.powerup.id);
+                init.model.powerupsContainer.deletePowerup(init.powerup.id);
                 init.model.getWorld().getBodies().should.not.containEql(init.powerup.body);
                 init.model.powerupsContainer.getPowerups().length.should.equal(0);
             });
@@ -680,7 +680,7 @@ describe('Model', function () {
                 init.model.getWorld().getBodies().should.containEql(init.powerup.body);
                 init.model.powerupsContainer.getPowerups().should.containEql(init.powerup);
 
-                init.model.deletePowerup(init.powerup.id);
+                init.model.powerupsContainer.deletePowerup(init.powerup.id);
                 init.model.getWorld().getBodies().should.not.containEql(init.powerup.body);
                 init.model.powerupsContainer.getPowerups().length.should.equal(0);
             });
@@ -688,14 +688,14 @@ describe('Model', function () {
         describe('#clearPowerups', function(){
             it('should delete all powerups from the list and remove from world', function(){
                 var init = addPowerup();
-                var powerup = init.model.addPowerup({
+                var powerup = init.model.powerupsContainer.clearPowerupElection({
                     name: Blackhole.Name,
                     body: getPowerupBody()
                 });
 
                 init.model.powerupsContainer.getPowerups().length.should.equal(2);
 
-                init.model.clearPowerups();
+                init.model.powerupsContainer.clearPowerups();
                 init.model.getWorld().getBodies().should.not.containEql(init.powerup.body);
                 init.model.getWorld().getBodies().should.not.containEql(powerup.body);
                 init.model.powerupsContainer.getPowerups().length.should.equal(0);

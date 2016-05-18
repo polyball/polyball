@@ -170,7 +170,7 @@ BulletTime.prototype.handleCollisions = function (event){
         if (Object.keys(this.affectedBalls).length === this.model.ballsContainer.ballCount()){
             clearTimeout(this.deleteTimeout);
             this.deleteTimeout = setTimeout(function(){
-                self.model.deletePowerup(self.id);
+                self.model.powerupsContainer.deletePowerup(self.id);
             }, bulletTimeout);
         }
     }

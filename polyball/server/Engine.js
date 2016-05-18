@@ -123,7 +123,7 @@ var Engine = function (config) {
         //TEST Bullet Time
         //setTimeout(function(){
         //    var bodyConfig = generatePowerupBody();
-        //    model.addPowerup({
+        //    model.powerupsContainer.clearPowerupElection({
         //        name: BulletTime.Name,
         //        body: bodyConfig,
         //        duration: config.configuration.powerupDuration,
@@ -133,7 +133,7 @@ var Engine = function (config) {
 
         //setTimeout(function(){
         //    var bodyConfig = generatePowerupBody();
-        //    model.addPowerup({
+        //    model.powerupsContainer.clearPowerupElection({
         //        name: Blackhole.Name,
         //        body: bodyConfig,
         //        duration: config.configuration.powerupDuration
@@ -142,7 +142,7 @@ var Engine = function (config) {
         //
         //setTimeout(function(){
         //    var bodyConfig = generatePowerupBody();
-        //    model.addPowerup({
+        //    model.powerupsContainer.clearPowerupElection({
         //        name: KingMidas.Name,
         //        body: bodyConfig,
         //        duration: config.configuration.powerupDuration
@@ -187,7 +187,7 @@ var Engine = function (config) {
         var winner = model.powerupElectionContainer.getPowerupElection().getWinner();
         model.powerupElectionContainer.clearPowerupElection();
         var bodyConfig = generatePowerupBody();
-        model.addPowerup({
+        model.powerupsContainer.clearPowerupElection({
             name: winner,
             body: bodyConfig,
             duration: config.configuration.powerupDuration,
@@ -326,11 +326,11 @@ var Engine = function (config) {
      * Removes all powerups from the world
      */
     var resetPowerups = function(){
-        model.getPowerups().forEach(function(powerup){
+        model.powerupsContainer.getPowerups().forEach(function(powerup){
            powerup.deactivate(model);
         });
 
-        model.clearPowerups();
+        model.powerupsContainer.clearPowerups();
     };
 
     /**

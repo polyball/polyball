@@ -66,8 +66,8 @@ function syncPowerupExistence(powerups, model) {
     if (powerups != null) {
         Logger.debug('synchronizing powerup');
 
-        searchAndDelete(powerups, model.powerupsContainer.getPowerups, model.deletePowerup, model);
-        searchAndCreate(powerups, model.hasPowerup, model.addPowerup, model);
+        searchAndDelete(powerups, model.powerupsContainer.getPowerups, model.powerupsContainer.deletePowerup, model);
+        searchAndCreate(powerups, model.powerupsContainer.hasPowerup, model.powerupsContainer.clearPowerupElection, model);
     }
 }
 
@@ -126,7 +126,7 @@ function syncDiscreteBallState(balls, model) {
 function syncDiscretePowerupState(powerups, model) {
     if (powerups != null) {
         powerups.forEach(function (snapshotPowerup) {
-            var powerup = model.getPowerup(snapshotPowerup.id);
+            var powerup = model.powerupsContainer.getPowerup(snapshotPowerup.id);
 
             if (powerup == null) {
                 throw 'syncDiscretePowerupState could not find powerup that MUST exist by now.';
@@ -185,7 +185,7 @@ PassthroughSynchronizer.sync = function (snapshot, model) {
     model.gameStatus = snapshot.gameStatus;
 
     if (snapshot.gameStatus !== EngineStatus.gameRunning) {
-        model.clearPowerups();
+        model.powerupsContainer.clearPowerups();
         model.powerupElectionContainer.clearPowerupElection();
     }
 };
