@@ -76,7 +76,7 @@ var Comms = function (config) {
         // Add the client as a spectator and send the new client its ID.
         // NOTE: Do NOT store spectator or IDs for later use - model or engine could
         //       change it or remove it at any time.  Query for IDs when necessary.
-        var newSpectator = model.addSpectator({
+        var newSpectator = model.spectatorsContainer.addSpectator({
             clientConfig: {
                 name: Util.randomUsername(),
                 socket: clientSocket
@@ -101,7 +101,7 @@ var Comms = function (config) {
             Logger.info('Client disconnected');
 
             var clientID = getPlayerOrSpectatorID(clientSocket);
-            model.deleteSpectator(clientID);
+            model.spectatorsContainer.deleteSpectator(clientID);
             model.playersContainer.deletePlayer(clientID);
 
             pubsub.fireEvent(CommsEvents.ServerToServer.clientDisconnected, {clientID: clientID});
@@ -110,7 +110,7 @@ var Comms = function (config) {
         clientSocket.on(CommsEvents.ClientToServer.requestName, function (name) {
             var clientID = getPlayerOrSpectatorID(clientSocket);
             var user = model.playersContainer.getPlayer(clientID);
-            user = user || model.getSpectator(clientID);
+            user = user || model.spectatorsContainer.getSpectator(clientID);
 
             if (name && typeof name === 'string' && name.length <= 20) {
                 user.client.name = name;
@@ -175,7 +175,7 @@ var Comms = function (config) {
         });
 
         if (candidates.length === 0) {
-            candidates = model.getSpectators(function (spectator) {
+            candidates = model.spectatorsContainer.getSpectators(function (spectator) {
                 return spectator.client.socket.id === socket.id;
             });
         }

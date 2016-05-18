@@ -76,7 +76,7 @@ var HUD = function (config) {
         spectatorListRenderer.render(model.spectatorsContainer.getSpectators(), model.getLocalClientID());
         playerQueueRenderer.render(model.spectatorsContainer.getAllQueuedPlayers(), model.getLocalClientID());
 
-        var localQueued = model.hasQueuedPlayer(model.getLocalClientID());
+        var localQueued = model.spectatorsContainer.hasQueuedPlayer(model.getLocalClientID());
         var localPlaying = model.playersContainer.hasPlayer(model.getLocalClientID());
         queueButtonRenderer.render(localQueued, localPlaying);
 
@@ -84,7 +84,7 @@ var HUD = function (config) {
         waitingForPlayersRenderer.render(model.gameStatus === EngineStatus.gameInitializing);
 
         var localUser = model.playersContainer.getPlayer(model.getLocalClientID());
-        localUser = localUser || model.getSpectator(model.getLocalClientID());
+        localUser = localUser || model.spectatorsContainer.getSpectator(model.getLocalClientID());
         var localName = localUser ? localUser.client.name : null;
         landingPageRenderer.render(localName);
     };

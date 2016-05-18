@@ -157,35 +157,35 @@ describe('Model', function () {
         describe("#addSpectator", function () {
             it('should add a queryable spectator to the model.', function () {
                 model = new Model();
-                model.spectatorCount().should.equal(0);
+                model.spectatorsContainer.spectatorCount().should.equal(0);
 
-                spectator = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                spectator = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
-                model.spectatorCount().should.equal(1);
-                model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
+                model.spectatorsContainer.spectatorCount().should.equal(1);
+                model.spectatorsContainer.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
             });
 
             it('should add a second, distinct queryable spectator to the model.', function () {
-                spectator2 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                spectator2 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
-                model.spectatorCount().should.equal(2);
+                model.spectatorsContainer.spectatorCount().should.equal(2);
 
                 spectator.should.not.equal(spectator2);
 
-                model.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
-                model.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
+                model.spectatorsContainer.hasSpectator(spectator.id).should.be.true; // jshint ignore:line
+                model.spectatorsContainer.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
             });
         });
 
         describe('#getSpectator', function () {
             it('should get a spectator by its id', function () {
-                var tmpSpectator = model.getSpectator(spectator.id);
+                var tmpSpectator = model.spectatorsContainer.getSpectator(spectator.id);
 
                 tmpSpectator.should.equal(spectator);
             });
 
             it('should get a spectator by any predicate', function () {
-                var tmpSpectator = model.getSpectator(function (spectator) {
+                var tmpSpectator = model.spectatorsContainer.getSpectator(function (spectator) {
                     return spectator.client.name === spectator2.client.name;
                 });
 
@@ -199,7 +199,7 @@ describe('Model', function () {
             });
 
             it('should get only a spectator specified by a predicate', function () {
-                var spectators = model.getSpectators(function (spectator) {
+                var spectators = model.spectatorsContainer.getSpectators(function (spectator) {
                     return spectator.id === spectator2.id;
                 });
                 spectators.length.should.equal(1);
@@ -210,19 +210,19 @@ describe('Model', function () {
         describe("#deleteSpectator", function () {
             it('should delete a spectator and only that spectator.', function () {
 
-                model.deleteSpectator(spectator.id);
+                model.spectatorsContainer.deleteSpectator(spectator.id);
 
-                model.spectatorCount().should.equal(1);
-                model.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
-                model.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
+                model.spectatorsContainer.spectatorCount().should.equal(1);
+                model.spectatorsContainer.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
+                model.spectatorsContainer.hasSpectator(spectator2.id).should.be.true; // jshint ignore:line
             });
 
             it('should delete a second spectator.', function () {
-                model.deleteSpectator(spectator2.id);
+                model.spectatorsContainer.deleteSpectator(spectator2.id);
 
-                model.spectatorCount().should.equal(0);
-                model.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
-                model.hasSpectator(spectator2.id).should.be.false; // jshint ignore:line
+                model.spectatorsContainer.spectatorCount().should.equal(0);
+                model.spectatorsContainer.hasSpectator(spectator.id).should.be.false; // jshint ignore:line
+                model.spectatorsContainer.hasSpectator(spectator2.id).should.be.false; // jshint ignore:line
             });
         });
     });
@@ -396,38 +396,38 @@ describe('Model', function () {
             var model;
             it('should add a single player to the queue.', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
-                model.addToPlayerQueue(spectator1.id);
+                var spectator1 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                model.spectatorsContainer.addToPlayerQueue(spectator1.id);
 
                 var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
 
-                model.numberOfQueuedPlayers().should.equal(1);
+                model.spectatorsContainer.numberOfQueuedPlayers().should.equal(1);
                 queuedPlayers.length.should.equal(1);
                 queuedPlayers.should.containEql(spectator1);
             });
             it('should not add the same player twice.', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator1 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
-                model.addToPlayerQueue(spectator1.id);
-                model.addToPlayerQueue(spectator1.id);
+                model.spectatorsContainer.addToPlayerQueue(spectator1.id);
+                model.spectatorsContainer.addToPlayerQueue(spectator1.id);
 
                 var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
 
-                model.numberOfQueuedPlayers().should.equal(1);
+                model.spectatorsContainer.numberOfQueuedPlayers().should.equal(1);
                 queuedPlayers.length.should.equal(1);
                 queuedPlayers.should.containEql(spectator1);
             });
             it('should have playerQueue.length = 2 when 2 spectators added.', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
-                var spectator2 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator1 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator2 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
-                model.addToPlayerQueue(spectator1.id);
-                model.addToPlayerQueue(spectator2.id);
+                model.spectatorsContainer.addToPlayerQueue(spectator1.id);
+                model.spectatorsContainer.addToPlayerQueue(spectator2.id);
 
                 var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
-                model.numberOfQueuedPlayers().should.equal(2);
+                model.spectatorsContainer.numberOfQueuedPlayers().should.equal(2);
                 queuedPlayers.length.should.equal(2);
                 queuedPlayers.should.containEql(spectator2);
                 queuedPlayers.should.containEql(spectator1);
@@ -437,13 +437,13 @@ describe('Model', function () {
                 var x = 5;
 
                 _.times(x, function(){
-                    var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
-                    model.addToPlayerQueue(spectator1.id);
+                    var spectator1 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                    model.spectatorsContainer.addToPlayerQueue(spectator1.id);
 
                 });
 
                 var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
-                model.numberOfQueuedPlayers().should.equal(x);
+                model.spectatorsContainer.numberOfQueuedPlayers().should.equal(x);
                 queuedPlayers.length.should.equal(x);
             });
             it('should not allow clients that are players to add themselves to the queue', function () {
@@ -453,8 +453,8 @@ describe('Model', function () {
                 var x = 5;
 
                 _.times(x, function(){
-                    var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
-                    model.addToPlayerQueue(spectator1.id);
+                    var spectator1 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                    model.spectatorsContainer.addToPlayerQueue(spectator1.id);
 
                 });
 
@@ -464,10 +464,10 @@ describe('Model', function () {
                         socket: 'dummy'}
                 });
 
-                model.addToPlayerQueue(player.id);
+                model.spectatorsContainer.addToPlayerQueue(player.id);
 
                 var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
-                model.numberOfQueuedPlayers().should.equal(x);
+                model.spectatorsContainer.numberOfQueuedPlayers().should.equal(x);
                 queuedPlayers.length.should.equal(x);
                 queuedPlayers.should.not.containEql(player.id);
 
@@ -478,32 +478,32 @@ describe('Model', function () {
             var model;
             it('should remove a single player from the queue.', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
-                var spectator2 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator1 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator2 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
-                model.addToPlayerQueue(spectator1.id);
-                model.addToPlayerQueue(spectator2.id);
-                model.removeFromPlayerQueue(spectator1.id);
+                model.spectatorsContainer.addToPlayerQueue(spectator1.id);
+                model.spectatorsContainer.addToPlayerQueue(spectator2.id);
+                model.spectatorsContainer.removeFromPlayerQueue(spectator1.id);
 
                 var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
-                model.numberOfQueuedPlayers().should.equal(1);
+                model.spectatorsContainer.numberOfQueuedPlayers().should.equal(1);
                 queuedPlayers.length.should.equal(1);
                 queuedPlayers.should.containEql(spectator2);
 
-                model.removeFromPlayerQueue(spectator2.id);
+                model.spectatorsContainer.removeFromPlayerQueue(spectator2.id);
 
                 queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
-                model.numberOfQueuedPlayers().should.equal(0);
+                model.spectatorsContainer.numberOfQueuedPlayers().should.equal(0);
                 queuedPlayers.length.should.equal(0);
 
             });
             it('should not throw an error when a player is removed that does not exist', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator1 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
-                model.addToPlayerQueue(spectator1.id);
-                model.removeFromPlayerQueue(spectator1.id);
-                model.removeFromPlayerQueue(spectator1.id);
+                model.spectatorsContainer.addToPlayerQueue(spectator1.id);
+                model.spectatorsContainer.removeFromPlayerQueue(spectator1.id);
+                model.spectatorsContainer.removeFromPlayerQueue(spectator1.id);
 
             });
         });
@@ -511,23 +511,23 @@ describe('Model', function () {
             var model;
             it('should remove the top spectator from the queue.', function () {
                 model = new Model();
-                var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
-                var spectator2 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator1 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+                var spectator2 = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
 
-                model.addToPlayerQueue(spectator1.id);
-                model.addToPlayerQueue(spectator2.id);
-                var out = model.popPlayerQueue();
+                model.spectatorsContainer.addToPlayerQueue(spectator1.id);
+                model.spectatorsContainer.addToPlayerQueue(spectator2.id);
+                var out = model.spectatorsContainer.popPlayerQueue();
 
                 var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
-                model.numberOfQueuedPlayers().should.equal(1);
+                model.spectatorsContainer.numberOfQueuedPlayers().should.equal(1);
                 queuedPlayers.length.should.equal(1);
                 queuedPlayers.should.containEql(spectator2);
                 out.should.equal(spectator1);
 
-                out = model.popPlayerQueue();
+                out = model.spectatorsContainer.popPlayerQueue();
 
                 queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
-                model.numberOfQueuedPlayers().should.equal(0);
+                model.spectatorsContainer.numberOfQueuedPlayers().should.equal(0);
                 queuedPlayers.length.should.equal(0);
                 out.should.equal(spectator2);
 
@@ -567,7 +567,7 @@ describe('Model', function () {
                 }
             };
 
-            model.addSpectator(spectatorConfig);
+            model.spectatorsContainer.addSpectator(spectatorConfig);
 
             var snap = model.getSnapshot();
 

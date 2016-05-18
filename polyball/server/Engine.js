@@ -59,7 +59,7 @@ var Engine = function (config) {
 
         Logger.info("Number of Players: " + model.playersContainer.playerCount());
 
-        if (model.numberOfQueuedPlayers() + model.playersContainer.playerCount() >= configuration.minimumPlayers){
+        if (model.spectatorsContainer.numberOfQueuedPlayers() + model.playersContainer.playerCount() >= configuration.minimumPlayers){
             setupPlayers();
 
             //TODO figure out radius as a function of # players
@@ -99,7 +99,7 @@ var Engine = function (config) {
                 "Insufficient players (" +
                 model.playersContainer.playerCount() +
                 ") and queued players " +
-                model.numberOfQueuedPlayers() +
+                model.spectatorsContainer.numberOfQueuedPlayers() +
                 ").  Waiting to start game.");
         }
     };
@@ -203,8 +203,8 @@ var Engine = function (config) {
      * SRS Requirement - 3.2.2.4 Join Game
      */
     var setupPlayers = function (){
-        while(model.playersContainer.playerCount() < config.configuration.maximumPlayers && model.numberOfQueuedPlayers() > 0){
-            convertSpectatorToPlayer(model.popPlayerQueue());
+        while(model.playersContainer.playerCount() < config.configuration.maximumPlayers && model.spectatorsContainer.numberOfQueuedPlayers() > 0){
+            convertSpectatorToPlayer(model.spectatorsContainer.popPlayerQueue());
         }
     };
 
@@ -223,7 +223,7 @@ var Engine = function (config) {
             id: spectator.id
         };
 
-        model.deleteSpectator(spectator.id);
+        model.spectatorsContainer.deleteSpectator(spectator.id);
         model.playersContainer.addPlayer(config);
     };
 
@@ -375,7 +375,7 @@ var Engine = function (config) {
      * @param {{spectatorID: Number}} data
      */
     this.handleAddPlayerToQueue = function (data){
-        model.addToPlayerQueue(data.spectatorID);
+        model.spectatorsContainer.addToPlayerQueue(data.spectatorID);
 
         // Are we waiting for players to start?
         if (model.gameStatus === EngineStatus.gameInitializing){

@@ -39,8 +39,8 @@ function syncSpectatorExistence(spectators, model) {
     if (spectators != null) {
         Logger.debug('synchronizing spectators');
 
-        searchAndDelete(spectators, model.getSpectators, model.deleteSpectator, model);
-        searchAndCreate(spectators, model.hasSpectator, model.addSpectator, model);
+        searchAndDelete(spectators, model.spectatorsContainer.getSpectators, model.spectatorsContainer.deleteSpectator, model);
+        searchAndCreate(spectators, model.spectatorsContainer.hasSpectator, model.spectatorsContainer.addSpectator, model);
     }
 }
 
@@ -74,7 +74,7 @@ function syncPowerupExistence(powerups, model) {
 function syncDiscreteSpectatorState(spectators, model) {
     if (spectators != null) {
         spectators.forEach(function (snapshotSpectator) {
-            var spectator = model.getSpectator(snapshotSpectator.id);
+            var spectator = model.spectatorsContainer.getSpectator(snapshotSpectator.id);
 
             if (spectator == null) {
                 throw 'syncDiscreteSpectatorState could not find spectator that MUST exist by now.';
@@ -180,7 +180,7 @@ PassthroughSynchronizer.sync = function (snapshot, model) {
     
     syncPowerupElection(snapshot.powerupElection, model);
 
-    model.setPlayerQueue(snapshot.playerQueue);
+    model.spectatorsContainer.setPlayerQueue(snapshot.playerQueue);
     model.roundTimingContainer.setRoundLength(snapshot.roundLength);
     model.gameStatus = snapshot.gameStatus;
 

@@ -35,7 +35,7 @@ describe('Engine', function() {
      * @returns {Spectator}
      */
     var addAndJoinQueue = function (){
-        var spectator = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
+        var spectator = model.spectatorsContainer.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
         comms.fireJoinQueue(spectator.id);
         return spectator;
     };
@@ -78,7 +78,7 @@ describe('Engine', function() {
             var spectators = model.spectatorsContainer.getSpectators();
             spectators.length.should.equal(1);
 
-            model.numberOfQueuedPlayers().should.equal(1);
+            model.spectatorsContainer.numberOfQueuedPlayers().should.equal(1);
 
             var players = model.playersContainer.getPlayers();
             players.should.be.empty();

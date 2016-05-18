@@ -166,16 +166,6 @@ var SpectatorContainer = function (){
     };
 
     /**
-     * Gets the config object for the enclosed spectators collection
-     * @returns {Object}
-     */
-    this.spectatorsConfig = function () {
-        if (spectators.length > 0){
-            return Util.arrayToConfig(spectators);
-        }
-    };
-
-    /**
      * Gets the config object for the enclosed player queue
      * @returns {Object}
      */

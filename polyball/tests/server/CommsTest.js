@@ -34,7 +34,7 @@ describe('Server Comms', function() {
         server.listen(39522);
 
         model = new Model();
-        model.spectatorCount().should.equal(0);
+        model.spectatorsContainer.spectatorCount().should.equal(0);
 
         comms = new Comms({httpServer: server, model: model});
 
@@ -81,7 +81,7 @@ describe('Server Comms', function() {
 
             return connectionComplete.should.be.fulfilled()
                 .then(function () {
-                model.spectatorCount().should.equal(1);
+                model.spectatorsContainer.spectatorCount().should.equal(1);
             });
         });
     });
@@ -90,7 +90,7 @@ describe('Server Comms', function() {
         it('should remove a spectator from the model', function () {
             this.timeout(5000);
 
-            model.spectatorCount().should.equal(1);
+            model.spectatorsContainer.spectatorCount().should.equal(1);
             var disconnectionComplete = new Promise( function (fulfill, reject) {
 
                 var disconnected = false;
@@ -110,7 +110,7 @@ describe('Server Comms', function() {
 
             return disconnectionComplete.should.be.fulfilled()
                 .then(function () {
-                    model.spectatorCount().should.equal(0);
+                    model.spectatorsContainer.spectatorCount().should.equal(0);
                 });
         });
     });
@@ -119,7 +119,7 @@ describe('Server Comms', function() {
         it('should fire the ServerToServer.newVote comms event', function () {
             this.timeout(5000);
 
-            model.spectatorCount().should.equal(0);
+            model.spectatorsContainer.spectatorCount().should.equal(0);
 
             client1 = ioClient.connect(IO_URL, IO_OPTS);
 
