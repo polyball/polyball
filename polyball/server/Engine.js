@@ -177,15 +177,15 @@ var Engine = function (config) {
 
     var startPoweupVote = function (){
         if (model.gameStatus === EngineStatus.gameRunning &&
-            model.getPowerupElection() == null) {
-            model.setPowerupElection({powerups: PowerupFactory.getAllPowerupNames()});
+            model.powerupElectionContainer.getPowerupElection() == null) {
+            model.powerupElectionContainer.setPowerupElection({powerups: PowerupFactory.getAllPowerupNames()});
             setTimeout(endPowerupVote, config.configuration.powerupVoteDuration);
         }
     };
 
     var endPowerupVote = function (){
-        var winner = model.getPowerupElection().getWinner();
-        model.clearPowerupElection();
+        var winner = model.powerupElectionContainer.getPowerupElection().getWinner();
+        model.powerupElectionContainer.clearPowerupElection();
         var bodyConfig = generatePowerupBody();
         model.addPowerup({
             name: winner,
@@ -389,7 +389,7 @@ var Engine = function (config) {
      */
     this.handleAddVote = function (voteConfig){
         var vote = new Vote(voteConfig);
-        model.getPowerupElection().addVote(vote);
+        model.powerupElectionContainer.getPowerupElection().addVote(vote);
     };
 
     /**

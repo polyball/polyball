@@ -544,7 +544,7 @@ describe('Model', function () {
                 pe.addVote(vote);
                 pe.votes.length.should.equal(1);
 
-                model.setPowerupElection(pe);
+                model.powerupElectionContainer.setPowerupElection(pe);
 
                 var pe2 = model.powerupElectionContainer.getPowerupElection();
 

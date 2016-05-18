@@ -151,9 +151,9 @@ function syncDiscretePowerupState(powerups, model) {
 
 function syncPowerupElection(election, model) {
     if (election != null) {
-        model.setPowerupElection(election);
+        model.powerupElectionContainer.setPowerupElection(election);
     } else {
-        model.clearPowerupElection();
+        model.powerupElectionContainer.clearPowerupElection();
     }
 }
 
@@ -186,7 +186,7 @@ PassthroughSynchronizer.sync = function (snapshot, model) {
 
     if (snapshot.gameStatus !== EngineStatus.gameRunning) {
         model.clearPowerups();
-        model.clearPowerupElection();
+        model.powerupElectionContainer.clearPowerupElection();
     }
 };
 
