@@ -98,7 +98,7 @@ var Model = function () {
 
     /**
      * @type {SpectatorsContainer}
-     */z
+     */
     this.spectatorsContainer = new SpectatorsContainer();
     containers.push(this.spectatorsContainer);
 
