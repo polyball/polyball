@@ -28,13 +28,6 @@ var Model = function () {
     //
     ///////////////////////////////////////////////////////////////////////////
 
-
-
-    //
-    //             PRIVATE STATE
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
     var world = Physics({maxIPF: 10000});
 
     /**
@@ -43,8 +36,6 @@ var Model = function () {
      * @type Number
      */
     var localClientID;
-
-    var containers = [];
 
     //
     //    ########  ##     ## ########  ##       ####  ######
@@ -63,43 +54,36 @@ var Model = function () {
      * @type {ArenaContainer}
      */
     this.arenaContainer = new ArenaContainer({world: world});
-    containers.push(this.arenaContainer);
 
     /**
      * @type {BallsContainer}
      */
     this.ballsContainer = new BallsContainer({world: world});
-    containers.push(this.ballsContainer);
 
     /**
      * @type {PlayersContainer}
      */
     this.playersContainer = new PlayersContainer({world: world});
-    containers.push(this.playersContainer);
 
     /**
      * @type {PowerupsContainer}
      */
     this.powerupsContainer = new PowerupsContainer({world: world});
-    containers.push(this.powerupsContainer);
 
     /**
      * @type {PowerupElectionContainer}
      */
     this.powerupElectionContainer = new PowerupElectionContainer();
-    containers.push(this.powerupElectionContainer);
 
     /**
      * @type {RoundTimingContainer}
      */
     this.roundTimingContainer = new RoundTimeingContainer();
-    containers.push(this.roundTimingContainer);
 
     /**
      * @type {SpectatorsContainer}
      */
     this.spectatorsContainer = new SpectatorsContainer();
-    containers.push(this.spectatorsContainer);
 
     /**
      * @returns {World}
@@ -173,28 +157,11 @@ var Model = function () {
         world.remove(world.getBodies());
         world.remove(world.getBehaviors());
 
-        resetBalls();
-        resetPaddles();
+        this.ballsContainer.clearBalls();
+        this.playersContainer.clearPaddles();
         world.unpause();
     };
 
-    var resetBalls = function(){
-        balls = [];
-    };
-
-    var resetPaddles = function(){
-        players.forEach(function(player){
-            player.paddle = null;
-        });
-    };
 };
-
-
-/**
- * A callback that returns true or false.
- * @callback Predicate
- * @param {Object} Instance of the type being queried.
- * @return {Boolean}
- */
 
 module.exports = Model;
