@@ -57,10 +57,7 @@ var Model = function () {
      */
     var balls = [];
 
-    /**
-     * @type {Number[]}
-     */
-    var playerQueue = [];
+
 
     /**
      * @type PowerupElection
@@ -144,78 +141,7 @@ var Model = function () {
         localClientID = newID;
     };
 
-    //SRS Requirement - 3.2.1.13 Player Queue
-    // The next 7 functions handle all of the CRUD operations for the player queue on the server side
-    /**
-     * Add a spectator to the end of the player queue
-     *
-     * @param {Number} id
-     */
-    this.addToPlayerQueue = function (id) {
-        if (!findByID(spectators, id)) {
-            Logger.error('Tried to add id to Player Queue that does not exist in spectators');
-        }
 
-        if (!findByID(players, id)){
-            if (!_.includes(playerQueue, id)){
-                playerQueue.push(id);
-            }
-        }
-
-    };
-
-    /**
-     * Test if a spectator is queued to play.
-     * @param {number} spectatorID - the id of the spectator.
-     * @returns {boolean} true iff the spectator is queued.
-     */
-    this.hasQueuedPlayer = function (spectatorID) {
-        return _.indexOf(playerQueue, spectatorID) !== -1;
-    };
-
-    /**
-     * Remove a spectator from the player queue
-     * @param {Number} id
-     */
-    this.removeFromPlayerQueue = function (id) {
-        _.remove(playerQueue, function(queuedID) {return queuedID === id;});
-    };
-
-
-    /**
-     * Returns how many players there are in the queue
-     * @return {Number}
-     */
-    this.numberOfQueuedPlayers = function () {
-        return playerQueue.length;
-    };
-
-    /**
-     * Returns how many players there are in the queue
-     * @return {Spectator[]}
-     */
-    this.getAllQueuedPlayers = function () {
-        var out = [];
-        playerQueue.forEach(function(x){out.push(findByID(spectators, x));});
-        return out;
-    };
-
-    /**
-     * Returns the first spectator in the player queue
-     * @return {Spectator}
-     */
-    this.popPlayerQueue = function () {
-        var id = playerQueue.shift();
-        return findByID(spectators, id);
-    };
-
-    /**
-     * Ignore the current queue and give the model a new one.  (For use with snapshots).
-     * @param {Number[]} newQueue
-     */
-    this.setPlayerQueue = function (newQueue) {
-        playerQueue = newQueue;
-    };
 
 
     //
