@@ -8,7 +8,7 @@ var IdGenerator = require('polyball/shared/utilities/IdGenerator');
 var Spectator = require('polyball/shared/model/Spectator');
 
 /**
- * Initializes the SpectatorContainer
+ * Initializes the SpectatorsContainer
  * @constructor
  */
 var SpectatorContainer = function (){

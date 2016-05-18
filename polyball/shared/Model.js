@@ -4,12 +4,12 @@ var Physics = require('physicsjs');
 var Util = require('polyball/shared/utilities/Util');
 var EngineStatus = require('polyball/shared/EngineStatus.js');
 var ArenaContainer = require('polyball/shared/model/containers/ArenaContainer');
-var BallContainer = require('polyball/shared/model/containers/BallContainer');
-var PlayerContainer = require('polyball/shared/model/containers/PlayerContainer');
-var PowerupContainer = require('polyball/shared/model/containers/PowerupContainer');
+var BallsContainer = require('polyball/shared/model/containers/BallsContainer');
+var PlayersContainer = require('polyball/shared/model/containers/PlayersContainer');
+var PowerupsContainer = require('polyball/shared/model/containers/PowerupsContainer');
 var PowerupElectionContainer = require('polyball/shared/model/containers/PowerupElectionContainer');
 var RoundTimeingContainer = require('polyball/shared/model/containers/RountTimingContainer');
-var SpectatorContainer = require('polyball/shared/model/containers/SpectatorContainer');
+var SpectatorsContainer = require('polyball/shared/model/containers/SpectatorsContainer');
 
 
 /**
@@ -67,22 +67,22 @@ var Model = function () {
     containers.push(this.arenaContainer);
 
     /**
-     * @type {BallContainer}
+     * @type {BallsContainer}
      */
-    this.ballContainer = new BallContainer({world: world});
-    containers.push(this.ballContainer);
+    this.ballsContainer = new BallsContainer({world: world});
+    containers.push(this.ballsContainer);
 
     /**
-     * @type {PlayerContainer}
+     * @type {PlayersContainer}
      */
-    this.playerContainer = new PlayerContainer({world: world});
-    containers.push(this.playerContainer);
+    this.playersContainer = new PlayersContainer({world: world});
+    containers.push(this.playersContainer);
 
     /**
-     * @type {PowerupContainer}
+     * @type {PowerupsContainer}
      */
-    this.powerupContainer = new PowerupContainer({world: world});
-    containers.push(this.powerupContainer);
+    this.powerupsContainer = new PowerupsContainer({world: world});
+    containers.push(this.powerupsContainer);
 
     /**
      * @type {PowerupElectionContainer}
@@ -97,10 +97,10 @@ var Model = function () {
     containers.push(this.RoundTimingContainer);
 
     /**
-     * @type {SpectatorContainer}
-     */
-    this.spectatorContainer = new SpectatorContainer();
-    containers.push(this.spectatorContainer);
+     * @type {SpectatorsContainer}
+     */z
+    this.spectatorsContainer = new SpectatorsContainer();
+    containers.push(this.spectatorsContainer);
 
     /**
      * @returns {World}
