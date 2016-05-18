@@ -7,13 +7,11 @@ var Arena = require('polyball/shared/model/Arena');
 
 /**
  * Initializes the ArenaContainer
- * @property {Model} config.model
  * @property {Physics.world} config.world
  * @constructor
  */
 var ArenaContainer = function(config) {
     var IdGen = new IdGenerator();
-    var model = config.model;
     var world = config.world;
     var arena = null;
 

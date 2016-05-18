@@ -1,10 +1,16 @@
 "use strict";
 
-var _ = require('lodash');
 var Physics = require('physicsjs');
 var Util = require('polyball/shared/utilities/Util');
 var EngineStatus = require('polyball/shared/EngineStatus.js');
-var PowerupElection = require('polyball/shared/powerups/PowerupElection');
+var ArenaContainer = require('polyball/shared/model/containers/ArenaContainer');
+var BallContainer = require('polyball/shared/model/containers/BallContainer');
+var PlayerContainer = require('polyball/shared/model/containers/PlayerContainer');
+var PowerupContainer = require('polyball/shared/model/containers/PowerupContainer');
+var PowerupElectionContainer = require('polyball/shared/model/containers/PowerupElectionContainer');
+var RoundTimeingContainer = require('polyball/shared/model/containers/RountTimingContainer');
+var SpectatorContainer = require('polyball/shared/model/containers/SpectatorContainer');
+
 
 /**
  * Holds all data for client and server game instances.  Exposes CRUD operations for data.
@@ -33,28 +39,13 @@ var Model = function () {
     var world = Physics({maxIPF: 10000});
 
     /**
-     * The number of milliseconds in the current round.
-     * @type {Number}
-     */
-    var roundLength;
-
-    /**
-     * The number of milliseconds elapsed in the current round.
-     * @type {Number}
-     */
-    var currentRoundTime;
-
-    /**
-     * @type PowerupElection
-     */
-    this.powerupElection;
-
-    /**
      * IGNORED BY SERVER.
      * The Player (or Spectator) Client id for the client machine.
      * @type Number
      */
     var localClientID;
+
+    var containers = [];
 
     //
     //    ########  ##     ## ########  ##       ####  ######
@@ -70,42 +61,52 @@ var Model = function () {
     this.collisionsPruner = null;
 
     /**
+     * @type {ArenaContainer}
+     */
+    this.arenaContainer = new ArenaContainer({world: world});
+    containers.push(this.arenaContainer);
+
+    /**
+     * @type {BallContainer}
+     */
+    this.ballContainer = new BallContainer({world: world});
+    containers.push(this.ballContainer);
+
+    /**
+     * @type {PlayerContainer}
+     */
+    this.playerContainer = new PlayerContainer({world: world});
+    containers.push(this.playerContainer);
+
+    /**
+     * @type {PowerupContainer}
+     */
+    this.powerupContainer = new PowerupContainer({world: world});
+    containers.push(this.powerupContainer);
+
+    /**
+     * @type {PowerupElectionContainer}
+     */
+    this.powerupElectionContainer = new PowerupElectionContainer();
+    containers.push(this.powerupElectionContainer);
+
+    /**
+     * @type {RoundTimingContainer}
+     */
+    this.RoundTimingContainer = new RoundTimeingContainer();
+    containers.push(this.RoundTimingContainer);
+
+    /**
+     * @type {SpectatorContainer}
+     */
+    this.spectatorContainer = new SpectatorContainer();
+    containers.push(this.spectatorContainer);
+
+    /**
      * @returns {World}
      */
     this.getWorld = function () {
         return world;
-    };
-
-    /**
-     * The round length in milliseconds.
-     * @returns {Number}
-     */
-    this.getRoundLength = function () {
-        return roundLength;
-    };
-
-    /**
-     * Set the round length in milliseconds.
-     * @param newRoundLength
-     */
-    this.setRoundLength = function (newRoundLength) {
-        roundLength = newRoundLength;
-    };
-
-    /**
-     * The current time elapsed in the round.
-     * @returns {Number}
-     */
-    this.getCurrentRoundTime = function () {
-        return currentRoundTime;
-    };
-
-    /**
-     * Set the current round elapsed time.
-     * @param newCurrentTime
-     */
-    this.setCurrentRoundTime = function (newCurrentTime) {
-        currentRoundTime = newCurrentTime;
     };
 
     /**
@@ -125,46 +126,6 @@ var Model = function () {
     this.setLocalClientID = function (newID) {
         localClientID = newID;
     };
-
-
-
-
-
-    //
-    //             Powerup Election
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns the internal instance of Powerup Election
-     * @Returns {PowerupElection}
-     */
-    this.getPowerupElection = function (){
-        return this.powerupElection;
-    };
-
-    /**
-     * Sets the internal instance of Powerup Election
-     * @param {PowerupElection} config
-     */
-    this.setPowerupElection = function(config){
-
-        var newConfig = {
-            id: config.id ? config.id : nextID()
-        };
-
-        _.assign(newConfig, config);
-
-        this.powerupElection = new PowerupElection(newConfig);
-    };
-
-    /**
-     * Stops the current powerup election
-     */
-    this.clearPowerupElection = function(){
-        this.powerupElection = null;
-    };
-
 
     //
     //             SNAPSHOT
@@ -244,4 +205,3 @@ var Model = function () {
  */
 
 module.exports = Model;
-

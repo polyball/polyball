@@ -9,7 +9,7 @@ var IdGenerator = require('polyball/shared/utilities/IdGenerator');
 var Player = require('polyball/shared/model/Player');
 
 /**
- * Initializes the ArenaContainer
+ * Initializes the PlayerContainer
  * @property {Physics.world} config.world
  * @constructor
  */
