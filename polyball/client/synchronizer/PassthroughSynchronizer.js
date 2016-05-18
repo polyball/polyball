@@ -181,7 +181,7 @@ PassthroughSynchronizer.sync = function (snapshot, model) {
     syncPowerupElection(snapshot.powerupElection, model);
 
     model.setPlayerQueue(snapshot.playerQueue);
-    model.setRoundLength(snapshot.roundLength);
+    model.roundTimingContainer.setRoundLength(snapshot.roundLength);
     model.gameStatus = snapshot.gameStatus;
 
     if (snapshot.gameStatus !== EngineStatus.gameRunning) {

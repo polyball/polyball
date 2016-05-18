@@ -75,7 +75,7 @@ var Engine = function (config) {
             addCustomBehavior(GoalBehavior, {model: model});
             addCustomBehavior(PowerupBehavior, {model: model});
 
-            model.setRoundLength(config.configuration.roundLength);
+            model.roundTimingContainer.setRoundLength(config.configuration.roundLength);
 
             roundEngine = new RoundEngine({
                 model: model,
