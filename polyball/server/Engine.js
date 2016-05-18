@@ -57,14 +57,14 @@ var Engine = function (config) {
         model.gameStatus = EngineStatus.gameInitializing;
         Logger.info('Initializing game');
 
-        Logger.info("Number of Players: " + model.playerCount());
+        Logger.info("Number of Players: " + model.playersContainer.playerCount());
 
-        if (model.numberOfQueuedPlayers() + model.playerCount() >= configuration.minimumPlayers){
+        if (model.numberOfQueuedPlayers() + model.playersContainer.playerCount() >= configuration.minimumPlayers){
             setupPlayers();
 
             //TODO figure out radius as a function of # players
             model.addOrResetArena({
-                numberPlayers: model.playerCount(),
+                numberPlayers: model.playersContainer.playerCount(),
                 arenaRadius: 350,
                 bumperRadius: 60,
                 marginX: 0,
@@ -97,7 +97,7 @@ var Engine = function (config) {
         } else {
             Logger.info(
                 "Insufficient players (" +
-                model.playerCount() +
+                model.playersContainer.playerCount() +
                 ") and queued players " +
                 model.numberOfQueuedPlayers() +
                 ").  Waiting to start game.");
@@ -113,7 +113,7 @@ var Engine = function (config) {
 
         //Add the balls to the game
         // SRS Requirement - 3.2.2.8 Ball Introduction
-        _.times(model.playerCount(), function(x){
+        _.times(model.playersContainer.playerCount(), function(x){
             setTimeout(addBall, x * 500);
         });
 
@@ -203,7 +203,7 @@ var Engine = function (config) {
      * SRS Requirement - 3.2.2.4 Join Game
      */
     var setupPlayers = function (){
-        while(model.playerCount() < config.configuration.maximumPlayers && model.numberOfQueuedPlayers() > 0){
+        while(model.playersContainer.playerCount() < config.configuration.maximumPlayers && model.numberOfQueuedPlayers() > 0){
             convertSpectatorToPlayer(model.popPlayerQueue());
         }
     };
@@ -224,7 +224,7 @@ var Engine = function (config) {
         };
 
         model.deleteSpectator(spectator.id);
-        model.addPlayer(config);
+        model.playersContainer.addPlayer(config);
     };
 
     /**
@@ -262,7 +262,7 @@ var Engine = function (config) {
                 }
             };
 
-            model.addPaddleToPlayer({playerID: players[i].id, paddleConfig: paddleConfig});
+            model.playersContainer.addPaddleToPlayer({playerID: players[i].id, paddleConfig: paddleConfig});
         }
     };
 

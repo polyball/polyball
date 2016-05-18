@@ -234,7 +234,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 textObjects.forEach(function(text) {
                     var idStr = text.polyID.substring(6, text.polyID.length);
                     var playerID = parseInt(idStr);
-                    if (!model.hasPlayer(playerID)) {
+                    if (!model.playersContainer.hasPlayer(playerID)) {
                         Logger.info('Removing child: ' + text.text);
                         textContainer.removeChild(text);
                     }
@@ -243,8 +243,8 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                 var players = model.playersContainer.getPlayers();
                 rotatePlayerText(players);
 
-                var localPlayer = model.getPlayer(model.getLocalClientID());
-                if (model.playerCount() > 0 && localPlayer !== undefined) {
+                var localPlayer = model.playersContainer.getPlayer(model.getLocalClientID());
+                if (model.playersContainer.playerCount() > 0 && localPlayer !== undefined) {
                     rotation = localPlayer.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length;
 
                     this.stage.rotation = 0;

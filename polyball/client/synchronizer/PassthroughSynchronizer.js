@@ -48,8 +48,8 @@ function syncPlayerExistence(players, model) {
     if (players != null) {
         Logger.debug('synchronizing players');
 
-        searchAndDelete(players, model.getPlayers, model.deletePlayer, model);
-        searchAndCreate(players, model.hasPlayer, model.addPlayer, model);
+        searchAndDelete(players, model.playersContainer.getPlayers, model.playersContainer.deletePlayer, model);
+        searchAndCreate(players, model.playersContainer.hasPlayer, model.playersContainer.addPlayer, model);
     }
 }
 
@@ -99,7 +99,7 @@ function syncDiscretePlayerState(players, model) {
                     playerID: snapshotPlayer.id,
                     paddleConfig: snapshotPlayer.paddleConfig
                 };
-                model.addPaddleToPlayer(paddleAddConfig);
+                model.playersContainer.addPaddleToPlayer(paddleAddConfig);
             }
             player.arenaPosition = snapshotPlayer.arenaPosition;
             player.score = snapshotPlayer.score;

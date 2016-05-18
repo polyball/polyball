@@ -102,7 +102,7 @@ var Comms = function (config) {
 
             var clientID = getPlayerOrSpectatorID(clientSocket);
             model.deleteSpectator(clientID);
-            model.deletePlayer(clientID);
+            model.playersContainer.deletePlayer(clientID);
 
             pubsub.fireEvent(CommsEvents.ServerToServer.clientDisconnected, {clientID: clientID});
         });
@@ -170,7 +170,7 @@ var Comms = function (config) {
      * @returns {Number} The id of the player or spectator.  null if it doesn't exist.
      */
     var getPlayerOrSpectatorID = function (socket) {
-        var candidates = model.getPlayers(function (player) {
+        var candidates = model.playersContainer.getPlayers(function (player) {
             return player.client.socket.id === socket.id;
         });
 

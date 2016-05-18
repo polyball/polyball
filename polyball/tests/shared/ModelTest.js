@@ -239,7 +239,7 @@ describe('Model', function () {
                 model = new Model();
                 model.playersContainer.playerCount().should.equal(0);
 
-                player = model.addPlayer({
+                player = model.playersContainer.addPlayer({
                     clientConfig: {
                         name: Util.randomUsername(),
                         socket: 'dummy'}
@@ -250,7 +250,7 @@ describe('Model', function () {
             });
 
             it('should add a second, distinct queryable player to the model.', function () {
-                player2 = model.addPlayer({
+                player2 = model.playersContainer.addPlayer({
                     clientConfig: {
                         name: Util.randomUsername(),
                         socket: 'dummy'}
@@ -287,7 +287,7 @@ describe('Model', function () {
             });
 
             it('should get only a player specified by a predicate', function () {
-                var players = model.getPlayers(function (player) {
+                var players = model.playersContainer.getPlayers(function (player) {
                     return player.id === player2.id;
                 });
                 players.length.should.equal(1);
@@ -298,7 +298,7 @@ describe('Model', function () {
         describe("#deletePlayer", function () {
             it('should delete a player and only that player.', function () {
 
-                model.deletePlayer(player.id);
+                model.playersContainer.deletePlayer(player.id);
 
                 model.playersContainer.playerCount().should.equal(1);
                 model.playersContainer.hasPlayer(player.id).should.be.false; // jshint ignore:line
@@ -308,7 +308,7 @@ describe('Model', function () {
             });
 
             it('should delete a second player.', function () {
-                model.deletePlayer(player2.id);
+                model.playersContainer.deletePlayer(player2.id);
 
                 model.playersContainer.playerCount().should.equal(0);
                 model.playersContainer.hasPlayer(player.id).should.be.false; // jshint ignore:line
@@ -319,7 +319,7 @@ describe('Model', function () {
         describe("#addPaddleToPlayer", function () {
 
             it('should add a paddle to a player', function () {
-                var player = model.addPlayer({
+                var player = model.playersContainer.addPlayer({
                     clientConfig: {
                         name: Util.randomUsername(),
                         socket: 'dummy'}
@@ -327,7 +327,7 @@ describe('Model', function () {
 
                 should.not.exists(player.paddle);
 
-                model.addPaddleToPlayer({
+                model.playersContainer.addPaddleToPlayer({
                     playerID: player.id,
                     paddleConfig: {
                         leftBound: {x: 1, y: 1},
@@ -353,18 +353,18 @@ describe('Model', function () {
             it('should get a paddle for a player', function () {
                 var ID = 3544;
 
-                should.not.exists(model.getPaddle(ID));
+                should.not.exists(model.playersContainer.getPaddle(ID));
 
-                model.addPlayer({
+                model.playersContainer.addPlayer({
                     id: ID,
                     clientConfig: {
                         name: Util.randomUsername(),
                         socket: 'dummy'}
                 });
 
-                should.not.exists(model.getPaddle(ID));
+                should.not.exists(model.playersContainer.getPaddle(ID));
 
-                model.addPaddleToPlayer({
+                model.playersContainer.addPaddleToPlayer({
                     playerID: ID,
                     paddleConfig: {
                         leftBound: {x: 1, y: 1},
@@ -380,8 +380,8 @@ describe('Model', function () {
                     }
                 });
 
-                should.exists(model.getPaddle(ID));
-                model.getPaddle(ID).body.state.pos.x.should.be.type('number');
+                should.exists(model.playersContainer.getPaddle(ID));
+                model.playersContainer.getPaddle(ID).body.state.pos.x.should.be.type('number');
             });
         });
 
@@ -458,7 +458,7 @@ describe('Model', function () {
 
                 });
 
-                var player = model.addPlayer({
+                var player = model.playersContainer.addPlayer({
                     clientConfig: {
                         name: Util.randomUsername(),
                         socket: 'dummy'}

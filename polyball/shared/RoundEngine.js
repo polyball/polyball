@@ -73,7 +73,7 @@ var RoundEngine = function(config){
 
         addPhysicsBehavior(PaddleBehavior, {paddleEventsPublisher: config.paddleEventsPublisher,
             paddleMoveEvent: config.paddleMoveEvent,
-            model: model}).applyTo(model.getPlayers());
+            model: model}).applyTo(model.playersContainer.getPlayers());
         addCustomBehavior(BallBehavior, {ballMaxVelocity: config.maxBallVelocity, model: model});
         addCustomBehavior(BallOwnershipBehavior, {model: model});
         pubsub.fireEvent(RoundEvents.initializationFinished);
