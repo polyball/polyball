@@ -22,6 +22,7 @@ var BallContainer = function (config) {
 
     var world = config.world;
     var IdGen = new IdGenerator();
+    var self = this;
 
     /**
      * Add a ball to the model.
@@ -68,7 +69,7 @@ var BallContainer = function (config) {
      * @returns {boolean} True iff the model has the ball identified by id.
      */
     this.hasBall = function (id) {
-        return this.getBall(id) != null;
+        return self.getBall(id) != null;
     };
 
     /**
@@ -108,9 +109,7 @@ var BallContainer = function (config) {
      * @returns {Object}
      */
     this.ballsConfig = function () {
-        if (balls.length > 0){
-            return Util.arrayToConfig(balls);
-        }
+        return Util.arrayToConfig(balls);
     };
 
 };

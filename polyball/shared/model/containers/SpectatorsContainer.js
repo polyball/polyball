@@ -15,6 +15,7 @@ var Util = require('polyball/shared/utilities/Util');
  */
 var SpectatorContainer = function (){
     var IdGen = new IdGenerator();
+    var self = this;
 
     /**
      * @type {Spectator[]}
@@ -67,7 +68,7 @@ var SpectatorContainer = function (){
      * @returns {boolean} True iff the model has the spectator identified by id.
      */
     this.hasSpectator = function (id) {
-        return this.getSpectator(id) != null;
+        return self.getSpectator(id) != null;
     };
 
     /**
@@ -84,7 +85,7 @@ var SpectatorContainer = function (){
      */
     this.deleteSpectator = function (id) {
         ArrayHelper.removeByID(spectators, id);
-        playerQueue.removeFromPlayerQueue(id);
+        self.removeFromPlayerQueue(id);
     };
 
     /**
@@ -93,8 +94,8 @@ var SpectatorContainer = function (){
      * @param {Number} id
      */
     this.addToPlayerQueue = function (id) {
-        if (this.hasSpectator(id)){
-            if (!this.hasQueuedPlayer(id)){
+        if (self.hasSpectator(id)){
+            if (!self.hasQueuedPlayer(id)){
                 playerQueue.push(id);
             }
         }else {
@@ -160,9 +161,7 @@ var SpectatorContainer = function (){
      * @returns {Object}
      */
     this.spectatorsConfig = function () {
-        if (spectators.length > 0){
-            return Util.arrayToConfig(spectators);
-        }
+        return Util.arrayToConfig(spectators);
     };
 
     /**

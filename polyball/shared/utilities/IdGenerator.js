@@ -1,8 +1,8 @@
 /**
  * Created by ryan on 16/05/16.
  */
-var IdGenerator = {
-    nextID : (function () {
+var IdGenerator = function () {
+    this.nextID = function () {
         var nextID = 1;
 
         return function () {
@@ -13,7 +13,7 @@ var IdGenerator = {
 
             return nextID++;
         };
-    }())
+    }();
 };
 
 module.exports = IdGenerator;

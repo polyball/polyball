@@ -63,7 +63,7 @@ var Engine = function (config) {
             setupPlayers();
 
             //TODO figure out radius as a function of # players
-            model.addOrResetArena({
+            model.arenaContainer.addOrResetArena({
                 numberPlayers: model.playersContainer.playerCount(),
                 arenaRadius: 350,
                 bumperRadius: 60,
@@ -123,7 +123,7 @@ var Engine = function (config) {
         //TEST Bullet Time
         //setTimeout(function(){
         //    var bodyConfig = generatePowerupBody();
-        //    model.powerupsContainer.clearPowerupElection({
+        //    model.powerupElectionContainer.clearPowerupElection({
         //        name: BulletTime.Name,
         //        body: bodyConfig,
         //        duration: config.configuration.powerupDuration,
@@ -133,7 +133,7 @@ var Engine = function (config) {
 
         //setTimeout(function(){
         //    var bodyConfig = generatePowerupBody();
-        //    model.powerupsContainer.clearPowerupElection({
+        //    model.powerupElectionContainer.clearPowerupElection({
         //        name: Blackhole.Name,
         //        body: bodyConfig,
         //        duration: config.configuration.powerupDuration
@@ -142,7 +142,7 @@ var Engine = function (config) {
         //
         //setTimeout(function(){
         //    var bodyConfig = generatePowerupBody();
-        //    model.powerupsContainer.clearPowerupElection({
+        //    model.powerupElectionContainer.clearPowerupElection({
         //        name: KingMidas.Name,
         //        body: bodyConfig,
         //        duration: config.configuration.powerupDuration
@@ -187,7 +187,7 @@ var Engine = function (config) {
         var winner = model.powerupElectionContainer.getPowerupElection().getWinner();
         model.powerupElectionContainer.clearPowerupElection();
         var bodyConfig = generatePowerupBody();
-        model.powerupsContainer.clearPowerupElection({
+        model.powerupsContainer.addPowerup({
             name: winner,
             body: bodyConfig,
             duration: config.configuration.powerupDuration,
@@ -234,9 +234,9 @@ var Engine = function (config) {
         var players = model.playersContainer.getPlayers();
         var paddleRadius = config.configuration.paddleRadius / players.length;
         for(var i=0; i < players.length; i++){
-            var leftBound = model.getArena().getPaddleLeftBound(i);
-            var rightBound = model.getArena().getPaddleRightBound(i);
-            var paddlePos = model.getArena().getPaddleStartPosition(i);
+            var leftBound = model.arenaContainer.getArena().getPaddleLeftBound(i);
+            var rightBound = model.arenaContainer.getArena().getPaddleRightBound(i);
+            var paddlePos = model.arenaContainer.getArena().getPaddleStartPosition(i);
 
             players[i].arenaPosition = i;
 
@@ -271,7 +271,7 @@ var Engine = function (config) {
             body: {
                 radius: 10,
                 cof: 0,
-                state: model.getArena().generateNewBallState()
+                state: model.arenaContainer.getArena().generateNewBallState()
             }
         });
     };
@@ -281,7 +281,7 @@ var Engine = function (config) {
      * @returns {Object}
      */
     var generatePowerupBody = function(){           //jshint ignore:line
-        var position = model.getArena().getCenter();
+        var position = model.arenaContainer.getArena().getCenter();
 
         return {
             state:{

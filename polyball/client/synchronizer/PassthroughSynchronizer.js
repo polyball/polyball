@@ -67,7 +67,7 @@ function syncPowerupExistence(powerups, model) {
         Logger.debug('synchronizing powerup');
 
         searchAndDelete(powerups, model.powerupsContainer.getPowerups, model.powerupsContainer.deletePowerup, model);
-        searchAndCreate(powerups, model.powerupsContainer.hasPowerup, model.powerupsContainer.clearPowerupElection, model);
+        searchAndCreate(powerups, model.powerupsContainer.hasPowerup, model.powerupElectionContainer.clearPowerupElection, model);
     }
 }
 

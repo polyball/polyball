@@ -6,6 +6,7 @@ var Logger = require('polyball/shared/Logger');
 var _ = require('lodash');
 var ArrayHelper = require('polyball/shared/utilities/ArrayHelper');
 var IdGenerator = require('polyball/shared/utilities/IdGenerator');
+var Util = require('polyball/shared/utilities/Util');
 
 /**
  * Initializes the PowerupContainer
@@ -16,6 +17,7 @@ var PowerupContainer = function (config) {
     var powerups = [];
     var world = config.world;
     var IdGen = new IdGenerator();
+    var self = this;
 
     /**
      * Add a powerup to the model.
@@ -62,7 +64,7 @@ var PowerupContainer = function (config) {
      * @returns {boolean} True iff the model has the powerup identified by id.
      */
     this.hasPowerup = function (id) {
-        return this.getPowerup(id) != null;
+        return self.getPowerup(id) != null;
     };
 
     /**
@@ -104,9 +106,7 @@ var PowerupContainer = function (config) {
      * @returns {Object}
      */
     this.powerupsConfig = function () {
-        if (powerups.length > 0){
-            return Util.arrayToConfig(powerups);
-        }
+        return Util.arrayToConfig(powerups);
     };
 
 };

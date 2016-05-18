@@ -17,6 +17,7 @@ var Util = require('polyball/shared/utilities/Util');
 var PlayerContainer = function (config) {
     var IdGen = new IdGenerator();
     var world = config.world;
+    var self = this;
 
     /**
      * @type {Player[]}
@@ -69,7 +70,7 @@ var PlayerContainer = function (config) {
      * @returns {boolean} True iff the model has the player identified by id.
      */
     this.hasPlayer = function (id) {
-        return this.getPlayer(id) != null;
+        return self.getPlayer(id) != null;
     };
 
     /**
@@ -114,7 +115,7 @@ var PlayerContainer = function (config) {
      * @returns {Paddle} The paddle added to the player.
      */
     this.addPaddleToPlayer = function (config){
-        var player = this.getPlayer(config.playerID);
+        var player = self.getPlayer(config.playerID);
 
         if (player == null) {
             Logger.warn('Cannot find player id in model - cannot add paddle to player.');
@@ -138,7 +139,7 @@ var PlayerContainer = function (config) {
      * @returns {Paddle} - The player's paddle.  Undefined if the player doesn't exist or if the player doesn't have a paddle yet.
      */
     this.getPaddle = function (playerID) {
-        var player = this.getPlayer(playerID);
+        var player = self.getPlayer(playerID);
 
         if (player == null) {
             return undefined;
@@ -164,9 +165,7 @@ var PlayerContainer = function (config) {
      * @returns {Object}
      */
     this.playersConfig = function () {
-        if (players.length > 0){
-            return Util.arrayToConfig(players);
-        }
+        return Util.arrayToConfig(players);
     };
 
 };

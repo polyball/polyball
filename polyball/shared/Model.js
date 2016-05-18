@@ -7,7 +7,7 @@ var BallsContainer = require('polyball/shared/model/containers/BallsContainer');
 var PlayersContainer = require('polyball/shared/model/containers/PlayersContainer');
 var PowerupsContainer = require('polyball/shared/model/containers/PowerupsContainer');
 var PowerupElectionContainer = require('polyball/shared/model/containers/PowerupElectionContainer');
-var RoundTimeingContainer = require('polyball/shared/model/containers/RountTimingContainer');
+var RoundTimeingContainer = require('polyball/shared/model/containers/RoundTimingContainer');
 var SpectatorsContainer = require('polyball/shared/model/containers/SpectatorsContainer');
 
 

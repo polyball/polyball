@@ -15,7 +15,7 @@ var ArrayHelper = function () {
  * @param {Number} id The id of the desired element (in field `element.id`)
  * @returns {T} The identified array element (or undefined).
  */
-this.prototype.findByID = function (array, id) {
+ArrayHelper.findByID = function (array, id) {
     return _.find(array, function (element) { return element.id === id; });
 };
 
@@ -26,9 +26,9 @@ this.prototype.findByID = function (array, id) {
  * @param {Number|Predicate} id The id or a callback identifying the desired element.
  * @returns {T} The identified array element (or undefined).
  */
-this.prototype.findSingle = function (array, id) {
+ArrayHelper.findSingle = function (array, id) {
     if (typeof id === 'number') {
-        return this.prototype.findByID(array, id);
+        return ArrayHelper.findByID(array, id);
     } else {
         return _.find(array, id);
     }
@@ -41,7 +41,7 @@ this.prototype.findSingle = function (array, id) {
  * @param {Predicate} [predicate] The boolean-returning predicate callback to filter by.
  * @returns {T[]} All elements of the array matching the predicate
  */
-this.prototype.findAll = function (array, predicate) {
+ArrayHelper.findAll = function (array, predicate) {
     if (predicate == null) {
         return Array.apply(undefined, array);
     }
@@ -55,7 +55,7 @@ this.prototype.findAll = function (array, predicate) {
  * @param {Number} id The id of the desired element (in field `element.id`)
  * @return {T} The removed object, null if not found.
  */
-this.prototype.removeByID = function (array, id) {
+ArrayHelper.removeByID = function (array, id) {
     var removed = _.remove(array, function (element) { return element.id === id; });
     if (removed.length > 1) {
         Logger.error("More than one object of id " + id + " found in array " + array);

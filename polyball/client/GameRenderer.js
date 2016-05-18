@@ -54,9 +54,9 @@ Physics.renderer('polyball', 'pixi', function (parent) {
      */
     var rotatePlayerText = function (players) {
         players.forEach(function(player) {
-            var worldPos = model.getArena().getScorePosition(player.arenaPosition);
+            var worldPos = model.arenaContainer.getArena().getScorePosition(player.arenaPosition);
             var localPos = self.worldToClient(worldPos);
-            var rotation = (model.getArena().getGoalRotation(player.arenaPosition) + self.stage.rotation);
+            var rotation = (model.arenaContainer.getArena().getGoalRotation(player.arenaPosition) + self.stage.rotation);
 
             if (rotation < -Math.PI / 2 && rotation > -(3/2) * Math.PI) {
                 rotation = rotation - Math.PI;
@@ -209,7 +209,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
 
             this.stage.filterArea = new Pixi.Rectangle(0, 0, this.width, this.height);
 
-            if (model.getArena() !== undefined) {
+            if (model.arenaContainer.getArena() !== undefined) {
                 // Remove the title
                 var textObjects = textContainer.children.filter(function(textChild) {
                     return textChild.polyID === titleID;
@@ -218,7 +218,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     textObjects[0].visible = false;
                 }
 
-                center = model.getArena().getCenter();
+                center = model.arenaContainer.getArena().getCenter();
 
                 this.stage.pivot.set(center.x, center.y);
                 this.stage.position.set(center.x, center.y);
@@ -245,7 +245,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
 
                 var localPlayer = model.playersContainer.getPlayer(model.getLocalClientID());
                 if (model.playersContainer.playerCount() > 0 && localPlayer !== undefined) {
-                    rotation = localPlayer.arenaPosition * 2*Math.PI / model.getArena().getBumpers().length;
+                    rotation = localPlayer.arenaPosition * 2*Math.PI / model.arenaContainer.getArena().getBumpers().length;
 
                     this.stage.rotation = 0;
                     this.rotate(rotation);
@@ -404,7 +404,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
         worldToClient: function(point) {
             var rotation = this.stage.rotation;
             var offset = this.stage.position;
-            var center = model.getArena().getCenter();
+            var center = model.arenaContainer.getArena().getCenter();
 
             var newPoint = Physics.vector(point.x, point.y);
 
@@ -431,7 +431,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
          * @returns {Physics.vector}
          */
         getWorldCenter: function() {
-            return model.getArena().getCenter();
+            return model.arenaContainer.getArena().getCenter();
         }
     };
 });

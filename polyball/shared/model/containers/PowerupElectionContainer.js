@@ -3,6 +3,7 @@
  */
 var PowerupElection = require('polyball/shared/powerups/PowerupElection');
 var IdGenerator = require('polyball/shared/utilities/IdGenerator');
+var _ = require('lodash');
 
 /**
  * Initializes the PowerupElectionContainer

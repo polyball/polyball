@@ -591,7 +591,7 @@ describe('Model', function () {
                 marginY: 0
             });
 
-            var powerup = model.powerupsContainer.clearPowerupElection({
+            var powerup = model.powerupsContainer.addPowerup({
                 name: Blackhole.Name,
                 body: getPowerupBody()
             });
@@ -629,7 +629,7 @@ describe('Model', function () {
            it('should add a distinct powerup', function(){
                var init = addPowerup();
 
-               var bh2 = init.model.powerupsContainer.clearPowerupElection({
+               var bh2 = init.model.powerupsContainer.addPowerup({
                    name: Blackhole.Name,
                    body: getPowerupBody()
                });
@@ -655,7 +655,7 @@ describe('Model', function () {
                 var init = addPowerup();
                 init.model.powerupsContainer.getPowerups().length.should.equal(1);
 
-                init.model.powerupsContainer.clearPowerupElection({
+                init.model.powerupsContainer.addPowerup({
                    name: Blackhole.Name,
                    body: getPowerupBody()
                 });
@@ -688,7 +688,7 @@ describe('Model', function () {
         describe('#clearPowerups', function(){
             it('should delete all powerups from the list and remove from world', function(){
                 var init = addPowerup();
-                var powerup = init.model.powerupsContainer.clearPowerupElection({
+                var powerup = init.model.powerupsContainer.addPowerup({
                     name: Blackhole.Name,
                     body: getPowerupBody()
                 });
