@@ -109,7 +109,7 @@ var Comms = function (config) {
 
         clientSocket.on(CommsEvents.ClientToServer.requestName, function (name) {
             var clientID = getPlayerOrSpectatorID(clientSocket);
-            var user = model.getPlayer(clientID);
+            var user = model.playersContainer.getPlayer(clientID);
             user = user || model.getSpectator(clientID);
 
             if (name && typeof name === 'string' && name.length <= 20) {
@@ -143,7 +143,7 @@ var Comms = function (config) {
         clientSocket.on(CommsEvents.ClientToServer.newCommandAggregate, function (newCommandAggregate) {
             var playerID = getPlayerOrSpectatorID(clientSocket);
 
-            if (model.getPlayer(playerID) == null) {
+            if (model.playersContainer.getPlayer(playerID) == null) {
                 Logger.warn("Command aggregate received from spectator!  Should not be possible.");
             }
 

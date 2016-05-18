@@ -251,7 +251,7 @@ describe('Synchronizer', function () {
         it('should update balls in the model', function () {
             comms.fireEvent(CommsEvents.ClientToClient.snapshotReceived, addSnapshot);
             
-            model.setCurrentRoundTime(0);
+            model.roundTimingContainer.setCurrentRoundTime(0);
 
             comms.fireEvent(CommsEvents.ClientToClient.snapshotReceived, updateSnapshot);
 

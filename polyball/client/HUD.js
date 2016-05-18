@@ -71,19 +71,19 @@ var HUD = function (config) {
     });
 
     this.render = function () {
-        roundTimerRenderer.render(model.getRoundLength() - model.getCurrentRoundTime());
+        roundTimerRenderer.render(model.roundTimingContainer.getRoundLength() - model.roundTimingContainer.getCurrentRoundTime());
 
-        spectatorListRenderer.render(model.getSpectators(), model.getLocalClientID());
-        playerQueueRenderer.render(model.getAllQueuedPlayers(), model.getLocalClientID());
+        spectatorListRenderer.render(model.spectatorsContainer.getSpectators(), model.getLocalClientID());
+        playerQueueRenderer.render(model.spectatorsContainer.getAllQueuedPlayers(), model.getLocalClientID());
 
         var localQueued = model.hasQueuedPlayer(model.getLocalClientID());
-        var localPlaying = model.hasPlayer(model.getLocalClientID());
+        var localPlaying = model.playersContainer.hasPlayer(model.getLocalClientID());
         queueButtonRenderer.render(localQueued, localPlaying);
 
         powerupElectionRenderer.render(model);
         waitingForPlayersRenderer.render(model.gameStatus === EngineStatus.gameInitializing);
 
-        var localUser = model.getPlayer(model.getLocalClientID());
+        var localUser = model.playersContainer.getPlayer(model.getLocalClientID());
         localUser = localUser || model.getSpectator(model.getLocalClientID());
         var localName = localUser ? localUser.client.name : null;
         landingPageRenderer.render(localName);

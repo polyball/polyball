@@ -13,7 +13,7 @@ var Events = require('polyball/shared/model/behaviors/Events');
 var GoalBehavior = function(config){
 
     var handleCollision = function(event){
-        var player = config.model.getPlayer(event.ball.lastTouchedID);
+        var player = config.model.playersContainer.getPlayer(event.ball.lastTouchedID);
         if (player != null){
             if (player.id !== event.entity.id){
                 player.score += 1;

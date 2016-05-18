@@ -43,7 +43,7 @@ inherits(KingMidas, Powerup);
 
 KingMidas.prototype.handleGoal = function(event){
     if (event.ball.lastTouchedID === this.owner){
-        var player = this.model.getPlayer(this.owner);
+        var player = this.model.playersContainer.getPlayer(this.owner);
         if (player != null){
             if (player.id !== event.entity.id){
                 player.score += 1;
@@ -91,7 +91,7 @@ KingMidas.prototype.render = function(renderer, model) {
             return emitter.owner === self && emitter.player === self.owner;
         });
 
-        var ownerPaddle = model.getPlayer(this.owner).paddle;
+        var ownerPaddle = model.playersContainer.getPlayer(this.owner).paddle;
         if (paddleEmitters.length === 0) {
             kingMidasPaddleParticleStyle.angleStart = ownerPaddle.body.state.angular.pos * 57.2958;
             paddleEmitters.push(renderer.addEmitter(['res/particle.png'], kingMidasPaddleParticleStyle));

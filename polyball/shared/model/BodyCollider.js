@@ -107,23 +107,23 @@ var BodyCollider = function (config) {
     };
 
     var setupPaddles = function(){
-        config.model.getPlayers().forEach(function(player){
+        config.model.playersContainer.getPlayers().forEach(function(player){
             paddles[player.paddle.body.uid] = player;
         });
     };
 
     var setupGoals = function(){
-        var arena = model.getArena();
-        config.model.getPlayers().forEach(function (player){
+        var arena = model.arenaContainer.getArena();
+        config.model.playersContainer.getPlayers().forEach(function (player){
             var goal = arena.getGoal(player.arenaPosition);
             goals[goal.uid] = player;
         });
     };
 
     var setupPowerups = function(){
-        if (powerupsLength !== model.getPowerups().length) {
+        if (powerupsLength !== model.powerupsContainer.getPowerups().length) {
             powerups = {};
-            config.model.getPowerups().forEach(function (powerup) {
+            config.model.powerupsContainer.getPowerups().forEach(function (powerup) {
                powerups[powerup.body.uid] = powerup;
             });
             powerupsLength = Object.keys(balls).length;

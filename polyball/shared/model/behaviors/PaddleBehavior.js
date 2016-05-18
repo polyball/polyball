@@ -54,8 +54,8 @@ var PaddleBehavior = function (config) {
                                 data.time = Physics.util.ticker.now();
 
                                 data.oldPos.clone(data.pos);
-                                data.pos.clone(config.model.getPlayer(command.playerID).paddle.getNewPosition(cmd.moveDelta));
-                                config.model.getPlayer().lastSequenceNumberAccepted = cmd.sequenceNumber;
+                                data.pos.clone(config.model.playersContainer.getPlayer(command.playerID).paddle.getNewPosition(cmd.moveDelta));
+                                config.model.playersContainer.getPlayer().lastSequenceNumberAccepted = cmd.sequenceNumber;
 
                             }
                         });

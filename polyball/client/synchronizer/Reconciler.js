@@ -59,7 +59,7 @@ var Reconciler = function (config) {
             // mutate model based on final buffered state
             // purge buffer at and before received sequence number
 
-            var localPlayer = model.getPlayer(model.getLocalClientID());
+            var localPlayer = model.playersContainer.getPlayer(model.getLocalClientID());
             players.forEach(function (snapshotPlayer) {
 
                 if (localPlayer != null &&

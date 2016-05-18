@@ -135,7 +135,7 @@ inherits(Blackhole, Powerup);
 Blackhole.prototype.activate = function(model){
     if (!this.active) {
         Blackhole.super_.prototype.activate.call(this, model);
-        var arenaCenter = model.getArena().getCenter();
+        var arenaCenter = model.arenaContainer.getArena().getCenter();
         this.attractor = Physics.behavior('attractor', {
             order: 0,
             strength: 0.01,

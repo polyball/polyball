@@ -105,7 +105,7 @@ var Synchronizer = function (config) {
         }
 
         model.reset();
-        model.setCurrentRoundTime(0);
+        model.roundTimingContainer.setCurrentRoundTime(0);
 
         roundStartTime = Date.now();
 
@@ -147,9 +147,9 @@ var Synchronizer = function (config) {
      * @param {Number} tickTime - The current time in millis.
      */
     this.tick = function (tickTime) {
-        model.setCurrentRoundTime(tickTime - roundStartTime);
+        model.roundTimingContainer.setCurrentRoundTime(tickTime - roundStartTime);
 
-        var isPlayer = model.getPlayer(model.getLocalClientID()) != null;
+        var isPlayer = model.playersContainer.getPlayer(model.getLocalClientID()) != null;
 
         if (isPlayer && tickTime - lastAggregationSendTime > aggregationInterval) {
             lastAggregationSendTime = Date.now();

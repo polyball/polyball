@@ -27,9 +27,9 @@ describe('Model', function () {
         var model, arena, arena2;
         it('should add an arena to the model.', function () {
             model = new Model();
-            should.not.exist(model.getArena());
+            should.not.exist(model.arenaContainer.getArena());
 
-            arena = model.addOrResetArena({
+            arena = model.arenaContainer.addOrResetArena({
                 numberPlayers: 4,
                 arenaRadius: 1000,
                 bumperRadius: 25,
@@ -37,11 +37,11 @@ describe('Model', function () {
                 marginY: 0
             });
 
-            model.getArena().should.equal(arena);
+            model.arenaContainer.getArena().should.equal(arena);
         });
 
         it('should reset the arena.', function () {
-            arena2 = model.addOrResetArena({
+            arena2 = model.arenaContainer.addOrResetArena({
                 numberPlayers: 9,
                 arenaRadius: 400,
                 bumperRadius: 25,
@@ -49,8 +49,8 @@ describe('Model', function () {
                 marginY: 0
             });
 
-            model.getArena().should.not.equal(arena);
-            model.getArena().should.equal(arena2);
+            model.arenaContainer.getArena().should.not.equal(arena);
+            model.arenaContainer.getArena().should.equal(arena2);
         });
     });
 
@@ -62,7 +62,7 @@ describe('Model', function () {
                 model = new Model();
                 model.ballCount().should.equal(0);
 
-                arena = model.addOrResetArena({
+                arena = model.arenaContainer.addOrResetArena({
                     numberPlayers: 9,
                     arenaRadius: 400,
                     bumperRadius: 25,
@@ -195,7 +195,7 @@ describe('Model', function () {
 
         describe('#getSpectators', function () {
             it('should get all spectators when passed nothing or null', function () {
-                model.getSpectators().length.should.equal(2);
+                model.spectatorsContainer.getSpectators().length.should.equal(2);
             });
 
             it('should get only a spectator specified by a predicate', function () {
@@ -237,7 +237,7 @@ describe('Model', function () {
         describe("#addPlayer", function () {
             it('should add a queryable player to the model.', function () {
                 model = new Model();
-                model.playerCount().should.equal(0);
+                model.playersContainer.playerCount().should.equal(0);
 
                 player = model.addPlayer({
                     clientConfig: {
@@ -245,8 +245,8 @@ describe('Model', function () {
                         socket: 'dummy'}
                 });
 
-                model.playerCount().should.equal(1);
-                model.hasPlayer(player.id).should.be.true; // jshint ignore:line
+                model.playersContainer.playerCount().should.equal(1);
+                model.playersContainer.hasPlayer(player.id).should.be.true; // jshint ignore:line
             });
 
             it('should add a second, distinct queryable player to the model.', function () {
@@ -256,24 +256,24 @@ describe('Model', function () {
                         socket: 'dummy'}
                 });
 
-                model.playerCount().should.equal(2);
+                model.playersContainer.playerCount().should.equal(2);
 
                 player.should.not.equal(player2);
 
-                model.hasPlayer(player.id).should.be.true; // jshint ignore:line
-                model.hasPlayer(player2.id).should.be.true; // jshint ignore:line
+                model.playersContainer.hasPlayer(player.id).should.be.true; // jshint ignore:line
+                model.playersContainer.hasPlayer(player2.id).should.be.true; // jshint ignore:line
             });
         });
 
         describe('#getPlayer', function () {
             it('should get a player by its id', function () {
-                var tmpPlayer = model.getPlayer(player.id);
+                var tmpPlayer = model.playersContainer.getPlayer(player.id);
 
                 tmpPlayer.should.equal(player);
             });
 
             it('should get a player by any predicate', function () {
-                var tmpPlayer = model.getPlayer(function (player) {
+                var tmpPlayer = model.playersContainer.getPlayer(function (player) {
                     return player.client.name === player2.client.name;
                 });
 
@@ -283,7 +283,7 @@ describe('Model', function () {
 
         describe('#getPlayers', function () {
             it('should get all players when passed nothing or null', function () {
-                model.getPlayers().length.should.equal(2);
+                model.playersContainer.getPlayers().length.should.equal(2);
             });
 
             it('should get only a player specified by a predicate', function () {
@@ -300,9 +300,9 @@ describe('Model', function () {
 
                 model.deletePlayer(player.id);
 
-                model.playerCount().should.equal(1);
-                model.hasPlayer(player.id).should.be.false; // jshint ignore:line
-                model.hasPlayer(player2.id).should.be.true; // jshint ignore:line
+                model.playersContainer.playerCount().should.equal(1);
+                model.playersContainer.hasPlayer(player.id).should.be.false; // jshint ignore:line
+                model.playersContainer.hasPlayer(player2.id).should.be.true; // jshint ignore:line
 
                 player2.score.should.equal(0); // jshint ignore:line
             });
@@ -310,9 +310,9 @@ describe('Model', function () {
             it('should delete a second player.', function () {
                 model.deletePlayer(player2.id);
 
-                model.playerCount().should.equal(0);
-                model.hasPlayer(player.id).should.be.false; // jshint ignore:line
-                model.hasPlayer(player2.id).should.be.false; // jshint ignore:line
+                model.playersContainer.playerCount().should.equal(0);
+                model.playersContainer.hasPlayer(player.id).should.be.false; // jshint ignore:line
+                model.playersContainer.hasPlayer(player2.id).should.be.false; // jshint ignore:line
             });
         });
 
@@ -399,7 +399,7 @@ describe('Model', function () {
                 var spectator1 = model.addSpectator({clientConfig: {name: Util.randomUsername(), socket: 'dummy'}});
                 model.addToPlayerQueue(spectator1.id);
 
-                var queuedPlayers = model.getAllQueuedPlayers();
+                var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
 
                 model.numberOfQueuedPlayers().should.equal(1);
                 queuedPlayers.length.should.equal(1);
@@ -412,7 +412,7 @@ describe('Model', function () {
                 model.addToPlayerQueue(spectator1.id);
                 model.addToPlayerQueue(spectator1.id);
 
-                var queuedPlayers = model.getAllQueuedPlayers();
+                var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
 
                 model.numberOfQueuedPlayers().should.equal(1);
                 queuedPlayers.length.should.equal(1);
@@ -426,7 +426,7 @@ describe('Model', function () {
                 model.addToPlayerQueue(spectator1.id);
                 model.addToPlayerQueue(spectator2.id);
 
-                var queuedPlayers = model.getAllQueuedPlayers();
+                var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
                 model.numberOfQueuedPlayers().should.equal(2);
                 queuedPlayers.length.should.equal(2);
                 queuedPlayers.should.containEql(spectator2);
@@ -442,7 +442,7 @@ describe('Model', function () {
 
                 });
 
-                var queuedPlayers = model.getAllQueuedPlayers();
+                var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
                 model.numberOfQueuedPlayers().should.equal(x);
                 queuedPlayers.length.should.equal(x);
             });
@@ -466,7 +466,7 @@ describe('Model', function () {
 
                 model.addToPlayerQueue(player.id);
 
-                var queuedPlayers = model.getAllQueuedPlayers();
+                var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
                 model.numberOfQueuedPlayers().should.equal(x);
                 queuedPlayers.length.should.equal(x);
                 queuedPlayers.should.not.containEql(player.id);
@@ -485,14 +485,14 @@ describe('Model', function () {
                 model.addToPlayerQueue(spectator2.id);
                 model.removeFromPlayerQueue(spectator1.id);
 
-                var queuedPlayers = model.getAllQueuedPlayers();
+                var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
                 model.numberOfQueuedPlayers().should.equal(1);
                 queuedPlayers.length.should.equal(1);
                 queuedPlayers.should.containEql(spectator2);
 
                 model.removeFromPlayerQueue(spectator2.id);
 
-                queuedPlayers = model.getAllQueuedPlayers();
+                queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
                 model.numberOfQueuedPlayers().should.equal(0);
                 queuedPlayers.length.should.equal(0);
 
@@ -518,7 +518,7 @@ describe('Model', function () {
                 model.addToPlayerQueue(spectator2.id);
                 var out = model.popPlayerQueue();
 
-                var queuedPlayers = model.getAllQueuedPlayers();
+                var queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
                 model.numberOfQueuedPlayers().should.equal(1);
                 queuedPlayers.length.should.equal(1);
                 queuedPlayers.should.containEql(spectator2);
@@ -526,7 +526,7 @@ describe('Model', function () {
 
                 out = model.popPlayerQueue();
 
-                queuedPlayers = model.getAllQueuedPlayers();
+                queuedPlayers = model.spectatorsContainer.getAllQueuedPlayers();
                 model.numberOfQueuedPlayers().should.equal(0);
                 queuedPlayers.length.should.equal(0);
                 out.should.equal(spectator2);
@@ -546,7 +546,7 @@ describe('Model', function () {
 
                 model.setPowerupElection(pe);
 
-                var pe2 = model.getPowerupElection();
+                var pe2 = model.powerupElectionContainer.getPowerupElection();
 
                 pe2.votes.length.should.equal(1);
                 pe2.votes.should.containEql(vote);
@@ -583,7 +583,7 @@ describe('Model', function () {
         var addPowerup = function(){
             var model = new Model();
 
-            var arena = model.addOrResetArena({
+            var arena = model.arenaContainer.addOrResetArena({
                 numberPlayers: 9,
                 arenaRadius: 400,
                 bumperRadius: 25,
@@ -635,7 +635,7 @@ describe('Model', function () {
                });
 
                init.model.powerupCount().should.equal(2);
-               var ids = init.model.getPowerups().map(function(val, index, array){
+               var ids = init.model.powerupsContainer.getPowerups().map(function(val, index, array){
                    return array[index].id;
                });
 
@@ -653,36 +653,36 @@ describe('Model', function () {
         describe('#getPowerups', function(){
            it('should get all balls when passed nothing',function(){
                 var init = addPowerup();
-                init.model.getPowerups().length.should.equal(1);
+                init.model.powerupsContainer.getPowerups().length.should.equal(1);
 
                 init.model.addPowerup({
                    name: Blackhole.Name,
                    body: getPowerupBody()
                 });
 
-               init.model.getPowerups().length.should.equal(2);
+               init.model.powerupsContainer.getPowerups().length.should.equal(2);
            });
         });
         describe('#deletePowerup', function(){
             it('should delete a powerup from the list and remove from world', function(){
                 var init = addPowerup();
                 init.model.getWorld().getBodies().should.containEql(init.powerup.body);
-                init.model.getPowerups().should.containEql(init.powerup);
+                init.model.powerupsContainer.getPowerups().should.containEql(init.powerup);
 
                 init.model.deletePowerup(init.powerup.id);
                 init.model.getWorld().getBodies().should.not.containEql(init.powerup.body);
-                init.model.getPowerups().length.should.equal(0);
+                init.model.powerupsContainer.getPowerups().length.should.equal(0);
             });
         });
         describe('#deletePowerup', function(){
             it('should delete a powerup from the list and remove from world', function(){
                 var init = addPowerup();
                 init.model.getWorld().getBodies().should.containEql(init.powerup.body);
-                init.model.getPowerups().should.containEql(init.powerup);
+                init.model.powerupsContainer.getPowerups().should.containEql(init.powerup);
 
                 init.model.deletePowerup(init.powerup.id);
                 init.model.getWorld().getBodies().should.not.containEql(init.powerup.body);
-                init.model.getPowerups().length.should.equal(0);
+                init.model.powerupsContainer.getPowerups().length.should.equal(0);
             });
         });
         describe('#clearPowerups', function(){
@@ -693,12 +693,12 @@ describe('Model', function () {
                     body: getPowerupBody()
                 });
 
-                init.model.getPowerups().length.should.equal(2);
+                init.model.powerupsContainer.getPowerups().length.should.equal(2);
 
                 init.model.clearPowerups();
                 init.model.getWorld().getBodies().should.not.containEql(init.powerup.body);
                 init.model.getWorld().getBodies().should.not.containEql(powerup.body);
-                init.model.getPowerups().length.should.equal(0);
+                init.model.powerupsContainer.getPowerups().length.should.equal(0);
             });
         });
     });

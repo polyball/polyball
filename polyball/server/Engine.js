@@ -231,7 +231,7 @@ var Engine = function (config) {
      * Handles adding paddles to each player
      */
     var addAllPaddles = function () {
-        var players = model.getPlayers();
+        var players = model.playersContainer.getPlayers();
         var paddleRadius = config.configuration.paddleRadius / players.length;
         for(var i=0; i < players.length; i++){
             var leftBound = model.getArena().getPaddleLeftBound(i);
@@ -337,7 +337,7 @@ var Engine = function (config) {
      * Resets all the player scores to 0
      */
     var resetPlayScores = function(){
-        model.getPlayers().forEach(function(player){
+        model.playersContainer.getPlayers().forEach(function(player){
             player.score = 0;
         });
     };
@@ -355,7 +355,7 @@ var Engine = function (config) {
      * @returns {Array}
      */
     var getWinners = function(){
-        var players = model.getPlayers().sort(function(a,b){
+        var players = model.playersContainer.getPlayers().sort(function(a,b){
             return b.score - a.score;
         });
         var winners = [];

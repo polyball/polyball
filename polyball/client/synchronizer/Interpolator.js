@@ -37,7 +37,7 @@ var Interpolator = function (config) {
         
         if (mostRecent != null && mostRecent.playerStates != null) {
             mostRecent.playerStates.forEach(function (playerState) {
-                var remotePlayer = model.getPlayer(playerState.id);
+                var remotePlayer = model.playersContainer.getPlayer(playerState.id);
                 var remotePaddle = remotePlayer ? remotePlayer.paddle : null;
 
                 if (playerState.id !== model.getLocalClientID() && remotePlayer != null && remotePaddle != null) {

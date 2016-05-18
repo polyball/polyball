@@ -16,7 +16,7 @@ var Events = require('polyball/shared/model/behaviors/Events');
 var PowerupBehavior = function(config){
 
     var handleCollision = function(event){
-        var player = config.model.getPlayer(event.ball.lastTouchedID);
+        var player = config.model.playersContainer.getPlayer(event.ball.lastTouchedID);
         if (player != null){
             event.entity.owner = player.id;
             event.entity.activate(config.model);

@@ -51,8 +51,8 @@ var BulletTime = function(config){
 inherits(BulletTime, Powerup);
 
 BulletTime.prototype.createBulletTimeBody = function(model){
-    var player = model.getPlayer(this.owner);
-    var pos = model.getArena().getGoal(player.arenaPosition).state.pos;
+    var player = model.playersContainer.getPlayer(this.owner);
+    var pos = model.arenaContainer.getArena().getGoal(player.arenaPosition).state.pos;
     var radiusVect = new Physics.vector(0,0);
 
     radiusVect.clone(player.paddle.goalRightBound);
@@ -177,12 +177,12 @@ BulletTime.prototype.handleCollisions = function (event){
 };
 
 BulletTime.prototype.fireBalls = function (model){
-    var player = model.getPlayer(this.owner);
+    var player = model.playersContainer.getPlayer(this.owner);
     var ball;
 
     for (var index in this.affectedBalls){
       if (this.affectedBalls.hasOwnProperty(index) && player !== undefined){
-          var zonePosition = model.getArena().getGoal(player.arenaPosition).state.pos;
+          var zonePosition = model.arenaContainer.getArena().getGoal(player.arenaPosition).state.pos;
 
           ball = this.affectedBalls[index];
           this.velVect.x = ball.body.state.pos.x;

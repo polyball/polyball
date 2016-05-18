@@ -240,7 +240,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
                     }
                 });
 
-                var players = model.getPlayers();
+                var players = model.playersContainer.getPlayers();
                 rotatePlayerText(players);
 
                 var localPlayer = model.getPlayer(model.getLocalClientID());

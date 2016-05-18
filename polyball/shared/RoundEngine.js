@@ -83,7 +83,7 @@ var RoundEngine = function(config){
 
     var startGame = function(){
         gameStartTime = Date.now();
-        model.setCurrentRoundTime(0);
+        model.roundTimingContainer.setCurrentRoundTime(0);
         gameLoop = setInterval(update, config.tickRate);
         pubsub.fireEvent(RoundEvents.gameStarted);
     };
@@ -91,11 +91,11 @@ var RoundEngine = function(config){
     var update = function(){
         var time = Date.now();
         model.getWorld().step();
-        model.setCurrentRoundTime(time - gameStartTime);
+        model.roundTimingContainer.setCurrentRoundTime(time - gameStartTime);
 
         pubsub.fireEvent(RoundEvents.simulationStepped);
 
-        if(model.getCurrentRoundTime() >= model.getRoundLength()){
+        if(model.roundTimingContainer.getCurrentRoundTime() >= model.roundTimingContainer.getRoundLength()){
             endGame();
         }
     };

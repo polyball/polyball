@@ -7,9 +7,9 @@ var Logger = require('polyball/shared/Logger');
 var EngineStatus = require('polyball/shared/EngineStatus');
 
 function syncArenaExistence(arena, model) {
-    if (arena != null && !model.hasArena(arena.id)) {
+    if (arena != null && !model.arenaContainer.hasArena(arena.id)) {
         Logger.info('Synchronizer constructing new arena');
-        model.addOrResetArena(arena);
+        model.arenaContainer.addOrResetArena(arena);
     }
 }
 
@@ -66,7 +66,7 @@ function syncPowerupExistence(powerups, model) {
     if (powerups != null) {
         Logger.debug('synchronizing powerup');
 
-        searchAndDelete(powerups, model.getPowerups, model.deletePowerup, model);
+        searchAndDelete(powerups, model.powerupsContainer.getPowerups, model.deletePowerup, model);
         searchAndCreate(powerups, model.hasPowerup, model.addPowerup, model);
     }
 }
@@ -88,7 +88,7 @@ function syncDiscreteSpectatorState(spectators, model) {
 function syncDiscretePlayerState(players, model) {
     if (players != null) {
         players.forEach(function (snapshotPlayer) {
-            var player = model.getPlayer(snapshotPlayer.id);
+            var player = model.playersContainer.getPlayer(snapshotPlayer.id);
 
             if (player == null) {
                 throw 'syncDiscretePlayerState could not find player that MUST exist by now.';

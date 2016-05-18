@@ -75,21 +75,21 @@ describe('Engine', function() {
         it('should queue players when players < minPlayers', function () {
             addAndJoinQueue();
 
-            var spectators = model.getSpectators();
+            var spectators = model.spectatorsContainer.getSpectators();
             spectators.length.should.equal(1);
 
             model.numberOfQueuedPlayers().should.equal(1);
 
-            var players = model.getPlayers();
+            var players = model.playersContainer.getPlayers();
             players.should.be.empty();
         });
         it('should start a game when enough players queue', function () {
             startGameWithMinPlayers();
 
-            var spectators = model.getSpectators();
+            var spectators = model.spectatorsContainer.getSpectators();
             spectators.should.be.empty();
 
-            var players = model.getPlayers();
+            var players = model.playersContainer.getPlayers();
             players.length.should.equal(config.values.minimumPlayers);
 
             engine.getGameStatus().should.equal(EngineStatus.gameRunning);
@@ -99,13 +99,13 @@ describe('Engine', function() {
 
             var spectator = addAndJoinQueue();
 
-            var spectators = model.getSpectators();
+            var spectators = model.spectatorsContainer.getSpectators();
             spectators.length.should.equal(1);
 
-            var playerQueue = model.getAllQueuedPlayers();
+            var playerQueue = model.spectatorsContainer.getAllQueuedPlayers();
             playerQueue.should.containEql(spectator);
 
-            var players = model.getPlayers();
+            var players = model.playersContainer.getPlayers();
             players.length.should.equal(config.values.minimumPlayers);
 
             engine.getGameStatus().should.equal(EngineStatus.gameRunning);
@@ -115,13 +115,13 @@ describe('Engine', function() {
     describe('#initializeGame', function(){
         it('Should add a paddle to each player', function () {
             startGameWithMinPlayers();
-            model.getPlayers().forEach(function(player){
+            model.playersContainer.getPlayers().forEach(function(player){
                 player.paddle.should.not.null();
             });
         });
         it('Should add an arena index to each player', function () {
             startGameWithMinPlayers();
-            model.getPlayers().forEach(function(player){
+            model.playersContainer.getPlayers().forEach(function(player){
                 player.arenaPosition.should.not.null();
             });
         });

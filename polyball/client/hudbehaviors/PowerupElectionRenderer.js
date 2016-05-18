@@ -99,13 +99,13 @@ var PowerupElectionRenderer = function (config) {
             return;
         }
         
-        var election = model.getPowerupElection();
+        var election = model.powerupElectionContainer.getPowerupElection();
         if (election == null) {
             mainElement.hide();
             return;
         }
 
-        var countVotes = !model.hasPlayer(model.getLocalClientID());
+        var countVotes = !model.playersContainer.hasPlayer(model.getLocalClientID());
 
         // on new election, clear the table and refill the rows
         if (currentElectionID !== election.id) {
