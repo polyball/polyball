@@ -89,6 +89,19 @@ var PlayerContainer = function (config) {
         if (player != null && player.paddle != null){
             var paddle = player.paddle;
             world.remove(paddle.body);
+            player.paddle = null;
+        }
+    };
+
+    /**
+     * Delete the identified player from the model.
+     * @param {Number} id
+     */
+    this.deletePaddle = function (playerID) {
+        var player = ArrayHelper.findByID(players, playerID);
+        if (player != null && player.paddle != null){
+            var paddle = player.paddle;
+            world.remove(paddle.body);
         }
     };
 
@@ -132,6 +145,18 @@ var PlayerContainer = function (config) {
         }
 
         return player.paddle;
+    };
+
+    /**
+     * A convenience method for resetting all player paddles
+     */
+    this.clearPaddles = function () {
+        var playerIDs = _.map(players, function (player) { return player.id; });
+
+        var me = this;
+        playerIDs.forEach(function (id) {
+            me.deletePaddle(id);
+        });
     };
 
     /**
