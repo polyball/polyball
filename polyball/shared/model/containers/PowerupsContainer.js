@@ -15,7 +15,6 @@ var Util = require('polyball/shared/utilities/Util');
  */
 var PowerupContainer = function (config) {
     var powerups = [];
-    this.powerupsPub = powerups;
     var model = config.model;
     var world = model.getWorld();
     var IdGen = new IdGenerator();

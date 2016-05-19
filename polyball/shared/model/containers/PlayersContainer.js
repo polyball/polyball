@@ -103,6 +103,7 @@ var PlayerContainer = function (config) {
         if (player != null && player.paddle != null){
             var paddle = player.paddle;
             world.remove(paddle.body);
+            player.paddle = null;
         }
     };
 
@@ -154,9 +155,8 @@ var PlayerContainer = function (config) {
     this.clearPaddles = function () {
         var playerIDs = _.map(players, function (player) { return player.id; });
 
-        var me = this;
         playerIDs.forEach(function (id) {
-            me.deletePaddle(id);
+            self.deletePaddle(id);
         });
     };
 

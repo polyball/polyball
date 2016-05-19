@@ -13,7 +13,7 @@ var Arena = require('polyball/shared/model/Arena');
 var ArenaContainer = function(config) {
     var IdGen = new IdGenerator();
     var world = config.world;
-    var arena = null;
+    var arena;
 
     /**
      * If there is not yet an arena in the model, add one according to the config.
