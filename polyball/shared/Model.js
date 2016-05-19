@@ -36,6 +36,7 @@ var Model = function () {
      * @type Number
      */
     var localClientID;
+    var self = this;
 
     //
     //    ########  ##     ## ########  ##       ####  ######
@@ -49,41 +50,6 @@ var Model = function () {
     ///////////////////////////////////////////////////////////////////////////
     this.gameStatus = EngineStatus.gameInitializing;
     this.collisionsPruner = null;
-
-    /**
-     * @type {ArenaContainer}
-     */
-    this.arenaContainer = new ArenaContainer({world: world});
-
-    /**
-     * @type {BallsContainer}
-     */
-    this.ballsContainer = new BallsContainer({world: world});
-
-    /**
-     * @type {PlayersContainer}
-     */
-    this.playersContainer = new PlayersContainer({world: world});
-
-    /**
-     * @type {PowerupsContainer}
-     */
-    this.powerupsContainer = new PowerupsContainer({world: world});
-
-    /**
-     * @type {PowerupElectionContainer}
-     */
-    this.powerupElectionContainer = new PowerupElectionContainer();
-
-    /**
-     * @type {RoundTimingContainer}
-     */
-    this.roundTimingContainer = new RoundTimeingContainer();
-
-    /**
-     * @type {SpectatorsContainer}
-     */
-    this.spectatorsContainer = new SpectatorsContainer();
 
     /**
      * @returns {World}
@@ -109,6 +75,41 @@ var Model = function () {
     this.setLocalClientID = function (newID) {
         localClientID = newID;
     };
+
+    /**
+     * @type {ArenaContainer}
+     */
+    this.arenaContainer = new ArenaContainer({world: world});
+
+    /**
+     * @type {BallsContainer}
+     */
+    this.ballsContainer = new BallsContainer({world: world});
+
+    /**
+     * @type {PlayersContainer}
+     */
+    this.playersContainer = new PlayersContainer({world: world});
+
+    /**
+     * @type {PowerupsContainer}
+     */
+    this.powerupsContainer = new PowerupsContainer({model: self});
+
+    /**
+     * @type {PowerupElectionContainer}
+     */
+    this.powerupElectionContainer = new PowerupElectionContainer();
+
+    /**
+     * @type {RoundTimingContainer}
+     */
+    this.roundTimingContainer = new RoundTimeingContainer();
+
+    /**
+     * @type {SpectatorsContainer}
+     */
+    this.spectatorsContainer = new SpectatorsContainer();
 
     //
     //             SNAPSHOT

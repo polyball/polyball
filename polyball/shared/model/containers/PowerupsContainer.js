@@ -10,12 +10,14 @@ var Util = require('polyball/shared/utilities/Util');
 
 /**
  * Initializes the PowerupContainer
- * @property {world} Physics.world
+ * @property {Model} config.model
  * @constructor
  */
 var PowerupContainer = function (config) {
     var powerups = [];
-    var world = config.world;
+    this.powerupsPub = powerups;
+    var model = config.model;
+    var world = model.getWorld();
     var IdGen = new IdGenerator();
     var self = this;
 
@@ -84,7 +86,7 @@ var PowerupContainer = function (config) {
         if (pu != null) {
             Logger.info('Model deactivating powerup.');
 
-            pu.deactivate(this);
+            pu.deactivate(model);
             world.removeBody(pu.body);
         }
     };
