@@ -8,11 +8,10 @@ var _ = require('lodash');
 
 // Private Variables
 //////////////////////////
-var id;
 var active = false;
 var duration;
 var deactivateTimeout = null;
-var body;
+
 
 
 // Flags for rendering
@@ -44,7 +43,7 @@ var setDeactive = function () {
  * @property {number} config.duration
  */
 var Powerup = function(config){
-    id = config.id;
+    this.id = config.id;
     this.owner = config.owner;
     duration = config.duration;
 
@@ -59,7 +58,7 @@ var Powerup = function(config){
         styles: config.body.styles
     };
 
-    body = Physics.body('circle', newBodyConfig);
+    this.body = Physics.body('circle', newBodyConfig);
 
 };
 
@@ -68,7 +67,7 @@ var Powerup = function(config){
  */
 Powerup.prototype._powerupActivate = function(model){
     if (!this.isActive()) {
-        model.getWorld().removeBody(body);
+        model.getWorld().removeBody(this.body);
         setActive();
         this.activate(model);
         deactivateTimeout = setTimeout(function () {
@@ -104,22 +103,22 @@ Powerup.prototype.isActive = function() {
     return active === true;
 };
 
-Powerup.prototype._powerupToConfig = function (){
+Powerup.prototype.toConfig = function (){
     var superConfig = {
-        id: id,
+        id: this.id,
         name: this.name,
         active: active,
         owner: this.owner,
         duration: duration,
         body: {
-            state: Util.bodyToStateConfig(body),
-            radius: body.geometry.radius,
-            mass: body.mass,
-            styles: body.styles
+            state: Util.bodyToStateConfig(this.body),
+            radius: this.body.geometry.radius,
+            mass: this.body.mass,
+            styles: this.body.styles
         }
     };
 
-    var subConfig = this.toConfig();
+    var subConfig = this.powerupConfig();
     _.assign(subConfig, superConfig);
     return subConfig;
 
