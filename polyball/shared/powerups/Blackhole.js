@@ -7,14 +7,6 @@ var inherits = require('inherits');
 var Powerup = require('polyball/shared/powerups/Powerup');
 var StyleCommons = require('polyball/shared/StyleCommons');
 
-// ================================= Private  =================================
-// ============================================================================
-var twistUp;
-var twistFilter;
-var bhContainer;
-var gameRenderer;
-var Pixi;
-
 // ================================= Public ===================================
 // ============================================================================
 
@@ -29,6 +21,11 @@ var Blackhole = function(config){
 
     Powerup.call(this, config);
     this.name = Blackhole.Name;
+    this.gameRenderer = undefined;
+    this.twistUp = null;
+    this.twistFilter = null;
+    this.bhContainer = null;
+    this.Pixi = null;
 };
 
 inherits(Blackhole, Powerup);
@@ -61,97 +58,105 @@ Blackhole.prototype.deactivate = function (model){
  * @param renderer: Physics.Renderer
  */
 Blackhole.prototype.renderActivate = function(renderer) {
-    if (Pixi === undefined) {
-        Pixi = renderer.Pixi;
+    if (this.Pixi == null) {
+        this.Pixi = renderer.Pixi;
     }
 
-    if (gameRenderer === undefined) {
-        gameRenderer = renderer;
+    if (this.gameRenderer == null) {
+        this.gameRenderer = renderer;
     }
 
-    var center = renderer.getWorldCenter();
-    var clientCenter = renderer.getClientCenter();
-    var relCenter = renderer.getRelativePoint(clientCenter);
+    var center = this.gameRenderer.getWorldCenter();
+    var clientCenter = this.gameRenderer.getClientCenter();
+    var relCenter = this.gameRenderer.getRelativePoint(clientCenter);
 
-    var bhSprite = Pixi.Sprite.fromImage('res/blackhole.png');
+    var bhSprite = this.Pixi.Sprite.fromImage('res/blackhole.png');
     bhSprite.anchor.set(0.5, 0.5);
     bhSprite.position.set(center.x, center.y);
 
-    bhContainer = new Pixi.Container();
-    bhContainer.layer = 11;
-    bhContainer.addChild(bhSprite);
+    this.bhContainer = new this.Pixi.Container();
+    this.bhContainer.layer = 11;
+    this.bhContainer.addChild(bhSprite);
 
-    twistFilter = new Pixi.filters.TwistFilter();
-    twistFilter.radius = 0.08;
-    twistFilter.offset.x = relCenter.x;
-    twistFilter.offset.y = relCenter.y;
-    twistFilter.angle = 0;
+    this.twistFilter = new this.Pixi.filters.TwistFilter();
+    this.twistFilter.radius = 0.08;
+    this.twistFilter.offset.x = relCenter.x;
+    this.twistFilter.offset.y = relCenter.y;
+    this.twistFilter.angle = 0;
 
-    twistUp = true;
+    this.twistUp = true;
 
-    renderer.stage.addChild(bhContainer);
+    this.gameRenderer.stage.addChild(this.bhContainer);
 
 
-    if (renderer.stage.filters === undefined) {
-        renderer.stage.filters = [twistFilter];
+    if (this.gameRenderer.stage.filters === undefined) {
+        this.gameRenderer.stage.filters = [this.twistFilter];
     }
     else {
-        renderer.stage.filters.push(twistFilter);
+        this.gameRenderer.stage.filters.push(this.twistFilter);
     }
 };
 
 /**
  * Removes the visual effects of this black hole from the game.
- * @param renderer: Physics.Renderer
  */
-Blackhole.prototype.renderDeactivate = function(renderer) {
-    var newFilters = [];
-    for (var i = 0; i < renderer.stage.filters.length; i++) {
-        if (renderer.stage.filters[i] !== twistFilter) {
-            newFilters.push(renderer.stage.filters);
+Blackhole.prototype.renderDeactivate = function() {
+    if (this.gameRenderer.stage.filters !== undefined) {
+        var newFilters = [];
+        for (var i = 0; i < this.gameRenderer.stage.filters.length; i++) {
+            if (this.gameRenderer.stage.filters[i] !== this.twistFilter) {
+                newFilters.push(this.gameRenderer.stage.filters[i]);
+            }
         }
-    }
 
-    if (newFilters.length > 0) {
-        renderer.stage.filters = newFilters;
-    }
-    else {
-        renderer.stage.filters = undefined;
-    }
+        if (newFilters.length > 0) {
+            this.gameRenderer.stage.filters = newFilters;
+        }
+        else {
+            this.gameRenderer.stage.filters = undefined;
+        }
 
-    renderer.stage.removeChild(bhContainer);
+        this.gameRenderer.stage.removeChild(this.bhContainer);
+    }
 };
 
 /**
  * Animate the black hole so it looks interesting.
- * @param renderer: Physics.Renderer
  */
-Blackhole.prototype.renderUpdate = function(renderer) {
-    var clientCenter = renderer.getClientCenter();
-    var relCenter = renderer.getRelativePoint(clientCenter);
-    twistFilter.offset.x = relCenter.x;
-    twistFilter.offset.y = relCenter.y;
+Blackhole.prototype.renderUpdate = function() {
+    var clientCenter = this.gameRenderer.getClientCenter();
+    var relCenter = this.gameRenderer.getRelativePoint(clientCenter);
+    this.twistFilter.offset.x = relCenter.x;
+    this.twistFilter.offset.y = relCenter.y;
 
     var twistMax = 23;
     var twistMin = 7;
     var twistChange = 0.3;
 
-    if (twistUp) {
-        twistFilter.angle += twistChange;
+    if (this.twistUp) {
+        this.twistFilter.angle += twistChange;
     }
     else {
-        twistFilter.angle -= twistChange;
+        this.twistFilter.angle -= twistChange;
     }
 
-    if (twistFilter.angle > twistMax) {
-        twistUp = false;
+    if (this.twistFilter.angle > twistMax) {
+        this.twistUp = false;
     }
-    else if (twistFilter.angle < twistMin) {
-        twistUp = true;
+    else if (this.twistFilter.angle < twistMin) {
+        this.twistUp = true;
     }
 
     if (Math.random() > 0.995) {
-        twistUp = !twistUp;
+        this.twistUp = !this.twistUp;
+    }
+
+    if (this.gameRenderer.stage.filters !== undefined ){
+        if (this.gameRenderer.stage.filters.indexOf(this.twistFilter) < 0){
+            this.gameRenderer.stage.filters.push(this.twistFilter);
+        }
+    } else {
+        this.gameRenderer.stage.filters = [this.twistFilter];
     }
 };
 

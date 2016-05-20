@@ -46,8 +46,8 @@ KingMidas.prototype.deactivate = function(model){
     model.getWorld().off(Events.ballGoalCollision, this.handleGoal, this);
 };
 
-KingMidas.prototype.renderDeactivate = function(renderer) {
-    var emitters = renderer.getEmitters();
+KingMidas.prototype.renderDeactivate = function() {
+    var emitters = this.gameRenderer.getEmitters();
     var self = this;
 
     var foundEmitters = emitters.filter(function (emitter) {
@@ -55,31 +55,33 @@ KingMidas.prototype.renderDeactivate = function(renderer) {
     });
 
     foundEmitters.forEach(function(emitter) {
-        renderer.removeEmitter(emitter);
+        self.gameRenderer.removeEmitter(emitter);
     });
 };
 
 KingMidas.prototype.renderActivate = function(renderer, model) {
+    this.gameRenderer = renderer;
+
     var ownerPaddle = model.playersContainer.getPlayer(this.owner).paddle;
-    var paddleEmitters = this.getPaddleEmitters(renderer);
+    var paddleEmitters = this.getPaddleEmitters(this.gameRenderer);
 
     if (paddleEmitters.length === 0) {
         kingMidasPaddleParticleStyle.angleStart = ownerPaddle.body.state.angular.pos * 57.2958;
-        paddleEmitters.push(renderer.addEmitter(['res/particle.png'], kingMidasPaddleParticleStyle));
+        paddleEmitters.push(this.gameRenderer.addEmitter(['res/particle.png'], kingMidasPaddleParticleStyle));
         paddleEmitters[0].owner = this;
         paddleEmitters[0].player = this.owner;
     }
 };
 
-KingMidas.prototype.renderUpdate = function(renderer, model) {
+KingMidas.prototype.renderUpdate = function(model) {
     var emitter;
-    var emitters = renderer.getEmitters();
+    var emitters = this.gameRenderer.getEmitters();
 
     var self = this;
     var ownerPaddle = model.playersContainer.getPlayer(this.owner).paddle;
 
-    var paddleEmitters = this.getPaddleEmitters(renderer);
-    renderer.moveEmitter(
+    var paddleEmitters = this.getPaddleEmitters(this.gameRenderer);
+    this.gameRenderer.moveEmitter(
         paddleEmitters[0], {
             x: ownerPaddle.body.state.pos.x,
             y: ownerPaddle.body.state.pos.y
@@ -98,7 +100,7 @@ KingMidas.prototype.renderUpdate = function(renderer, model) {
         if (ball.lastTouchedID === self.owner) {
             // SRS Requirement - 3.2.2.18.6 King Midas Sparkle
             if (foundEmitters.length === 0) { // Create a new emitter
-                emitter = renderer.addEmitter(['res/particle.png'], kingMidasBallParticleStyle);
+                emitter = self.gameRenderer.addEmitter(['res/particle.png'], kingMidasBallParticleStyle);
                 emitter.ball = ball;
                 emitter.owner = self;
                 foundEmitters.push(emitter);
@@ -110,11 +112,11 @@ KingMidas.prototype.renderUpdate = function(renderer, model) {
             };
 
             emitter = foundEmitters[0];
-            renderer.moveEmitter(emitter, point);
+            self.gameRenderer.moveEmitter(emitter, point);
         }
         else {
             foundEmitters.forEach(function(emitter) {
-                renderer.removeEmitter(emitter);
+                self.gameRenderer.removeEmitter(emitter);
             });
         }
     });

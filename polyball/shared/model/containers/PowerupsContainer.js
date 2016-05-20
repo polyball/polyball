@@ -2,7 +2,6 @@
  * Created by ryan on 16/05/16.
  */
 var PowerupFactory = require('polyball/shared/powerups/PowerupFactory');
-var Logger = require('polyball/shared/Logger');
 var _ = require('lodash');
 var ArrayHelper = require('polyball/shared/utilities/ArrayHelper');
 var IdGenerator = require('polyball/shared/utilities/IdGenerator');
@@ -83,8 +82,7 @@ var PowerupContainer = function (config) {
     this.deletePowerup = function (id) {
         var pu = ArrayHelper.removeByID(powerups, id);
         if (pu != null) {
-            Logger.info('Model deactivating powerup.');
-            pu._powerupDeactivate(model);
+            pu._powerupKill(model);
             world.removeBody(pu.body);
         }
     };

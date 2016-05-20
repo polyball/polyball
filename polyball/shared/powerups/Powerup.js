@@ -58,17 +58,24 @@ Powerup.prototype._powerupDeactivate = function(model) {
     }
 };
 
+Powerup.prototype._powerupKill = function(model) {
+    this._powerupDeactivate(model);
+    if (typeof window !== 'undefined'){
+        this._powerupRender(model);
+    }
+};
+
 Powerup.prototype._powerupRender = function(renderer, model) {
     if (this.isActive()){
         if (this.justActivated){
             this.renderActivate(renderer, model);
             this.justActivated = false;
         } else {
-            this.renderUpdate(renderer, model);
+            this.renderUpdate(model);
         }
     } else{
         if (this.justDeactivated){
-            this.renderDeactivate(renderer, model);
+            this.renderDeactivate(model);
             this.justDeactivated = false;
         }
     }

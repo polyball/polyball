@@ -7,13 +7,6 @@ var Powerup = require('polyball/shared/powerups/Powerup');
 var StyleCommons = require('polyball/shared/StyleCommons');
 var Events = require('polyball/shared/model/behaviors/Events');
 
-// ================================= Private  =================================
-// ============================================================================
-var gameRenderer;
-var bulletTimeout;
-
-
-
 // ================================= Public ===================================
 // ============================================================================
 
@@ -34,8 +27,7 @@ var BulletTime = function(config){
     this.velVect = new Physics.vector(0,0);
     this.maxBallVelocity = config.maxBallVelocity || 3;
     this.model = null;
-
-    bulletTimeout = 2000;
+    this.bulletTimeout = 2000;
 };
 
 inherits(BulletTime, Powerup);
@@ -92,27 +84,27 @@ BulletTime.prototype.deactivate = function (model){
 
 
 BulletTime.prototype.renderActivate = function(renderer) {
-    if (gameRenderer === undefined) {
-        gameRenderer = renderer;
+    if (this.gameRenderer === undefined) {
+        this.gameRenderer = renderer;
     }
 };
 
-BulletTime.prototype.renderDeactivate = function(renderer) {
-    var emitters = renderer.getEmitters();
+BulletTime.prototype.renderDeactivate = function() {
+    var emitters = this.gameRenderer.getEmitters();
     var self = this;
     var foundEmitters = emitters.filter(function (emitter) {
         return emitter.owner === self;
     });
 
     foundEmitters.forEach(function(emitter) {
-        renderer.removeEmitter(emitter);
+        self.gameRenderer.removeEmitter(emitter);
     });
 };
 
-BulletTime.prototype.renderUpdate = function(renderer, model) {
+BulletTime.prototype.renderUpdate = function(model) {
     var self = this;
     var emitter;
-    var emitters = renderer.getEmitters();
+    var emitters = this.gameRenderer.getEmitters();
     var balls = model.ballsContainer.getBalls(function(ball) {
         return ball.body.treatment === 'static' && ball.lastTouchedID === self.owner;
     });
@@ -121,7 +113,7 @@ BulletTime.prototype.renderUpdate = function(renderer, model) {
             return emitter.ball === ball && emitter.owner === self;
         });
         if (foundEmitters.length === 0) {
-            emitter = renderer.addEmitter(['res/particle.png'], bulletTimeEmitterStyle);
+            emitter = self.gameRenderer.addEmitter(['res/particle.png'], bulletTimeEmitterStyle);
             emitter.ball = ball;
             emitter.owner = self;
             foundEmitters.push(emitter);
@@ -132,7 +124,7 @@ BulletTime.prototype.renderUpdate = function(renderer, model) {
         };
 
         emitter = foundEmitters[0];
-        renderer.moveEmitter(emitter, point);
+        self.gameRenderer.moveEmitter(emitter, point);
     });
 };
 
@@ -153,7 +145,7 @@ BulletTime.prototype.handleCollisions = function (event){
 
         if (Object.keys(this.affectedBalls).length === this.model.ballsContainer.ballCount()){
             this.clearTimeout();
-            this.setTimeout(bulletTimeout, this.model);
+            this.setTimeout(this.bulletTimeout, this.model);
         }
     }
 };
