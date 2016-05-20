@@ -67,11 +67,12 @@ var Powerup = function(config){
  */
 Powerup.prototype._powerupActivate = function(model){
     if (!this.isActive()) {
+        var self = this;
         model.getWorld().removeBody(this.body);
         setActive();
         this.activate(model);
         deactivateTimeout = setTimeout(function () {
-            this._powerupDeactivate(model);
+            self._powerupDeactivate(model);
         }, duration);
     }
 };

@@ -266,7 +266,7 @@ Physics.renderer('polyball', 'pixi', function (parent) {
 
             // Render powerups
             model.powerupsContainer.getPowerups().forEach(function(powerup) {
-                powerup.render(self, model);
+                powerup._powerupRender(self, model);
             });
         },
 
