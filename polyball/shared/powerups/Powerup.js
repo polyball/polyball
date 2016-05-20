@@ -4,6 +4,36 @@
 
 var Physics = require('physicsjs');
 var Util = require('polyball/shared/utilities/Util');
+var _ = require('lodash');
+
+// Private Variables
+//////////////////////////
+var id;
+var active = false;
+var duration;
+var deactivateTimeout = null;
+var body;
+
+
+// Flags for rendering
+var justActivated;
+var justDeactivated;
+
+// Private functions
+var setActive = function () {
+    if (!active) {
+        active = true;
+        justActivated = true;
+    }
+};
+
+var setDeactive = function () {
+    if (active){
+        active = false;
+        justDeactivated = true;
+    }
+};
+
 /**
  * @property {number} config.body.state.pos.x
  * @property {number} config.body.state.pos.y
@@ -14,11 +44,9 @@ var Util = require('polyball/shared/utilities/Util');
  * @property {number} config.duration
  */
 var Powerup = function(config){
-    this.id = config.id;
-    this.active = false;
+    id = config.id;
     this.owner = config.owner;
-    this.duration = config.duration;
-    this.deleteTimeout = null;
+    duration = config.duration;
 
     var newBodyConfig = {
         x: config.body.state.pos.x,
@@ -31,36 +59,70 @@ var Powerup = function(config){
         styles: config.body.styles
     };
 
-    this.body = Physics.body('circle', newBodyConfig);
+    body = Physics.body('circle', newBodyConfig);
 
 };
 
 /**
- * Intended for override.  Child implementation should be idempotent.  Call parent activate() in child implementation.
  * @param {Model} model - The model to mutate with powerup goodies.
  */
-// SRS Requirement - 3.2.2.15 Powerup Activated
-Powerup.prototype.activate = function(model){
-    model.getWorld().removeBody(this.body);
-    var self = this;
-    this.deleteTimeout = setTimeout(function(){
-        model.powerupsContainer.deletePowerup(self.id);
-    }, this.duration);
+Powerup.prototype._powerupActivate = function(model){
+    if (!this.isActive()) {
+        model.getWorld().removeBody(body);
+        setActive();
+        this.activate(model);
+        deactivateTimeout = setTimeout(function () {
+            this._powerupDeactivate(model);
+        }, duration);
+    }
 };
 
-Powerup.prototype.toConfig = function (){
-    return{
-        id: this.id,
-        active: this.active,
+Powerup.prototype._powerupDeactivate = function(model) {
+    if (this.isActive()){
+        setDeactive();
+        this.deactivate(model);
+    }
+};
+
+Powerup.prototype._powerupRender = function(renderer, model) {
+    if (this.isActive()){
+        if (justActivated){
+            this.renderActivate(renderer, model);
+            justActivated = false;
+        } else {
+            this.renderUpdate(renderer, model);
+        }
+    } else{
+        if (justDeactivated){
+            this.renderDeactivate(renderer, model);
+            justDeactivated = false;
+        }
+    }
+};
+
+Powerup.prototype.isActive = function() {
+    return active === true;
+};
+
+Powerup.prototype._powerupToConfig = function (){
+    var superConfig = {
+        id: id,
+        name: this.name,
+        active: active,
         owner: this.owner,
-        duration: this.duration,
+        duration: duration,
         body: {
-            state: Util.bodyToStateConfig(this.body),
-            radius: this.body.geometry.radius,
-            mass: this.body.mass,
-            styles: this.body.styles
+            state: Util.bodyToStateConfig(body),
+            radius: body.geometry.radius,
+            mass: body.mass,
+            styles: body.styles
         }
     };
+
+    var subConfig = this.toConfig();
+    _.assign(subConfig, superConfig);
+    return subConfig;
+
 };
 
 
