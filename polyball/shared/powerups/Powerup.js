@@ -6,33 +6,6 @@ var Physics = require('physicsjs');
 var Util = require('polyball/shared/utilities/Util');
 var _ = require('lodash');
 
-// Private Variables
-//////////////////////////
-var active = false;
-var duration;
-var deactivateTimeout = null;
-
-
-
-// Flags for rendering
-var justActivated;
-var justDeactivated;
-
-// Private functions
-var setActive = function () {
-    if (!active) {
-        active = true;
-        justActivated = true;
-    }
-};
-
-var setDeactive = function () {
-    if (active){
-        active = false;
-        justDeactivated = true;
-    }
-};
-
 /**
  * @property {number} config.body.state.pos.x
  * @property {number} config.body.state.pos.y
@@ -45,7 +18,11 @@ var setDeactive = function () {
 var Powerup = function(config){
     this.id = config.id;
     this.owner = config.owner;
-    duration = config.duration;
+    this.duration = config.duration;
+    this.active = false;
+    this.deactivateTimeout = null;
+    this.justActivated = false;
+    this.justDeactivated = false;
 
     var newBodyConfig = {
         x: config.body.state.pos.x,
@@ -68,57 +45,73 @@ var Powerup = function(config){
 Powerup.prototype._powerupActivate = function(model){
     if (!this.isActive()) {
         model.getWorld().removeBody(this.body);
-        setActive();
         this.activate(model);
-        this.setTimeout(duration, model);
+        this.setActive();
+        this.setTimeout(this.duration, model);
     }
 };
 
 Powerup.prototype._powerupDeactivate = function(model) {
     if (this.isActive()){
-        setDeactive();
         this.deactivate(model);
+        this.setDeactive();
     }
 };
 
 Powerup.prototype._powerupRender = function(renderer, model) {
     if (this.isActive()){
-        if (justActivated){
+        if (this.justActivated){
             this.renderActivate(renderer, model);
-            justActivated = false;
+            this.justActivated = false;
         } else {
             this.renderUpdate(renderer, model);
         }
     } else{
-        if (justDeactivated){
+        if (this.justDeactivated){
             this.renderDeactivate(renderer, model);
-            justDeactivated = false;
+            this.justDeactivated = false;
         }
     }
 };
 
 Powerup.prototype.isActive = function() {
-    return active === true;
+    return this.active === true;
 };
 
 Powerup.prototype.clearTimeout = function() {
-    clearTimeout(deactivateTimeout);
+    clearTimeout(this.deactivateTimeout);
 };
 
 Powerup.prototype.setTimeout = function(delay, model) {
     var self = this;
-    deactivateTimeout = setTimeout(function () {
+    this.deactivateTimeout = setTimeout(function () {
         self._powerupDeactivate(model);
     }, delay);
 };
+
+
+Powerup.prototype.setActive = function () {
+    if (!this.isActive()) {
+        this.active = true;
+        this.justActivated = true;
+    }
+};
+
+Powerup.prototype.setDeactive = function () {
+    if (this.isActive()){
+        this.active = false;
+        this.justDeactivated = true;
+    }
+};
+
 
 Powerup.prototype.toConfig = function (){
     var superConfig = {
         id: this.id,
         name: this.name,
-        active: active,
+        active: this.active,
         owner: this.owner,
-        duration: duration,
+        duration: this.duration,
         body: {
             state: Util.bodyToStateConfig(this.body),
             radius: this.body.geometry.radius,

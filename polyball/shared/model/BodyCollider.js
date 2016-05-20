@@ -126,7 +126,7 @@ var BodyCollider = function (config) {
             config.model.powerupsContainer.getPowerups().forEach(function (powerup) {
                powerups[powerup.body.uid] = powerup;
             });
-            powerupsLength = Object.keys(balls).length;
+            powerupsLength = Object.keys(powerups).length;
 
         }
     };
