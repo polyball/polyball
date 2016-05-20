@@ -67,13 +67,10 @@ var Powerup = function(config){
  */
 Powerup.prototype._powerupActivate = function(model){
     if (!this.isActive()) {
-        var self = this;
         model.getWorld().removeBody(this.body);
         setActive();
         this.activate(model);
-        deactivateTimeout = setTimeout(function () {
-            self._powerupDeactivate(model);
-        }, duration);
+        this.setTimeout(duration, model);
     }
 };
 
@@ -102,6 +99,17 @@ Powerup.prototype._powerupRender = function(renderer, model) {
 
 Powerup.prototype.isActive = function() {
     return active === true;
+};
+
+Powerup.prototype.clearTimeout = function() {
+    clearTimeout(deactivateTimeout);
+};
+
+Powerup.prototype.setTimeout = function(delay, model) {
+    var self = this;
+    deactivateTimeout = setTimeout(function () {
+        self._powerupDeactivate(model);
+    }, delay);
 };
 
 Powerup.prototype.toConfig = function (){

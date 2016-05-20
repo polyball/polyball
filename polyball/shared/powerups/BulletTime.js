@@ -5,7 +5,6 @@ var Physics = require('physicsjs');
 var inherits = require('inherits');
 var Powerup = require('polyball/shared/powerups/Powerup');
 var StyleCommons = require('polyball/shared/StyleCommons');
-var _ = require('lodash');
 var Events = require('polyball/shared/model/behaviors/Events');
 
 // ================================= Private  =================================
@@ -13,16 +12,7 @@ var Events = require('polyball/shared/model/behaviors/Events');
 var gameRenderer;
 var bulletTimeout;
 
-var renderDeactivate = function(self, renderer) {
-    var emitters = renderer.getEmitters();
-    var foundEmitters = emitters.filter(function (emitter) {
-        return emitter.owner === self;
-    });
 
-    foundEmitters.forEach(function(emitter) {
-        renderer.removeEmitter(emitter);
-    });
-};
 
 // ================================= Public ===================================
 // ============================================================================
@@ -76,22 +66,14 @@ BulletTime.prototype.createBulletTimeBody = function(model){
  * This holds all the logic to activate a blackhole
  * @param {Model} model
  */
-// SRS Requirement - 3.2.2.15 Powerup Activated
-// SRS Requirement - 3.2.2.15.1 Bullet Time Powerup
 BulletTime.prototype.activate = function(model){
-    if (!this.active) {
-        this.zone = this.createBulletTimeBody(model);
-        if (model.collisionsPruner != null) {
-            model.collisionsPruner.addIgnoredBody(this.zone);
-            model.getWorld().on(Events.nonImpulsiveCollision, this.handleCollisions, this);
-        }
-        this.model = model;
-        model.getWorld().addBody(this.zone);
-        BulletTime.super_.prototype.activate.call(this, model);
-
-
-        this.active = true;
+    this.zone = this.createBulletTimeBody(model);
+    if (model.collisionsPruner != null) {
+        model.collisionsPruner.addIgnoredBody(this.zone);
+        model.getWorld().on(Events.nonImpulsiveCollision, this.handleCollisions, this);
     }
+    this.model = model;
+    model.getWorld().addBody(this.zone);
 };
 
 /**
@@ -99,68 +81,70 @@ BulletTime.prototype.activate = function(model){
  * @param {Model} model
  */
 BulletTime.prototype.deactivate = function (model){
-    if (this.active){
-        this.active = false;
-        if (model.collisionsPruner != null) {
-            model.collisionsPruner.removeIgnoredBody(this.zone);
-            model.getWorld().off(Events.nonImpulsiveCollision, this.handleCollisions, this);
-        }
-
-        if (gameRenderer !== undefined) {
-            renderDeactivate(this, gameRenderer);
-        }
-
-        model.getWorld().removeBody(this.zone);
-        this.fireBalls(model);
+    if (model.collisionsPruner != null) {
+        model.collisionsPruner.removeIgnoredBody(this.zone);
+        model.getWorld().off(Events.nonImpulsiveCollision, this.handleCollisions, this);
     }
+
+    model.getWorld().removeBody(this.zone);
+    this.fireBalls(model);
 };
 
-BulletTime.prototype.render = function(renderer, model) {
-    var self = this;
+
+BulletTime.prototype.renderActivate = function(renderer) {
     if (gameRenderer === undefined) {
         gameRenderer = renderer;
     }
-
-    if (this.active) {
-        var emitter;
-        var emitters = renderer.getEmitters();
-        var balls = model.ballsContainer.getBalls(function(ball) {
-            return ball.body.treatment === 'static' && ball.lastTouchedID === self.owner;
-        });
-        balls.forEach(function(ball) {
-            var foundEmitters = emitters.filter(function(emitter) {
-                return emitter.ball === ball && emitter.owner === self;
-            });
-            if (foundEmitters.length === 0) {
-                emitter = renderer.addEmitter(['res/particle.png'], bulletTimeEmitterStyle);
-                emitter.ball = ball;
-                emitter.owner = self;
-                foundEmitters.push(emitter);
-            }
-            var point = {
-                x: ball.body.state.pos.x,
-                y: ball.body.state.pos.y
-            };
-
-            emitter = foundEmitters[0];
-            renderer.moveEmitter(emitter, point);
-        });
-    }
 };
 
-BulletTime.prototype.toConfig = function (){
-    var config = {
-        name: this.name,
+BulletTime.prototype.renderDeactivate = function(renderer) {
+    var emitters = renderer.getEmitters();
+    var self = this;
+    var foundEmitters = emitters.filter(function (emitter) {
+        return emitter.owner === self;
+    });
+
+    foundEmitters.forEach(function(emitter) {
+        renderer.removeEmitter(emitter);
+    });
+};
+
+BulletTime.prototype.renderUpdate = function(renderer, model) {
+    var self = this;
+    var emitter;
+    var emitters = renderer.getEmitters();
+    var balls = model.ballsContainer.getBalls(function(ball) {
+        return ball.body.treatment === 'static' && ball.lastTouchedID === self.owner;
+    });
+    balls.forEach(function(ball) {
+        var foundEmitters = emitters.filter(function(emitter) {
+            return emitter.ball === ball && emitter.owner === self;
+        });
+        if (foundEmitters.length === 0) {
+            emitter = renderer.addEmitter(['res/particle.png'], bulletTimeEmitterStyle);
+            emitter.ball = ball;
+            emitter.owner = self;
+            foundEmitters.push(emitter);
+        }
+        var point = {
+            x: ball.body.state.pos.x,
+            y: ball.body.state.pos.y
+        };
+
+        emitter = foundEmitters[0];
+        renderer.moveEmitter(emitter, point);
+    });
+};
+
+BulletTime.prototype.powerupConfig = function (){
+    return {
         maxBallVelocity: this.maxBallVelocity
     };
-    _.assign(config, BulletTime.super_.prototype.toConfig.call(this));
-    return config;
 };
 
 BulletTime.prototype.handleCollisions = function (event){
     if (!this.affectedBalls[event.ball.id]){
         var ball = event.ball;
-        var self = this;
         ball.lastTouchedID = this.owner;
         this.affectedBalls[ball.id] = ball;
         ball.body.treatment = 'static';
@@ -168,10 +152,8 @@ BulletTime.prototype.handleCollisions = function (event){
         ball.body.state.vel.y = 0;
 
         if (Object.keys(this.affectedBalls).length === this.model.ballsContainer.ballCount()){
-            clearTimeout(this.deleteTimeout);
-            this.deleteTimeout = setTimeout(function(){
-                self.model.powerupsContainer.deletePowerup(self.id);
-            }, bulletTimeout);
+            this.clearTimeout();
+            this.setTimeout(bulletTimeout, this.model);
         }
     }
 };
