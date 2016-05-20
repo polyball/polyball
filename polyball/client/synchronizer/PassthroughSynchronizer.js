@@ -132,15 +132,12 @@ function syncDiscretePowerupState(powerups, model) {
                 throw 'syncDiscretePowerupState could not find powerup that MUST exist by now.';
             }
 
-            if (!powerup.active && snapshotPowerup.active) {
+            if (!powerup.isActive() && snapshotPowerup.active) {
                 Logger.info("PassthroughSync activating powerup");
-                powerup.activate(model);
-
-                // NOTE: activate() automatically sets below state
-                // powerup.active = snapshotPowerup.active;
-            } else if (powerup.active && !snapshotPowerup.active) {
+                powerup._powerupActivate(model);
+            } else if (powerup.isActive() && !snapshotPowerup.active) {
                 Logger.info('PassthroughSync deactivating powerup');
-                powerup.deactivate(model);
+                powerup._powerupDeactivate(model);
             }
 
             powerup.owner = snapshotPowerup.owner;

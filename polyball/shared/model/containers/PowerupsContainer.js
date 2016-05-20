@@ -84,8 +84,7 @@ var PowerupContainer = function (config) {
         var pu = ArrayHelper.removeByID(powerups, id);
         if (pu != null) {
             Logger.info('Model deactivating powerup.');
-
-            pu.deactivate(model);
+            pu._powerupDeactivate(model);
             world.removeBody(pu.body);
         }
     };

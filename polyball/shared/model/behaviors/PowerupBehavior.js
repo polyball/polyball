@@ -12,14 +12,13 @@ var Events = require('polyball/shared/model/behaviors/Events');
  * @property {model} config.model
  * @constructor
  */
-// SRS Requirement - 3.2.2.11 Collecting Powerup
 var PowerupBehavior = function(config){
 
     var handleCollision = function(event){
         var player = config.model.playersContainer.getPlayer(event.ball.lastTouchedID);
         if (player != null){
             event.entity.owner = player.id;
-            event.entity.activate(config.model);
+            event.entity._powerupActivate(config.model);
         }
     };
 

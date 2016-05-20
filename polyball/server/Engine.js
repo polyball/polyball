@@ -326,10 +326,6 @@ var Engine = function (config) {
      * Removes all powerups from the world
      */
     var resetPowerups = function(){
-        model.powerupsContainer.getPowerups().forEach(function(powerup){
-           powerup.deactivate(model);
-        });
-
         model.powerupsContainer.clearPowerups();
     };
 
