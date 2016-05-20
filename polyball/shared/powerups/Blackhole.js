@@ -115,9 +115,9 @@ Blackhole.prototype.renderDeactivate = function() {
         else {
             this.gameRenderer.stage.filters = undefined;
         }
-
-        this.gameRenderer.stage.removeChild(this.bhContainer);
     }
+    
+    this.gameRenderer.stage.removeChild(this.bhContainer);
 };
 
 /**
