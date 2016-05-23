@@ -48,6 +48,14 @@ function syncPlayerExistence(players, model) {
     if (players != null) {
         Logger.debug('synchronizing players');
 
+        players.forEach(function (player) {
+           if (isLocalEntity(player.id, model)){
+                if (player.paddleConfig){
+                    player.paddleConfig.local = true;
+                }
+           }
+        });
+
         searchAndDelete(players, model.playersContainer.getPlayers, model.playersContainer.deletePlayer, model);
         searchAndCreate(players, model.playersContainer.hasPlayer, model.playersContainer.addPlayer, model);
     }
@@ -95,6 +103,7 @@ function syncDiscretePlayerState(players, model) {
             }
 
             if (player.paddle == null && snapshotPlayer.paddleConfig != null) {
+                snapshotPlayer.paddleConfig.local = isLocalEntity(snapshotPlayer.id, model);
                 var paddleAddConfig = {
                     playerID: snapshotPlayer.id,
                     paddleConfig: snapshotPlayer.paddleConfig
@@ -152,6 +161,10 @@ function syncPowerupElection(election, model) {
     } else {
         model.powerupElectionContainer.clearPowerupElection();
     }
+}
+
+function isLocalEntity(entityID, model) {
+    return entityID === model.getLocalClientID();
 }
 
 

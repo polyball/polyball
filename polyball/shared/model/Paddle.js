@@ -19,6 +19,7 @@ var StyleCommons = require('polyball/shared/StyleCommons');
  * @property {number} config.radius
  * @property {number} config.body.state.pos.x
  * @property {number} config.body.state.pos.y
+ * @property {Boolean} config.local
  * @constructor
  */
 var Paddle = function(config){
@@ -155,6 +156,8 @@ var Paddle = function(config){
     this.rightBound = computeBound(this.goalRightBound, this.goalLeftBound);
     var maxVelocity = config.maxVelocity;
     var me = this;
+    var style = config.local ? StyleCommons.localPaddleStyle : StyleCommons.paddleStyle;
+
 
     this.body = Physics.body('convex-polygon',
         {
@@ -162,7 +165,7 @@ var Paddle = function(config){
             y: config.body.state.pos.y,
             vertices: Physics.geometry.regularPolygonVertices(8, config.radius),
             treatment: 'kinematic',
-            styles: StyleCommons.paddleStyle
+            styles: style
         }
     );
 

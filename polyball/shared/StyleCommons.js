@@ -4,6 +4,7 @@ var blue = '0x3b4c60';
 var turqoise = '0x386055';
 var red = '0xb01d19';
 var orange = '0xd04900';
+var green = '0x4CAF50';
 var background = '0xeae1cc'; //jshint ignore:line
 var lightPink = '0xE61945'; //jshint ignore:line
 var fuchsia = '0xC00029'; //jshint ignore:line
@@ -34,6 +35,10 @@ var bumperStyle = {
 
 var paddleStyle = {
     fillStyle: red
+};
+
+var localPaddleStyle = {
+    fillStyle: green
 };
 
 var blackholeStyle = {
@@ -80,6 +85,7 @@ exports.localBallStyle = localBallStyle;
 exports.goalStyle = goalStyle;
 exports.bumperStyle = bumperStyle;
 exports.paddleStyle = paddleStyle;
+exports.localPaddleStyle = localPaddleStyle;
 exports.blackholeStyle = blackholeStyle;
 exports.kingMidasStyle = kingMidasStyle;
 exports.midasParticleStartColor = midasParticleStartColor;
