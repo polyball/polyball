@@ -34,6 +34,8 @@ var testConfig = {
     reporter: process.env.NO_NYAN === 'true' ? 'spec' : 'nyan'
 };
 
+var scssFiles = './polyball/client/hudcomponents/**/*.scss';
+
 var lintReporter = 'jshint-stylish';
 var lintConfig = {
     verbose: true
@@ -48,6 +50,8 @@ gulp.task('compile-static', compileStatic);
 gulp.task('default', ['lint', 'build-js', 'compile-static', 'run-tests']);
 
 gulp.task('watch-js', watchifyBundle);
+gulp.task('watch-static', watchifySCSS);
+gulp.task('watch-all', ['watch-js', 'watch-static']);
 
 function bundle(bundler, killOnError) {
     bundler = bundler.bundle()
@@ -103,6 +107,10 @@ function watchifyBundle() {
     wify.on('log', gutil.log); // output build logs to terminal
 
     return bundle(wify, false);
+}
+
+function watchifySCSS() {
+    gulp.watch(scssFiles, ['compile-static']);
 }
 
 function compileStatic(){
