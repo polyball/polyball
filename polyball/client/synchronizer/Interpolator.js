@@ -40,7 +40,8 @@ var Interpolator = function (config) {
                 var remotePlayer = model.playersContainer.getPlayer(playerState.id);
                 var remotePaddle = remotePlayer ? remotePlayer.paddle : null;
 
-                if (playerState.id !== model.getLocalClientID() && remotePlayer != null && remotePaddle != null) {
+                if (playerState.id !== model.getLocalClientID() && remotePlayer != null &&
+                    remotePaddle != null && playerState.paddleConfig) {
                     remotePaddle.body.state.pos.x = playerState.paddleConfig.body.state.pos.x;
                     remotePaddle.body.state.pos.y = playerState.paddleConfig.body.state.pos.y;
 
