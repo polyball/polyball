@@ -14,6 +14,7 @@ var GoalBehavior = require('polyball/shared/model/behaviors/GoalBehavior');
 var PowerupBehavior = require('polyball/shared/model/behaviors/PowerupBehavior');
 var PowerupFactory = require('polyball/shared/powerups/PowerupFactory');
 var Vote = require('polyball/shared/model/Vote');
+var BodyScaler = require('polyball/shared/utilities/BodyScaler');
 
 /**
  * Initializes the engine
@@ -66,7 +67,7 @@ var Engine = function (config) {
             model.arenaContainer.addOrResetArena({
                 numberPlayers: model.playersContainer.playerCount(),
                 arenaRadius: 350,
-                bumperRadius: 60,
+                bumperRadius: 240,
                 marginX: 0,
                 marginY: 0
             });
@@ -232,7 +233,6 @@ var Engine = function (config) {
      */
     var addAllPaddles = function () {
         var players = model.playersContainer.getPlayers();
-        var paddleRadius = config.configuration.paddleRadius / players.length;
         for(var i=0; i < players.length; i++){
             var leftBound = model.arenaContainer.getArena().getPaddleLeftBound(i);
             var rightBound = model.arenaContainer.getArena().getPaddleRightBound(i);
@@ -242,7 +242,7 @@ var Engine = function (config) {
 
             var paddleConfig = {
                 maxVelocity: config.configuration.paddleMaximumVelocity,
-                radius: paddleRadius>= 30 ? paddleRadius : 30,
+                radius: BodyScaler.getScaledRadius(config.configuration.paddleRadius, model.playersContainer.playerCount()),
                 leftBound: {
                     x: leftBound.x,
                     y: leftBound.y
@@ -269,7 +269,7 @@ var Engine = function (config) {
     var addBall = function (){
         model.ballsContainer.addBall({
             body: {
-                radius: 10,
+                radius: BodyScaler.getScaledRadius(35, model.playersContainer.playerCount()),
                 cof: 0,
                 state: model.arenaContainer.getArena().generateNewBallState()
             }

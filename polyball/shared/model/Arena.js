@@ -6,6 +6,7 @@
 var Physics = require("physicsjs");
 var Util = require('polyball/shared/utilities/Util');
 var StyleCommons = require('polyball/shared/StyleCommons');
+var BodyScaler = require('polyball/shared/utilities/BodyScaler');
 
 /**
  * @param {Object} config
@@ -257,7 +258,7 @@ var Arena = function(config) {
             id: this.id,
             numberPlayers: this.numberPlayers,
             arenaRadius: this.arenaRadius,
-            bumperRadius: this.bumperRadius,
+            bumperRadius: this.unscaledBumperRadius,
             marginX: this.marginX,
             marginY: this.marginY
         };
@@ -269,7 +270,8 @@ var Arena = function(config) {
     this.id = config.id;
     this.numberPlayers = config.numberPlayers;
     this.arenaRadius = config.arenaRadius;
-    this.bumperRadius = config.bumperRadius;
+    this.unscaledBumperRadius = config.bumperRadius;
+    this.bumperRadius = BodyScaler.getScaledRadius(config.bumperRadius, this.numberPlayers);
     this.marginX = config.marginX;
     this.marginY = config.marginY;
 
@@ -303,7 +305,7 @@ var Arena = function(config) {
             y: yCenter,
             angle: -theta * curr,
             width: goalWidth,
-            height: 30,
+            height: BodyScaler.getScaledRadius(90, this.numberPlayers),
             treatment: 'static',
             cof: 0,
             styles: StyleCommons.goalStyle
