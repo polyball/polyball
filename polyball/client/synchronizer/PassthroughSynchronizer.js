@@ -6,12 +6,11 @@ var _ = require('lodash');
 var Logger = require('polyball/shared/Logger');
 var EngineStatus = require('polyball/shared/EngineStatus');
 
-function syncArenaExistence(arena, model) {
-    if (arena != null && !model.arenaContainer.hasArena(arena.id)) {
-        Logger.info('Synchronizer constructing new arena');
-        model.arenaContainer.addOrResetArena(arena);
-    }
-}
+
+/*
+ *
+ * Generic creation and deletion functions
+ */
 
 function searchAndDelete(snapshotArray, modelGet, modelDelete, model) {
     var toDelete = modelGet.call(model, function (modelEntity) {
@@ -44,12 +43,25 @@ function syncSpectatorExistence(spectators, model) {
     }
 }
 
+
+/*
+ *
+ * Existential synchronization functions.
+ */
+
+function syncArenaExistence(arena, model) {
+    if (arena != null && !model.arenaContainer.hasArena(arena.id)) {
+        Logger.info('Synchronizer constructing new arena');
+        model.arenaContainer.addOrResetArena(arena);
+    }
+}
+
 function syncPlayerExistence(players, model) {
     if (players != null) {
         Logger.debug('synchronizing players');
 
         players.forEach(function (player) {
-           if (isLocalEntity(player.id, model)){
+           if (isLocalClient(player.id, model)){
                 if (player.paddleConfig){
                     player.paddleConfig.local = true;
                 }
@@ -79,6 +91,13 @@ function syncPowerupExistence(powerups, model) {
     }
 }
 
+
+/*
+ *
+ * Discrete state synchronization functions.
+ * (Other state sync handled by Interpolator and Reconciler.)
+ */
+
 function syncDiscreteSpectatorState(spectators, model) {
     if (spectators != null) {
         spectators.forEach(function (snapshotSpectator) {
@@ -103,7 +122,7 @@ function syncDiscretePlayerState(players, model) {
             }
 
             if (player.paddle == null && snapshotPlayer.paddleConfig != null) {
-                snapshotPlayer.paddleConfig.local = isLocalEntity(snapshotPlayer.id, model);
+                snapshotPlayer.paddleConfig.local = isLocalClient(snapshotPlayer.id, model);
                 var paddleAddConfig = {
                     playerID: snapshotPlayer.id,
                     paddleConfig: snapshotPlayer.paddleConfig
@@ -163,16 +182,22 @@ function syncPowerupElection(election, model) {
     }
 }
 
-function isLocalEntity(entityID, model) {
+function isLocalClient(entityID, model) {
     return entityID === model.getLocalClientID();
 }
 
 
+/*
+ *
+ * Module definition.
+ */
 
 var PassthroughSynchronizer = {};
+
 /**
+ * Sync the existence and discrete state of game entities.
  * 
- * @param snapshot
+ * @param {Object} snapshot
  * @param {Model} model
  */
 PassthroughSynchronizer.sync = function (snapshot, model) {
